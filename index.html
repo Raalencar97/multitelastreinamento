@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Multitelas · Treinamento CS · Betano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F0F23; --navycard:#17172E; --orange:#FF3C00; --white:#FFFFFF;
+    --cream:#FAF5F0; --card:#FFFFFF; --border:#E8E3DC; --slate:#3A3A55;
+    --lav:#C9C9D6; --call:#FFF0EC; --green:#178E33; --greenbg:#ECF6EE; --red:#FF2A21; --amber:#E8A21C;
+    --bubble:#EEF1F6; --bubbleb:#D6DEEA;
+    --f:"Barlow",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    --fc:"Barlow Condensed",var(--f);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--f);background:var(--cream);color:var(--slate);line-height:1.45;-webkit-font-smoothing:antialiased}
+
+  header.masthead{background:var(--navy);border-bottom:4px solid var(--orange)}
+  .mast-in{max-width:1240px;margin:0 auto;padding:13px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .wordmark{font-family:var(--fc);font-weight:700;letter-spacing:.5px;font-size:22px;color:var(--cream)}
+  .wordmark b{color:var(--orange)}
+  .mast-sep{width:1px;height:22px;background:#4A4A63}
+  .mast-title{font-weight:700;font-size:13px;color:var(--white);letter-spacing:.3px}
+  .mast-tag{margin-left:auto;font-size:11px;color:var(--lav);letter-spacing:2px;text-transform:uppercase}
+
+  main{max-width:1240px;margin:0 auto;padding:24px 22px 60px}
+  .eyebrow{font-family:var(--f);font-weight:700;font-size:11.5px;letter-spacing:3px;color:var(--orange);text-transform:uppercase}
+  h1.h2{font-family:var(--fc);font-weight:700;font-size:32px;color:var(--navy);line-height:1.05;margin:6px 0 4px}
+  h1.h2 span{color:var(--orange)}
+  .sub{font-size:13.5px;color:var(--slate);max-width:78ch}
+
+  .btn{appearance:none;border:none;cursor:pointer;font-family:var(--f);font-weight:700;font-size:13px;letter-spacing:.3px;border-radius:10px;padding:12px 22px;transition:.16s;text-transform:uppercase}
+  .btn-primary{background:var(--orange);color:#fff}
+  .btn-primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .btn-ghost{background:transparent;color:var(--slate);border:1.5px solid var(--border)}
+  .btn-ghost:hover{border-color:var(--orange);color:var(--navy)}
+  .btn:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+  .slas{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0 4px}
+  .sla{background:#fff;border:1px solid var(--border);border-radius:12px;padding:11px 15px;display:flex;align-items:center;gap:11px}
+  .sla .n{font-family:var(--fc);font-weight:700;font-size:24px;color:var(--orange);line-height:1}
+  .sla .l{font-size:12px;color:var(--slate)} .sla .l b{color:var(--navy)}
+  .tomvoz{background:var(--call);border:1.5px solid var(--orange);border-radius:12px;padding:12px 16px;font-size:12.5px;color:var(--navy);margin-top:12px;line-height:1.4}
+  .tomvoz b{color:var(--orange)}
+
+  .days{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:8px;margin:18px 0}
+  .day{position:relative;aspect-ratio:1;border:1.5px solid var(--border);background:#fff;border-radius:12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:.15s}
+  .day:hover{border-color:var(--orange);transform:translateY(-2px)}
+  .day[aria-pressed="true"]{background:var(--navy);border-color:var(--navy)}
+  .day .dn{font-family:var(--fc);font-weight:700;font-size:22px;color:var(--navy)}
+  .day .ds{font-size:9px;letter-spacing:.5px;color:var(--slate);text-transform:uppercase}
+  .day[aria-pressed="true"] .dn{color:#fff} .day[aria-pressed="true"] .ds{color:var(--lav)}
+  .day .scr{margin-top:3px;display:flex;gap:2px} .day .scr i{width:6px;height:6px;border-radius:50%;background:var(--orange);opacity:.85}
+  .day .rg{position:absolute;top:6px;right:7px;font-size:9px;font-weight:700;color:var(--red)}
+
+  .briefing{background:var(--navycard);border-radius:16px;padding:22px;color:#fff;display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:8px}
+  .briefing .bg-emoji{font-size:44px}
+  .briefing .bt{font-family:var(--fc);font-weight:700;font-size:26px}
+  .briefing .bd{font-size:13px;color:var(--lav);max-width:52ch;margin-top:2px}
+  .briefing .go{margin-left:auto}
+
+  #game{display:none}
+  .status{position:sticky;top:0;z-index:30;background:var(--navy);border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:16px;box-shadow:0 6px 18px rgba(15,15,35,.2)}
+  .status .s-day{font-family:var(--fc);font-weight:700;font-size:20px;color:#fff}
+  .status .s-day span{color:var(--orange)}
+  .status .s-pill{display:flex;flex-direction:column;line-height:1.05}
+  .status .s-pill .n{font-family:var(--fc);font-weight:700;font-size:20px}
+  .status .s-pill .l{font-size:10px;letter-spacing:1px;color:var(--lav);text-transform:uppercase}
+  .s-pill .n.ok{color:var(--green)} .s-pill .n.lost{color:var(--red)} .s-pill .n.act{color:#fff}
+  .status .s-end{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .status .btn{padding:9px 16px}
+  #dayDoneNote{color:var(--lav);font-size:11.5px}
+
+  .browser{background:var(--navycard);border-radius:16px;padding:14px;box-shadow:0 16px 36px rgba(15,15,35,.16)}
+  .tabbar{display:flex;gap:6px;overflow-x:auto}
+  .tab-chat{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#20203a;color:#cfcfe0;border:1px solid #2f2f4d;border-bottom:none;border-radius:10px 10px 0 0;padding:9px 13px;cursor:pointer;font-size:12.5px;font-weight:700;max-width:190px;white-space:nowrap;transition:.15s}
+  .tab-chat:hover{background:#2a2a48}
+  .tab-chat.sel{background:#fff;color:var(--navy);border-color:#fff}
+  .tab-chat .dot{width:8px;height:8px;border-radius:50%;flex:none;background:#666}
+  .tab-chat .nm{overflow:hidden;text-overflow:ellipsis}
+  .tab-chat .mini{font-family:var(--fc);font-weight:700;font-size:12px;opacity:.85}
+  .tab-chat.urgent{animation:tabpulse .8s infinite}
+  @keyframes tabpulse{50%{background:#5a1616;color:#fff}}
+  .tab-chat.done,.tab-chat.lost{opacity:.55}
+
+  .workspace{display:grid;grid-template-columns:1fr 224px;gap:14px;background:#fff;border-radius:0 12px 12px 12px;padding:14px}
+  @media(max-width:760px){.workspace{grid-template-columns:1fr}}
+  .chatpanel{position:relative;min-height:380px;display:flex;flex-direction:column}
+  .cp-empty{margin:auto;color:var(--slate);font-style:italic;font-size:13px}
+  .cp-head{border-bottom:1px solid var(--border);padding-bottom:11px;margin-bottom:11px}
+  .cp-row1{display:flex;align-items:center;gap:9px}
+  .cp-row1 .who{font-family:var(--fc);font-weight:700;font-size:20px;color:var(--navy)}
+  .cp-row1 .tag{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;background:var(--bubble);color:var(--slate);border:1px solid var(--bubbleb);padding:3px 9px;border-radius:12px}
+  .cp-timerrow{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .timer{flex:1;height:8px;border-radius:5px;background:#eee3d8;overflow:hidden}
+  .timer .bar{height:100%;width:100%;background:var(--green);transition:width .12s linear,background .3s}
+  .tleft{font-family:var(--fc);font-weight:700;font-size:17px;color:var(--navy);min-width:48px;text-align:right}
+  .sla-lbl{font-size:10px;color:var(--slate);letter-spacing:.4px;text-transform:uppercase;margin-top:4px;display:block;min-height:12px}
+
+  .msgs{flex:1;display:flex;flex-direction:column;gap:9px;overflow-y:auto;max-height:260px;padding:2px}
+  .msg{max-width:82%;font-size:13px;padding:9px 12px;border-radius:12px;line-height:1.35}
+  .msg.c{align-self:flex-start;background:var(--bubble);border:1px solid var(--bubbleb);color:var(--navy);border-bottom-left-radius:3px}
+  .msg.a{align-self:flex-end;background:var(--call);border:1px solid var(--orange);color:var(--navy);border-bottom-right-radius:3px}
+  .msg .lbl{display:block;font-size:8.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.6;margin-bottom:2px}
+  .sysmsg{align-self:center;background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 14px;border-radius:20px;text-align:center;max-width:94%}
+  .typing{font-size:11.5px;color:var(--slate);font-style:italic;padding:6px 2px}
+  .typing.on::after{content:"";animation:dots 1.2s steps(4,end) infinite}
+  @keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+
+  .opts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .opt{appearance:none;text-align:left;cursor:pointer;background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-family:var(--f);font-size:12.5px;color:var(--navy);transition:.13s;line-height:1.3}
+  .opt:hover{border-color:var(--orange);background:var(--call)}
+  .prompt{margin-top:12px;border-radius:10px;padding:11px 13px;font-size:12.5px;line-height:1.35}
+  .prompt.rg{background:#fff3cd;border:1.5px solid #e8c760;color:#7a5b00}
+  .prompt.sv{background:var(--greenbg);border:1.5px solid #bfe4c6;color:#0f5d24}
+
+  .rgpanel{background:#fbf9f6;border:1px solid var(--border);border-radius:12px;padding:14px;height:fit-content}
+  .rg-section+.rg-section{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+  .rg-title{font-family:var(--fc);font-weight:700;font-size:15px;color:var(--navy)}
+  .rg-hint{font-size:10.5px;color:var(--slate);line-height:1.35;margin:2px 0 8px}
+  .rg-btn{appearance:none;cursor:pointer;text-align:left;width:100%;border:1.5px solid var(--border);background:#fff;border-radius:10px;padding:10px 12px;font-family:var(--f);font-weight:700;font-size:12.5px;color:var(--navy);transition:.14s;display:flex;align-items:center;gap:9px;margin-bottom:8px}
+  .rg-btn:last-child{margin-bottom:0}
+  .rg-btn:hover{border-color:var(--red);background:#fff5f4}
+  .rg-btn .ri{width:9px;height:9px;border-radius:2px;background:var(--red);flex:none}
+  .rgpanel.armRG .rg-btn{border-color:var(--orange);animation:armO 1s infinite}
+  @keyframes armO{50%{box-shadow:0 0 0 3px rgba(255,60,0,.14)}}
+  .survey-btn{appearance:none;cursor:pointer;width:100%;text-align:left;border:1.5px solid var(--green);background:#eefaf0;color:#0f5d24;border-radius:10px;padding:11px 12px;font-family:var(--f);font-weight:700;font-size:12.5px;transition:.14s;display:flex;align-items:center;gap:8px}
+  .survey-btn:hover{background:#dff3e4}
+  .rgpanel.armSV .survey-btn{animation:armG 1s infinite}
+  @keyframes armG{50%{box-shadow:0 0 0 3px rgba(23,142,51,.18)}}
+  .rg-btn:focus-visible,.survey-btn:focus-visible{outline:2px solid var(--orange);outline-offset:1px}
+  .flash{font-size:10.5px;color:var(--red);margin-top:8px;line-height:1.3}
+
+  .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22px;border-radius:10px}
+  .overlay.lost{background:rgba(255,42,33,.95);color:#fff}
+  .overlay.done{background:rgba(23,142,51,.96);color:#fff}
+  .overlay .ot{font-family:var(--fc);font-weight:700;font-size:24px;line-height:1.05}
+  .overlay .od{font-size:12.5px;opacity:.94;margin-top:8px;max-width:30ch}
+  .overlay .score{font-family:var(--fc);font-weight:700;font-size:54px;margin-top:4px;line-height:1}
+  .dims{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:12px;width:100%;max-width:260px}
+  .dim{font-size:10px;text-align:left}
+  .dim .dbar{height:5px;border-radius:3px;background:rgba(255,255,255,.3);margin-top:2px;overflow:hidden}
+  .dim .dbar i{display:block;height:100%;background:#fff}
+  .cat{font-size:11px;opacity:.92;margin-top:12px;border-top:1px solid rgba(255,255,255,.3);padding-top:8px}
+
+  #summary{display:none;position:fixed;inset:0;background:rgba(15,15,35,.6);z-index:60;align-items:center;justify-content:center;padding:22px}
+  #summary.show{display:flex}
+  .sum-card{background:#fff;border-radius:18px;max-width:520px;width:100%;padding:28px;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,.3)}
+  .sum-card .eyebrow{justify-content:center}
+  .sum-title{font-family:var(--fc);font-weight:700;font-size:30px;color:var(--navy);margin:4px 0 14px}
+  .sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+  .sum-stat{background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:14px 8px}
+  .sum-stat .n{font-family:var(--fc);font-weight:700;font-size:30px;line-height:1}
+  .sum-stat .n.ok{color:var(--green)} .sum-stat .n.lost{color:var(--red)} .sum-stat .n.ts{color:var(--orange)}
+  .sum-stat .l{font-size:10.5px;letter-spacing:.8px;color:var(--slate);text-transform:uppercase;margin-top:4px}
+  .sum-msg{font-size:13.5px;color:var(--slate);margin:6px 0 18px}
+  .sum-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+  footer{background:var(--navy);border-top:4px solid var(--orange);margin-top:40px}
+  .foot-in{max-width:1240px;margin:0 auto;padding:12px 22px;display:flex;justify-content:space-between;font-size:11px;color:var(--lav);letter-spacing:.5px}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mast-in">
+    <span class="wordmark">bet<b>ano</b></span>
+    <span class="mast-sep"></span>
+    <span class="mast-title">Simulador de Multitelas · Treinamento CS</span>
+    <span class="mast-tag">Uso interno</span>
+  </div>
+</header>
+
+<main>
+  <section id="picker">
+    <span class="eyebrow">Atendimento simultâneo de chats</span>
+    <h1 class="h2">Vários clientes ao mesmo tempo, <span>o relógio correndo</span></h1>
+    <p class="sub">Os chats abrem em guias, como no navegador — e a tela não muda sozinha: fique de olho nas abas que piscam. A partir do Dia 4 entram casos de Jogo Responsável. Todo atendimento comum se encerra enviando a pesquisa de satisfação.</p>
+
+    <div class="slas">
+      <div class="sla"><span class="n">0:30</span><span class="l"><b>Primeira mensagem.</b> Se estourar, o cliente vai embora na hora.</span></div>
+      <div class="sla"><span class="n">2:59</span><span class="l"><b>Espera máxima</b> nas mensagens seguintes antes do abandono.</span></div>
+    </div>
+    <div class="tomvoz"><b>Tom de voz:</b> acolha sem reforçar a emoção negativa — prefira <i>“entendo como você se sente”</i> a <i>“entendo sua frustração”</i>. Reconheça a situação, use o nome do cliente e foque no que você <b>pode</b> fazer.</div>
+
+    <h1 class="h2" style="font-size:22px;margin-top:26px">Escolha o <span>dia</span></h1>
+    <div class="days" id="days"></div>
+    <div class="briefing" id="briefing"></div>
+  </section>
+
+  <section id="game">
+    <div class="status">
+      <span class="s-day" id="sDay">Dia <span>1</span></span>
+      <div class="s-pill"><span class="n act" id="sActive">0</span><span class="l">Ativos</span></div>
+      <div class="s-pill"><span class="n ok" id="sOk">0</span><span class="l">Concluídos</span></div>
+      <div class="s-pill"><span class="n lost" id="sLost">0</span><span class="l">Perdidos</span></div>
+      <div class="s-end">
+        <span id="dayDoneNote" style="display:none">Todos encerrados — revise as guias</span>
+        <button class="btn btn-primary" id="endDayBtn" style="display:none">Encerrar dia</button>
+        <button class="btn btn-ghost" id="quitBtn" style="color:var(--lav);border-color:#3a3a55">Sair do dia</button>
+      </div>
+    </div>
+
+    <div class="browser">
+      <div class="tabbar" id="tabbar"></div>
+      <div class="workspace">
+        <div class="chatpanel" id="chatpanel"></div>
+        <div class="rgpanel" id="rgpanel">
+          <div class="rg-section">
+            <div class="rg-title">Encerramento</div>
+            <div class="rg-hint">Ao resolver um atendimento comum, envie a pesquisa de satisfação para o cliente avaliar.</div>
+            <button class="survey-btn" id="surveyBtn">📨 Pesquisa</button>
+          </div>
+          <div class="rg-section">
+            <div class="rg-title">Reportar RG</div>
+            <div class="rg-hint">Somente em casos de Jogo Responsável. A restrição é obrigatória, mesmo que o cliente minimize.</div>
+            <button class="rg-btn" data-kind="cc"><span class="ri"></span>Reportar CC</button>
+            <button class="rg-btn" data-kind="psa"><span class="ri"></span>Reportar PSA</button>
+            <button class="rg-btn" data-kind="psacc"><span class="ri"></span>Reportar PSA+CC</button>
+            <button class="rg-btn" data-kind="third"><span class="ri"></span>Reportar 3rd Party</button>
+            <div id="rgFlash"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="summary">
+  <div class="sum-card">
+    <span class="eyebrow">Fim do dia</span>
+    <div class="sum-title" id="sumTitle">Dia concluído</div>
+    <div class="sum-grid">
+      <div class="sum-stat"><div class="n ok" id="sumOk">0</div><div class="l">Atendidos</div></div>
+      <div class="sum-stat"><div class="n lost" id="sumLost">0</div><div class="l">Perdidos</div></div>
+      <div class="sum-stat"><div class="n ts" id="sumTcsat">0</div><div class="l">TCSAT médio</div></div>
+    </div>
+    <p class="sum-msg" id="sumMsg"></p>
+    <div class="sum-actions">
+      <button class="btn btn-primary" id="againBtn">Refazer o dia</button>
+      <button class="btn btn-ghost" id="backBtn">Escolher outro dia</button>
+    </div>
+  </div>
+</div>
+
+<footer><div class="foot-in"><span>Uso interno · Confidencial</span><span>Kaizen Gaming · 2026</span></div></footer>
+
+<script>
+const SLA_FIRST=30, SLA_WAIT=179;
+const NAMES=["Ana","Bruno","Carla","Diego","Marina","Felipe","Paula","Lucas","Juliana","Marcos","Renata","Tiago","Bianca","André","Camila","Rodrigo","Letícia","Gustavo"];
+const EV={futebol:"jogo de futebol",volei:"partida de vôlei",basquete:"jogo de basquete",tenis:"partida de tênis",f1:"corrida de F1",ufc:"luta do UFC"};
+const SPORT_NAME={futebol:"Futebol",volei:"Vôlei",basquete:"Basquete",tenis:"Tênis",f1:"Fórmula 1",ufc:"UFC (MMA)"};
+const SPORT_IC={futebol:"⚽",volei:"🏐",basquete:"🏀",tenis:"🎾",f1:"🏎️",ufc:"🥊"};
+const RG_MSG="🔒 Esse cliente recebeu a restrição RG_Withdrawals_Only";
+const SURVEY="{nome}, posso te ajudar com algo mais? Ficou alguma dúvida? Caso esteja tudo certo, a Betano agradece o seu contato. Foi um prazer atender você hoje! 😊 Assim que encerrarmos, vai aparecer uma pesquisa rápida sobre o meu atendimento e a Betano. Sua resposta é muito importante para continuarmos melhorando. Conte com a gente sempre que precisar!";
+
+/* s=[acolhimento, precisão, fluxo, fechamento] (0–2.5 cada). rg: cc|psa|psacc|third → fecha por reporte; demais fecham por Pesquisa */
+const SCENARIOS={
+  saque:{tag:"Saque", cat:"Saque · análise em andamento", turns:[
+    {c:"Isso é um absurdo! Ganhei no {ev} e meu saque não caiu. Preciso desse dinheiro agora!", o:[
+      {t:"Poxa, {nome}, sinto muito por isso! Já vou verificar o status do seu saque agora mesmo e te explico certinho o que aconteceu.", s:[2.5,2.4,2.5,2.4]},
+      {t:"Entendo sua frustração. Seu saque está em processamento, o prazo é de até 24h.", s:[1.6,1.8,1.6,1.4]},
+      {t:"Isso não é comigo, você precisa esperar o sistema.", s:[.4,.6,.5,.3]}]},
+    {c:"Já faz dois dias! Vão resolver ou não?", o:[
+      {t:"Entendo a situação, {nome}, e vou cuidar disso com você. A análise leva até 72h e, assim que concluir, você recebe um aviso por e-mail — vou acompanhar até o fim.", s:[2.4,2.5,2.5,2.4]},
+      {t:"Vou pedir pra agilizar, deve sair logo.", s:[1.5,1,1.2,1]},
+      {t:"Segue o link dos Termos e Condições: [link].", s:[.6,1,.5,.4]}]}
+  ]},
+  liquidacao:{tag:"Aposta", cat:"Aposta · contestação de liquidação", turns:[
+    {c:"Vocês me roubaram! Minha aposta no {ev} foi liquidada errada, eu tinha ganhado!", o:[
+      {t:"Entendo como você se sente, {nome}. Vamos revisar isso juntos: já vou puxar a liquidação e a evidência oficial do resultado pra esclarecer o que aconteceu.", s:[2.5,2.4,2.5,2.4]},
+      {t:"Entendo sua indignação. A liquidação segue o resultado oficial, mas posso verificar.", s:[1.7,1.9,1.6,1.5]},
+      {t:"Você deve ter entendido a aposta errado.", s:[.3,.7,.4,.3]}]},
+    {c:"E se eu estiver certo?", o:[
+      {t:"Se a evidência mostrar qualquer divergência, eu abro a correção pra você na hora, {nome}. Já estou conferindo o mercado e o resultado oficial.", s:[2.4,2.5,2.4,2.4]},
+      {t:"Aí a gente vê o que dá pra fazer.", s:[1.3,1.2,1.2,1]},
+      {t:"Dificilmente, mas pode tentar o formulário.", s:[.6,.9,.6,.5]}]}
+  ]},
+  bonus:{tag:"Bônus", cat:"Bônus · dúvida de elegibilidade", turns:[
+    {c:"Por que eu quase não recebo bônus? Meus amigos vivem ganhando e eu não.", o:[
+      {t:"Boa pergunta, {nome}! Os bônus seguem critérios de elegibilidade que variam por perfil e promoção. Posso te mostrar onde acompanhar as ofertas disponíveis pra você.", s:[2.5,2.4,2.4,2.4]},
+      {t:"Os bônus são automáticos, não depende da gente.", s:[1.2,1.3,1.2,1]},
+      {t:"Sorte, né. Vai que na próxima vem.", s:[.4,.4,.4,.3]}]},
+    {c:"Então como faço pra receber mais?", o:[
+      {t:"Fique de olho na aba de Promoções e ative as que combinam com você — algumas exigem opt-in. Sem garantir liberação, é assim que aumentam as chances, tá {nome}?", s:[2.4,2.5,2.5,2.3]},
+      {t:"Continua jogando que uma hora vem.", s:[.6,.6,.6,.5]},
+      {t:"Não tem como saber.", s:[.5,.6,.5,.4]}]}
+  ]},
+  aposta_gratis:{tag:"Rodadas grátis", cat:"Cassino · rodadas grátis", turns:[
+    {c:"Ganhei umas rodadas grátis. O que eu ganhar com elas eu consigo sacar?", o:[
+      {t:"Consegue sim, {nome}! Os ganhos das rodadas grátis são dinheiro real e podem ser sacados. Só recomendo usá-las antes de expirarem 🙌", s:[2.5,2.5,2.4,2.4]},
+      {t:"Acho que precisa apostar de novo antes de conseguir sacar.", s:[1,.6,1,1]},
+      {t:"Rodada grátis não vale dinheiro de verdade.", s:[.3,.2,.4,.3]}]},
+    {c:"E até quando elas valem?", o:[
+      {t:"Elas têm prazo de validade; dá pra ver a data na sua conta, em Promoções. Quer que eu te mostre o caminho, {nome}?", s:[2.4,2.5,2.5,2.3]},
+      {t:"Não sei o prazo, dá uma olhada lá.", s:[.8,.9,.8,.7]},
+      {t:"Deve valer bastante tempo.", s:[.5,.5,.5,.4]}]}
+  ]},
+  rng:{tag:"Cassino", cat:"Cassino · dúvida de mecânica (RNG/RTP)", turns:[
+    {c:"Esse caça-níquel é viciado, nunca ganho. É tudo programado contra mim!", o:[
+      {t:"Entendo como você se sente, {nome}. Mas cada giro é sorteado de forma independente e imprevisível — o resultado anterior não muda o próximo. Não é 'programado contra você'.", s:[2.5,2.5,2.4,2.3]},
+      {t:"A casa sempre leva vantagem, é assim mesmo.", s:[.8,.6,.8,.7]},
+      {t:"Então para de jogar nesse jogo.", s:[.4,.5,.4,.3]}]},
+    {c:"Mas e esse tal de RTP? Não garante retorno?", o:[
+      {t:"O RTP é uma média estatística de longo prazo, não uma garantia por rodada. Em jogadas individuais dá pra ganhar ou perder normalmente — é lazer, com aleatoriedade real.", s:[2.5,2.5,2.5,2.4]},
+      {t:"O RTP garante que você recupera parte sempre.", s:[.9,.4,.9,.8]},
+      {t:"Não sei explicar isso direito.", s:[.5,.6,.5,.4]}]}
+  ]},
+  dados:{tag:"Cadastro", cat:"Conta · atualização de dados", turns:[
+    {c:"Preciso mudar meu e-mail cadastrado, como faço?", o:[
+      {t:"Tranquilo, {nome}! Você mesmo consegue: acesse Conta > Perfil > Informações Pessoais e atualize o e-mail. Se travar em algum passo, é só me chamar que eu te guio 😉", s:[2.5,2.4,2.5,2.4]},
+      {t:"Vou trocar aqui pra você, me passa o e-mail novo.", s:[1.5,1.2,1.3,1.2]},
+      {t:"Não dá pra mudar o e-mail.", s:[.3,.4,.4,.3]}]}
+  ]},
+  senha:{tag:"Acesso", cat:"Acesso · recuperação de senha", turns:[
+    {c:"Esqueci minha senha e não consigo entrar.", o:[
+      {t:"Sem problema, {nome}! Na tela de login toque em 'Esqueci minha senha' e siga o link enviado pro seu e-mail pra criar uma nova. Por segurança, nunca compartilhe a senha comigo, tá?", s:[2.5,2.4,2.5,2.4]},
+      {t:"Me diz sua senha antiga que eu confiro aqui.", s:[.4,.3,.5,.4]},
+      {t:"Cria outra conta então.", s:[.2,.3,.3,.2]}]}
+  ]},
+  verificacao:{tag:"Verificação", cat:"Conta · código de verificação", turns:[
+    {c:"O código de verificação não chega no meu celular!", o:[
+      {t:"Vamos resolver juntos, {nome}. Confirma pra mim se o número no cadastro está correto e dá uma olhada na caixa de SMS/spam; você pode solicitar o reenvio do código. Por segurança, não me passe o código, tá?", s:[2.5,2.4,2.4,2.4]},
+      {t:"Me passa o código quando chegar que eu confirmo.", s:[.5,.4,.6,.5]},
+      {t:"Tenta de novo mais tarde.", s:[.6,.6,.5,.4]}]}
+  ]},
+  kyc:{tag:"KYC", cat:"Conta · verificação KYC", turns:[
+    {c:"Por que estão pedindo meus documentos pra liberar o saque?", o:[
+      {t:"Ótima pergunta, {nome} — é um passo de segurança pra confirmar que a conta é sua mesmo (verificação KYC). Deixa eu te explicar certinho quais documentos enviar e onde.", s:[2.5,2.4,2.4,2.4]},
+      {t:"É obrigatório, manda logo os documentos.", s:[1,1.4,1.2,1]},
+      {t:"Não sei por que pedem isso.", s:[.5,.6,.5,.4]}]},
+    {c:"E quanto tempo demora?", o:[
+      {t:"A análise costuma levar até 72h após o envio. Assim que aprovado, seu saque segue normalmente — e eu te aviso sobre o andamento, tá {nome}?", s:[2.4,2.5,2.5,2.4]},
+      {t:"Depende, pode demorar.", s:[1,1,1,.9]},
+      {t:"Não tenho essa informação.", s:[.5,.6,.5,.4]}]}
+  ]},
+  deposito:{tag:"Depósito", cat:"Financeiro · depósito não creditado", turns:[
+    {c:"Fiz um depósito e o valor não apareceu na conta!", o:[
+      {t:"Poxa, {nome}, deixa que eu já verifico o status do seu depósito — na maioria das vezes cai em poucos minutos. Me confirma o método que você usou?", s:[2.5,2.4,2.5,2.4]},
+      {t:"Entendo sua preocupação. Deve cair logo, é só aguardar mais um pouco.", s:[1.6,1.5,1.5,1.3]},
+      {t:"Deposita de novo que deve funcionar.", s:[.5,.4,.6,.5]}]},
+    {c:"Usei Pix, há uns 20 minutos.", o:[
+      {t:"Obrigado, {nome}! O Pix costuma ser rápido; já estou checando aqui. Se não constar, abro a verificação com o comprovante e acompanho até o valor entrar.", s:[2.5,2.5,2.5,2.4]},
+      {t:"Então espera mais um pouco.", s:[1,1,1,.9]},
+      {t:"Aí não sei, fala com o seu banco.", s:[.5,.6,.5,.4]}]}
+  ]},
+  reativacao:{tag:"Reativação", cat:"Conta · reativação", turns:[
+    {c:"Minha conta está inativa. Como reativo?", o:[
+      {t:"Posso te ajudar com isso, {nome}! A reativação passa por uma verificação rápida dos seus dados; vou te guiar pelos passos e já te digo o prazo pra concluir.", s:[2.5,2.4,2.5,2.3]},
+      {t:"Vou reativar aqui, um instante.", s:[1.4,1.2,1.3,1.2]},
+      {t:"Conta inativa não volta.", s:[.3,.4,.3,.3]}]}
+  ]},
+  limite:{tag:"Limitação", cat:"Apostas · limitação de conta", turns:[
+    {c:"Por que limitaram minhas apostas?! Eu não fiz nada de errado!", o:[
+      {t:"Entendo como você se sente, {nome} — deixa eu te explicar. Sua conta continua ativa; foi aplicado apenas um limite específico de apostas, uma medida de segurança prevista nos Termos, reavaliada de tempos em tempos.", s:[2.5,2.5,2.4,2.4]},
+      {t:"Foi aplicada uma limitação conforme a cláusula 13.27 dos Termos e Condições.", s:[1,2,1.2,1.2]},
+      {t:"Você deve ter feito algo pra isso acontecer.", s:[.3,.6,.4,.3]}]},
+    {c:"E dá pra tirar essa limitação?", o:[
+      {t:"Como é reavaliada periodicamente, pode mudar com o tempo. Não consigo garantir a remoção agora, mas registro seu contato e te explico o que influencia. Estou aqui pro que precisar, {nome}!", s:[2.4,2.5,2.5,2.3]},
+      {t:"Não, isso é definitivo.", s:[.6,.9,.7,.6]},
+      {t:"Abre uma reclamação no site.", s:[.6,.8,.6,.5]}]}
+  ]},
+
+  /* ===== JOGO RESPONSÁVEL — fluxo completo de perguntas, fecha por reporte ===== */
+  cc1:{tag:"Cassino", rg:"cc", cat:"Comentário Preocupante · RG_Withdrawals_Only aplicada", turns:[
+    {c:"Cara, tô perdendo tudo nesse cassino… meu hábito de jogar tá me deixando pra baixo e endividado.", o:[
+      {t:"Obrigado por compartilhar isso comigo, {nome}. Fico atento ao que você falou — pode me contar um pouco mais sobre o que está acontecendo?", s:[2.5,2.4,2.4,2.4]},
+      {t:"Você pode definir um limite de depósito nas configurações.", s:[1.4,1.8,1.4,1.3]},
+      {t:"Isso foge do meu atendimento, aqui só trato de apostas.", s:[.3,.5,.4,.3]}]},
+    {c:"É que eu jogo todo dia, já perdi bastante e tô endividado mesmo.", o:[
+      {t:"Entendo. E o que tem feito você se sentir assim ultimamente, {nome}?", s:[2.4,2.5,2.4,2.3]},
+      {t:"Todo mundo passa por isso, é só maneirar.", s:[.6,.6,.6,.5]},
+      {t:"Então joga menos, simples.", s:[.4,.5,.4,.3]}]},
+    {c:"Sinto que não consigo mais parar quando começo.", o:[
+      {t:"Você sente que está totalmente no controle do seu jogo hoje?", s:[2.4,2.5,2.4,2.3]},
+      {t:"Você só precisa ter mais disciplina.", s:[.5,.6,.5,.4]},
+      {t:"Ah, isso é força de vontade.", s:[.4,.5,.4,.3]}]},
+    {c:"Sinceramente? Acho que não.", o:[
+      {t:"Obrigado pela sinceridade, {nome}. Deixa eu te apresentar nossas ferramentas de Jogo Responsável — limites, pausa e autoexclusão — e vou tomar uma medida de proteção na sua conta agora.", s:[2.5,2.5,2.5,2.4]},
+      {t:"Beleza, então evita jogar por uns dias.", s:[.7,.7,.7,.6]},
+      {t:"Ok, qualquer coisa volta aqui.", s:[.4,.5,.4,.4]}]}
+  ]},
+  cc2:{tag:"Suporte", rg:"cc", cat:"Comentário Preocupante · RG_Withdrawals_Only aplicada", turns:[
+    {c:"Acho que tô jogando demais e gastando o que não tenho. Dá pra me ajudar a colocar um limite? Acho que preciso.", o:[
+      {t:"Que bom que você me contou isso, {nome} — pedir ajuda já é um passo importante. Pode me contar um pouco mais sobre como tem sido?", s:[2.5,2.5,2.4,2.4]},
+      {t:"Claro, o limite de depósito fica em Configurações.", s:[1.6,1.9,1.6,1.5]},
+      {t:"Ah, é só você se controlar mais.", s:[.3,.4,.4,.3]}]},
+    {c:"É que quando começo não consigo parar, e tô gastando o dinheiro das contas.", o:[
+      {t:"Obrigado por confiar isso a mim. Faz tempo que você vem se sentindo assim em relação ao jogo?", s:[2.4,2.5,2.4,2.3]},
+      {t:"Isso acontece com bastante gente.", s:[.6,.6,.6,.5]},
+      {t:"Então para de depositar.", s:[.4,.5,.4,.3]}]},
+    {c:"Já faz um tempo, e tá piorando.", o:[
+      {t:"E você sente que ainda está no controle do seu jogo hoje?", s:[2.4,2.5,2.4,2.3]},
+      {t:"Você consegue segurar se quiser.", s:[.5,.6,.5,.4]},
+      {t:"É só querer parar.", s:[.4,.5,.4,.3]}]},
+    {c:"Não, não consigo parar sozinho.", o:[
+      {t:"Você fez certo em buscar apoio, {nome}. Temos limite, pausa e autoexclusão — e vou aplicar uma medida de proteção na sua conta agora pra te ajudar nesse momento.", s:[2.5,2.5,2.5,2.4]},
+      {t:"Então ativa o limite e tenta segurar.", s:[.8,1,.9,.8]},
+      {t:"Beleza, boa sorte então.", s:[.3,.3,.3,.3]}]}
+  ]},
+  psa1:{tag:"Suporte", rg:"psa", cat:"PSA · RG_Withdrawals_Only + Jira Critical", turns:[
+    {c:"Sinceramente… não vejo mais sentido em nada. Tô no meu limite.", o:[
+      {t:"Obrigado por confiar isso comigo, {nome}. Quero te entender melhor — você poderia me esclarecer o que quis dizer com isso? Você está bem?", s:[2.5,2.5,2.4,2.4]},
+      {t:"Vamos resolver a sua aposta primeiro, tá?", s:[.4,.6,.5,.4]},
+      {t:"Ah, isso é só cansaço, amanhã melhora.", s:[.2,.3,.3,.2]}]},
+    {c:"Não sei… as coisas tão muito pesadas ultimamente.", o:[
+      {t:"Sinto muito que você esteja passando por isso, {nome}. Você está se sentindo seguro agora? E o seu telefone de cadastro está atualizado, pra que a gente consiga te contatar?", s:[2.5,2.5,2.4,2.4]},
+      {t:"Você já tentou dar uma pausa nas apostas?", s:[1,1.2,1.1,1]},
+      {t:"Relaxa que passa.", s:[.2,.2,.3,.2]}]},
+    {c:"Ah, deixa pra lá, foi só desabafo.", o:[
+      {t:"Tá tudo bem falar sobre isso, {nome}. Mesmo assim, quero garantir que você receba o cuidado certo. Um especialista nosso vai te contatar e, se precisar de apoio imediato, o CVV atende no 188, 24h.", s:[2.5,2.5,2.5,2.5]},
+      {t:"Ah tá, então beleza! Precisando é só chamar.", s:[.5,.6,.6,.5]},
+      {t:"Que bom, então era só isso mesmo.", s:[.2,.3,.3,.2]}]}
+  ]},
+  psacc1:{tag:"Suporte", rg:"psacc", cat:"PSA + Comentário Preocupante · restrição aplicada", turns:[
+    {c:"Perdi o controle nas apostas, tô afundado em dívidas… e às vezes penso que não valia a pena continuar.", o:[
+      {t:"Obrigado por compartilhar algo tão delicado comigo, {nome}. Quero te entender — pode me contar um pouco mais sobre como você está se sentindo?", s:[2.5,2.5,2.4,2.5]},
+      {t:"Vamos ver como reorganizar seus depósitos então.", s:[1,1.3,1.1,1]},
+      {t:"Aposta é assim mesmo, tem que saber a hora de parar.", s:[.2,.3,.3,.2]}]},
+    {c:"Tô me afundando nas dívidas do jogo e não vejo saída.", o:[
+      {t:"Sinto muito que esteja tão difícil. Sobre o jogo, você sente que ainda está no controle?", s:[2.4,2.5,2.4,2.3]},
+      {t:"Que tal uma pausa nas apostas?", s:[1,1.2,1.1,1]},
+      {t:"Vai melhorar, confia.", s:[.2,.3,.3,.2]}]},
+    {c:"Não, faz tempo que perdi o controle. E tô muito cansado de tudo.", o:[
+      {t:"Você está se sentindo seguro neste momento, {nome}? E o seu telefone de cadastro está atualizado, pra que a gente consiga te contatar?", s:[2.5,2.5,2.4,2.4]},
+      {t:"Melhor você procurar ajuda.", s:[.8,1,.8,.8]},
+      {t:"Tenta se distrair um pouco.", s:[.2,.3,.3,.2]}]},
+    {c:"Tá atualizado sim… sei lá, tô perdido.", o:[
+      {t:"Vou tomar uma medida de proteção na sua conta agora e um especialista de Jogo Responsável vai te contatar. Você não está sozinho, {nome} — e o CVV atende no 188, 24h, se precisar agora.", s:[2.5,2.5,2.5,2.5]},
+      {t:"Então bora dar um tempo nas apostas, tá?", s:[.7,.8,.7,.7]},
+      {t:"Ok, qualquer coisa retorna.", s:[.3,.3,.3,.3]}]}
+  ]},
+  third1:{tag:"Conta", rg:"third", cat:"Contato de terceiros (RG) · registrado", turns:[
+    {c:"Oi, tô preocupado com meu irmão. Ele tá jogando demais na conta dele e se endividando. O nome dele é Pedro, o CPF é 000…", o:[
+      {t:"Obrigado por se preocupar e nos procurar. Por segurança e pela LGPD, não posso compartilhar nem tratar da conta de outra pessoa — mas vou registrar essa preocupação com todo o cuidado.", s:[2.5,2.5,2.4,2.4]},
+      {t:"Deixa eu localizar a conta do Pedro aqui pra ver a situação dele…", s:[.3,.2,.4,.3]},
+      {t:"Não posso fazer nada, é conta dele.", s:[.6,.8,.6,.5]}]},
+    {c:"Mas ele tá muito mal, gastando o que não tem. Dá pra fazer alguma coisa?", o:[
+      {t:"Levo isso a sério. Só pra eu registrar direitinho: a sua preocupação é com o comportamento de jogo e as dívidas dele, é isso?", s:[2.4,2.5,2.5,2.3]},
+      {t:"Fala pra ele entrar em contato com a gente.", s:[1.2,1.4,1.2,1.1]},
+      {t:"Infelizmente não tem o que fazer.", s:[.4,.6,.5,.4]}]},
+    {c:"Isso. Ele não fala em se machucar nem nada, mas tá gastando demais e brigando com todo mundo.", o:[
+      {t:"Entendi, {nome}. Vou registrar o seu relato para o nosso time de Jogo Responsável avaliar e agir da forma adequada, sempre respeitando a privacidade da conta.", s:[2.5,2.5,2.5,2.4]},
+      {t:"Tá, vou anotar aqui.", s:[1.2,1.3,1.2,1.1]},
+      {t:"Então não é caso pra gente.", s:[.4,.6,.5,.4]}]}
+  ]}
+};
+
+const DAYS=[
+  {d:1, sport:"futebol", screens:2, gap:6, sc:["saque","liquidacao"]},
+  {d:2, sport:"futebol", screens:2, gap:6, sc:["bonus","dados"]},
+  {d:3, sport:"volei",   screens:3, gap:5, sc:["saque","verificacao","aposta_gratis"]},
+  {d:4, sport:"basquete",screens:3, gap:5, sc:["deposito","senha","cc1"]},
+  {d:5, sport:"tenis",   screens:3, gap:5, sc:["liquidacao","kyc","psa1"]},
+  {d:6, sport:"f1",      screens:4, gap:4, sc:["saque","dados","third1","aposta_gratis"]},
+  {d:7, sport:"ufc",     screens:4, gap:4, sc:["verificacao","deposito","psacc1","reativacao"]},
+  {d:8, sport:"futebol", screens:4, gap:4, sc:["liquidacao","bonus","cc2","rng"]},
+  {d:9, sport:"volei",   screens:5, gap:3, sc:["saque","aposta_gratis","cc1","psa1","dados"]},
+  {d:10,sport:"basquete",screens:5, gap:3, sc:["deposito","verificacao","third1","psacc1","limite"]},
+  {d:11,sport:"tenis",   screens:5, gap:3, sc:["saque","senha","cc2","psa1","bonus"]},
+  {d:12,sport:"f1",      screens:5, gap:3, sc:["liquidacao","aposta_gratis","cc1","third1","verificacao"]},
+  {d:13,sport:"futebol", screens:5, gap:3, sc:["saque","psacc1","cc2","psa1","third1"]}
+];
+
+/* ===== ENGINE ===== */
+let cfg=null, chats=[], loop=null, arrivals=[], sel=0, pr=null, dayOver=false;
+const $=id=>document.getElementById(id);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const sum=s=>s.reduce((x,y)=>x+y,0);
+const fmt=sec=>{sec=Math.max(0,Math.ceil(sec));return Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0");};
+const fill=(t,c)=>t.replace(/{ev}/g,c.ev).replace(/{nome}/g,c.name);
+
+/* picker */
+const daysBox=$("days");
+DAYS.forEach(dc=>{
+  const hasRG=dc.sc.some(id=>SCENARIOS[id].rg);
+  const b=document.createElement("button");
+  b.className="day"; b.setAttribute("aria-pressed","false"); b.dataset.d=dc.d;
+  let dots=""; for(let i=0;i<dc.screens;i++)dots+="<i></i>";
+  b.innerHTML=`${hasRG?'<span class="rg">RG</span>':''}<span class="dn">${dc.d}</span><span class="ds">${SPORT_IC[dc.sport]} ${dc.screens} telas</span><span class="scr">${dots}</span>`;
+  b.addEventListener("click",()=>selectDay(dc));
+  daysBox.appendChild(b);
+});
+function selectDay(dc){
+  [...daysBox.children].forEach(b=>b.setAttribute("aria-pressed", +b.dataset.d===dc.d?"true":"false"));
+  const hasRG=dc.sc.some(id=>SCENARIOS[id].rg);
+  $("briefing").innerHTML=`
+    <span class="bg-emoji">${SPORT_IC[dc.sport]}</span>
+    <div><div class="bt">Dia ${dc.d} · ${SPORT_NAME[dc.sport]}</div>
+      <div class="bd">${dc.screens} telas simultâneas em guias.${hasRG?' Fique atento: pode haver caso(s) de Jogo Responsável hoje.':''}</div></div>
+    <div class="go"><button class="btn btn-primary" id="startBtn">Iniciar dia</button></div>`;
+  $("startBtn").addEventListener("click",()=>startDay(dc));
+  $("briefing").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function startDay(dc){
+  cleanup(); cfg=dc; sel=0; dayOver=false;
+  chats=dc.sc.map((sid,i)=>{const s=SCENARIOS[sid];return{
+    i, sid, sc:s, rg:s.rg||null, name:pick(NAMES), ev:EV[dc.sport],
+    state:"waiting", turn:0, deadline:0, total:SLA_FIRST, sla:"first", slaLabel:"", scores:[], tcsat:0, msgs:[], lostReason:"", tabEl:null
+  };});
+  $("picker").style.display="none"; $("game").style.display="block"; $("summary").classList.remove("show");
+  $("sDay").innerHTML=`Dia <span>${dc.d}</span> · ${SPORT_NAME[dc.sport]}`;
+  $("endDayBtn").style.display="none"; $("dayDoneNote").style.display="none";
+  buildTabs(); renderPanel(); updateStatus();
+  dc.sc.forEach((_,i)=>arrivals.push(setTimeout(()=>arrive(i), i*dc.gap*1000 + 500)));
+  loop=setInterval(tick,100);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* tabs — SEM sigla RG */
+function buildTabs(){
+  const bar=$("tabbar"); bar.innerHTML="";
+  chats.forEach((c,i)=>{
+    const t=document.createElement("button"); t.className="tab-chat"; t.dataset.i=i;
+    t.innerHTML=`<span class="dot"></span><span class="nm">${c.name}</span><span class="mini">…</span>`;
+    t.addEventListener("click",()=>selectTab(i));
+    bar.appendChild(t); c.tabEl=t;
+  });
+  markSelTab();
+}
+function markSelTab(){ chats.forEach((c,i)=>c.tabEl&&c.tabEl.classList.toggle("sel",i===sel)); }
+function updateTab(c){
+  if(!c.tabEl)return;
+  const dot=c.tabEl.querySelector(".dot"), mini=c.tabEl.querySelector(".mini");
+  c.tabEl.classList.remove("urgent","done","lost");
+  let col="#666", mtxt="…";
+  if(c.state==="client"||c.state==="reportpending"||c.state==="surveypending"){ col="var(--orange)";
+    const rem=(c.deadline-Date.now())/1000, frac=Math.max(0,rem/c.total);
+    mtxt=fmt(rem); if(frac<.35) c.tabEl.classList.add("urgent");
+  } else if(c.state==="solvepending"){ col="var(--orange)"; mtxt="•"; }
+  else if(c.state==="typing"){ col="var(--orange)"; mtxt="✎"; }
+  else if(c.state==="done"){ col="var(--green)"; mtxt="✓"; c.tabEl.classList.add("done"); }
+  else if(c.state==="lost"){ col="var(--red)"; mtxt="✕"; c.tabEl.classList.add("lost"); }
+  dot.style.background=col; mini.textContent=mtxt;
+}
+function selectTab(i){ sel=i; markSelTab(); renderPanel(); }
+
+/* chegadas — NÃO troca de aba sozinho */
+function arrive(i){
+  const c=chats[i]; if(!c||c.state!=="waiting")return;
+  c.msgs.push({who:"c",text:c.sc.turns[0].c});
+  c.state="client"; c.total=SLA_FIRST; c.deadline=Date.now()+SLA_FIRST*1000; c.sla="first";
+  c.slaLabel="Responda a 1ª mensagem (0:30)";
+  updateTab(c); updateStatus();
+  if(i===sel) renderPanel();
+}
+
+function choose(c,idx){
+  if(c.state!=="client")return;
+  const opt=c.sc.turns[c.turn].o[idx];
+  c.msgs.push({who:"a",text:opt.t}); c.scores.push(opt.s);
+  if(c.turn < c.sc.turns.length-1){
+    c.state="typing"; c.slaLabel=""; if(c===chats[sel])renderPanel(); updateTab(c);
+    setTimeout(()=>{
+      if(c.state!=="typing")return;
+      c.turn++; c.msgs.push({who:"c",text:c.sc.turns[c.turn].c});
+      c.state="client"; c.total=SLA_WAIT; c.deadline=Date.now()+SLA_WAIT*1000; c.sla="wait";
+      c.slaLabel="Cliente aguardando resposta (até 2:59)";
+      if(c===chats[sel])renderPanel(); updateTab(c);
+    }, 1400+Math.random()*1500);
+  } else if(c.rg){
+    c.state="reportpending"; c.total=SLA_WAIT; c.deadline=Date.now()+SLA_WAIT*1000; c.sla="wait";
+    c.slaLabel="Aplique a conduta de RG (até 2:59)";
+    if(c===chats[sel])renderPanel(); updateTab(c);
+  } else {
+    c.state="surveypending"; c.total=SLA_WAIT; c.deadline=Date.now()+SLA_WAIT*1000; c.sla="wait";
+    c.slaLabel="Encerre enviando a Pesquisa (até 2:59)";
+    if(c===chats[sel])renderPanel(); updateTab(c);
+  }
+}
+
+/* Pesquisa (encerramento comum) */
+$("surveyBtn").addEventListener("click",pesquisa);
+function pesquisa(){
+  const c=chats[sel]; if(!c)return;
+  if(["done","lost","typing"].includes(c.state))return;
+  if(c.state==="solvepending"){ finish(c); return; }
+  if(c.rg){ flashHint("Casos de Jogo Responsável são encerrados pelo reporte, não pela pesquisa."); return; }
+  if(c.state==="client"){ flashHint("Resolva a dúvida do cliente antes de enviar a pesquisa."); return; }
+  if(c.state==="surveypending"){
+    c.msgs.push({who:"a",text:SURVEY});
+    c.state="solvepending"; c.slaLabel="Atendimento resolvido — clique em Solved para encerrar";
+    updateTab(c); renderPanel();
+  }
+}
+
+/* Reporte RG */
+document.querySelectorAll(".rg-btn").forEach(b=>b.addEventListener("click",()=>report(b.dataset.kind)));
+function report(kind){
+  const c=chats[sel]; if(!c)return;
+  if(["done","lost","typing","solvepending"].includes(c.state))return;
+  if(c.rg){
+    if(c.state==="reportpending"){
+      c.msgs.push({who:"sys",text:RG_MSG});
+      if(kind===c.rg){ c.state="solvepending"; c.slaLabel="Restrição aplicada — clique em Solved para encerrar"; updateTab(c); renderPanel(); }
+      else loseReason(c,"Classificação de RG incorreta — este caso pedia outro tipo de reporte.");
+    } else { flashHint("Conclua o fluxo de perguntas de Jogo Responsável antes de reportar."); }
+  } else {
+    c.msgs.push({who:"sys",text:RG_MSG});
+    loseReason(c,"Este contato não era um caso de Jogo Responsável. A restrição foi aplicada indevidamente.");
+  }
+}
+let hintTimer=null;
+function flashHint(msg){
+  const box=$("rgFlash"); box.innerHTML=`<div class="flash">${msg}</div>`;
+  clearTimeout(hintTimer); hintTimer=setTimeout(()=>box.innerHTML="",2800);
+}
+
+function tick(){
+  const now=Date.now();
+  chats.forEach(c=>{
+    if(["client","reportpending","surveypending"].includes(c.state)){
+      const rem=(c.deadline-now)/1000;
+      if(c===chats[sel]&&pr){ const frac=Math.max(0,rem/c.total);
+        pr.bar.style.width=(frac*100)+"%";
+        pr.bar.style.background=frac>.5?"var(--green)":frac>.2?"var(--amber)":"var(--red)";
+        pr.tleft.textContent=fmt(rem);
+      }
+      updateTab(c);
+      if(rem<=0) loseReason(c,"Você perdeu esse cliente — o bump bump começou a agir. Fique de olho no relógio de cada guia.");
+    }
+  });
+}
+
+function loseReason(c,reason){ c.state="lost"; c.lostReason=reason; updateTab(c); updateStatus(); if(c===chats[sel])renderPanel(); checkEnd(); }
+function finish(c){
+  const n=c.scores.length||1;
+  c.tcsat=c.scores.reduce((a,s)=>a+sum(s),0)/n;
+  c.state="done"; updateTab(c); updateStatus(); if(c===chats[sel])renderPanel(); checkEnd();
+}
+
+/* painel do chat selecionado */
+function renderPanel(){
+  const c=chats[sel], panel=$("chatpanel"); pr=null; armSV(false); armRG(false);
+  $("surveyBtn").innerHTML="📨 Pesquisa";
+  if(!c){panel.innerHTML="";return;}
+  if(c.state==="waiting"){ panel.innerHTML=`<div class="cp-empty">Cliente conectando…</div>`; return; }
+  const msgs=c.msgs.map(m=> m.who==="sys"
+    ? `<div class="sysmsg">${m.text}</div>`
+    : `<div class="msg ${m.who}"><span class="lbl">${m.who==="c"?"Cliente":"Você"}</span>${fill(m.text,c)}</div>`).join("");
+  let bottom="";
+  if(c.state==="client") bottom=`<div class="opts">`+c.sc.turns[c.turn].o.map((o,idx)=>`<button class="opt" data-idx="${idx}">${fill(o.t,c)}</button>`).join("")+`</div>`;
+  else if(c.state==="typing") bottom=`<div class="typing on">cliente está digitando</div>`;
+  else if(c.state==="reportpending") bottom=`<div class="prompt rg">⚠️ Conduta de Jogo Responsável obrigatória: aplique a restrição selecionando o <b>reporte correto</b> ao lado — mesmo que o cliente minimize.</div>`;
+  else if(c.state==="surveypending") bottom=`<div class="prompt sv">✅ Dúvida resolvida. Encerre o atendimento enviando a <b>Pesquisa</b> de satisfação (botão ao lado).</div>`;
+  else if(c.state==="solvepending") bottom=`<div class="prompt sv">${c.rg?"🔒 Restrição aplicada":"📨 Pesquisa enviada"} — leia a mensagem acima. Clique em <b>Solved</b> para encerrar o atendimento.</div>`;
+  panel.innerHTML=`
+    <div class="cp-head">
+      <div class="cp-row1"><span class="who">${c.name}</span><span class="tag">${c.sc.tag}</span></div>
+      <div class="cp-timerrow"><div class="timer"><div class="bar" id="cpbar"></div></div><span class="tleft" id="cptleft">–</span></div>
+      <span class="sla-lbl">${c.slaLabel||""}</span>
+    </div>
+    <div class="msgs" id="cpmsgs">${msgs}</div>
+    ${bottom}`;
+  pr={bar:$("cpbar"),tleft:$("cptleft")};
+  const mEl=$("cpmsgs"); if(mEl)mEl.scrollTop=mEl.scrollHeight;
+  panel.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>choose(c,parseInt(b.dataset.idx))));
+  if(c.state==="reportpending") armRG(true);
+  if(c.state==="surveypending") armSV(true);
+  if(c.state==="solvepending"){ $("surveyBtn").innerHTML="✅ Solved"; armSV(true); }
+  if(c.state==="done"||c.state==="lost") renderOverlay(panel,c);
+}
+function armRG(on){ $("rgpanel").classList.toggle("armRG",on); }
+function armSV(on){ $("rgpanel").classList.toggle("armSV",on); }
+
+function renderOverlay(panel,c){
+  const ov=document.createElement("div");
+  if(c.state==="lost"){
+    ov.className="overlay lost";
+    ov.innerHTML=`<div style="font-size:40px;margin-bottom:6px">📉</div><div class="ot">Cliente perdido</div><div class="od">${c.lostReason}</div>`;
+  } else {
+    const dimN=["Acolhimento","Precisão","Fluxo","Fechamento"], n=c.scores.length||1;
+    const dim=[0,1,2,3].map(k=>c.scores.reduce((a,s)=>a+s[k],0)/n);
+    const dims=dim.map((v,k)=>`<div class="dim">${dimN[k]}<div class="dbar"><i style="width:${v/2.5*100}%"></i></div></div>`).join("");
+    ov.className="overlay done";
+    ov.innerHTML=`<div class="ot">${c.rg?"Conduta de RG aplicada!":"Muito bem!"}</div><div class="od">Seu TCSAT foi de</div>
+      <div class="score">${c.tcsat.toFixed(1)}</div><div class="dims">${dims}</div><div class="cat">Categorizado como: ${c.sc.cat}</div>`;
+  }
+  panel.appendChild(ov);
+}
+
+function updateStatus(){
+  $("sActive").textContent=chats.filter(c=>["client","typing","reportpending","surveypending","solvepending","waiting"].includes(c.state)).length;
+  $("sOk").textContent=chats.filter(c=>c.state==="done").length;
+  $("sLost").textContent=chats.filter(c=>c.state==="lost").length;
+}
+function checkEnd(){
+  if(!dayOver && chats.every(c=>c.state==="done"||c.state==="lost")){
+    dayOver=true; clearInterval(loop); loop=null; arrivals.forEach(clearTimeout); arrivals=[];
+    $("endDayBtn").style.display="inline-block"; $("dayDoneNote").style.display="inline";
+  }
+}
+function showSummary(){
+  const done=chats.filter(c=>c.state==="done"), lost=chats.filter(c=>c.state==="lost").length;
+  const avg=done.length?done.reduce((a,c)=>a+c.tcsat,0)/done.length:0;
+  $("sumTitle").textContent=`Dia ${cfg.d} concluído`;
+  $("sumOk").textContent=done.length; $("sumLost").textContent=lost;
+  $("sumTcsat").textContent=done.length?avg.toFixed(1):"–";
+  let msg;
+  if(lost===0&&avg>=9) msg="Atendimento impecável — no prazo, com tom de voz acolhedor e classificação de RG correta. É esse o padrão.";
+  else if(lost===0) msg="Nenhum cliente perdido! Agora é lapidar a qualidade das respostas para subir o TCSAT.";
+  else msg="Alguns clientes se perderam. Priorize a 1ª mensagem (0:30) e vigie as abas — a tela não muda sozinha.";
+  $("sumMsg").textContent=msg; $("summary").classList.add("show");
+}
+function cleanup(){ if(loop){clearInterval(loop);loop=null;} arrivals.forEach(clearTimeout); arrivals=[]; chats=[]; }
+
+$("endDayBtn").addEventListener("click",showSummary);
+$("quitBtn").addEventListener("click",()=>{cleanup();$("game").style.display="none";$("summary").classList.remove("show");$("picker").style.display="block";window.scrollTo({top:0});});
+$("againBtn").addEventListener("click",()=>{$("summary").classList.remove("show");startDay(cfg);});
+$("backBtn").addEventListener("click",()=>{cleanup();$("summary").classList.remove("show");$("game").style.display="none";$("picker").style.display="block";window.scrollTo({top:0});});
+
+selectDay(DAYS[0]);
+</script>
+</body>
+</html>
