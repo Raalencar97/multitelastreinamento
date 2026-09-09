@@ -112,8 +112,9 @@
   @keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
 
   .opts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-  .opt{appearance:none;text-align:left;cursor:pointer;background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-family:var(--f);font-size:12.5px;color:var(--navy);transition:.13s;line-height:1.3}
-  .opt:hover{border-color:var(--orange);background:var(--call)}
+  .opt,.greet-opt{appearance:none;text-align:left;cursor:pointer;background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-family:var(--f);font-size:12.5px;color:var(--navy);transition:.13s;line-height:1.3}
+  .greet-opt{border-color:var(--orange);font-weight:700;white-space:pre-line}
+  .opt:hover,.greet-opt:hover{border-color:var(--orange);background:var(--call)}
   .prompt{margin-top:12px;border-radius:10px;padding:11px 13px;font-size:12.5px;line-height:1.35}
   .prompt.rg{background:#fff3cd;border:1.5px solid #e8c760;color:#7a5b00}
   .prompt.sv{background:var(--greenbg);border:1.5px solid #bfe4c6;color:#0f5d24}
@@ -135,6 +136,27 @@
   .rg-btn:focus-visible,.survey-btn:focus-visible{outline:2px solid var(--orange);outline-offset:1px}
   .flash{font-size:10.5px;color:var(--red);margin-top:8px;line-height:1.3}
 
+  .tool-btn{appearance:none;cursor:pointer;text-align:left;width:100%;border:1.5px solid var(--navy);background:var(--navy);color:#fff;border-radius:10px;padding:11px 12px;font-family:var(--f);font-weight:700;font-size:12.5px;transition:.14s;display:flex;align-items:center;gap:9px}
+  .tool-btn:hover{background:#23233f}
+  .tool-btn.opened{background:var(--greenbg);border-color:var(--green);color:#0f5d24}
+  .rgpanel.armTOOL .tool-btn{animation:armT 1s infinite}
+  @keyframes armT{50%{box-shadow:0 0 0 3px rgba(255,60,0,.22)}}
+
+  .bothist{display:flex;gap:9px;align-items:flex-start;background:#F4F1EC;border:1px dashed var(--border);border-radius:10px;padding:9px 12px;margin-bottom:4px}
+  .bothist .bh-ic{font-size:16px;flex:none;line-height:1.3}
+  .bothist .bh-lbl{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--slate);opacity:.75;margin-bottom:2px}
+  .bothist .bh-txt{font-size:11.5px;color:var(--navy);line-height:1.35}
+
+  .gate-overlay{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+  .gate-card{background:#fff;border-radius:16px;max-width:420px;width:100%;padding:32px 30px;text-align:center}
+  .gate-badge{width:52px;height:52px;border-radius:12px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-family:var(--fc);font-weight:800;color:#fff;font-size:26px;margin:0 auto 16px}
+  .gate-title{font-family:var(--fc);font-weight:700;font-size:24px;color:var(--navy);margin:0 0 8px}
+  .gate-sub{font-size:13px;color:var(--slate);margin:0 0 22px;line-height:1.5}
+  .gate-input{width:100%;padding:13px 15px;border:1.5px solid var(--border);border-radius:9px;font-family:var(--f);font-size:14px;color:var(--navy);margin-bottom:14px}
+  .gate-input:focus{outline:none;border-color:var(--orange)}
+  .gate-btn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:9px;font-family:var(--f);font-weight:700;font-size:14px;padding:13px;cursor:pointer}
+  .gate-btn:hover{filter:brightness(1.06)}
+
   .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22px;border-radius:10px}
   .overlay.lost{background:rgba(255,42,33,.95);color:#fff}
   .overlay.done{background:rgba(23,142,51,.96);color:#fff}
@@ -145,6 +167,7 @@
   .dim{font-size:10px;text-align:left}
   .dim .dbar{height:5px;border-radius:3px;background:rgba(255,255,255,.3);margin-top:2px;overflow:hidden}
   .dim .dbar i{display:block;height:100%;background:#fff}
+  .aht{font-size:12.5px;font-weight:700;letter-spacing:.3px;margin-top:10px;opacity:.95}
   .cat{font-size:11px;opacity:.92;margin-top:12px;border-top:1px solid rgba(255,255,255,.3);padding-top:8px}
 
   #summary{display:none;position:fixed;inset:0;background:rgba(15,15,35,.6);z-index:60;align-items:center;justify-content:center;padding:22px}
@@ -160,12 +183,41 @@
   .sum-msg{font-size:13.5px;color:var(--slate);margin:6px 0 18px}
   .sum-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
+  #toolModal,#dayPassModal{display:none;position:fixed;inset:0;background:rgba(15,15,35,.65);z-index:70;align-items:center;justify-content:center;padding:22px}
+  #toolModal.show,#dayPassModal.show{display:flex}
+  .pass-input{width:100%;padding:13px 15px;border:1.5px solid var(--border);border-radius:9px;font-family:var(--f);font-size:14px;color:var(--navy);margin:4px 0 8px;letter-spacing:1px}
+  .pass-input:focus{outline:none;border-color:var(--orange)}
+  .pass-err{color:var(--red);font-size:11.5px;margin-bottom:10px;display:none}
+  .pass-actions{display:flex;gap:10px;margin-top:6px}
+  .pass-actions .btn{flex:1;padding:11px}
+  .tool-card{background:#fff;border-radius:16px;max-width:480px;width:100%;padding:24px;box-shadow:0 30px 60px rgba(0,0,0,.3)}
+  .tool-card .tc-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .tool-card .tc-icon{font-size:26px}
+  .tool-card .tc-title{font-family:var(--fc);font-weight:700;font-size:22px;color:var(--navy)}
+  .tool-card .tc-sub{font-size:11px;color:var(--slate);letter-spacing:.5px;text-transform:uppercase}
+  .tc-row{display:flex;justify-content:space-between;gap:14px;font-size:12.5px;padding:9px 0;border-bottom:1px dashed var(--border)}
+  .tc-row:last-of-type{border-bottom:none}
+  .tc-row .k{color:var(--slate);flex:0 0 40%}
+  .tc-row .v{color:var(--navy);font-weight:600;text-align:right;flex:1}
+  .tc-note{background:var(--call);border:1px solid var(--orange);border-radius:10px;padding:11px 13px;font-size:12px;color:var(--navy);margin-top:14px;line-height:1.4}
+  .tc-close{margin-top:16px;width:100%}
+
   footer{background:var(--navy);border-top:4px solid var(--orange);margin-top:40px}
   .foot-in{max-width:1240px;margin:0 auto;padding:12px 22px;display:flex;justify-content:space-between;font-size:11px;color:var(--lav);letter-spacing:.5px}
   @media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
 <body>
+
+<div class="gate-overlay" id="nameGate">
+  <div class="gate-card">
+    <div class="gate-badge">B</div>
+    <h2 class="gate-title">Antes de começar</h2>
+    <p class="gate-sub">Qual é o seu nome? Vamos usar para preencher a saudação padrão nas simulações, no lugar de "(Nome atendente)".</p>
+    <input type="text" class="gate-input" id="agentNameInput" placeholder="Seu nome" autocomplete="name">
+    <button class="gate-btn" id="agentNameBtn">Começar treinamento</button>
+  </div>
+</div>
 
 <header class="masthead">
   <div class="mast-in">
@@ -211,6 +263,7 @@
       <div class="workspace">
         <div class="chatpanel" id="chatpanel"></div>
         <div class="rgpanel" id="rgpanel">
+          <div class="rg-section" id="toolSection" style="display:none"></div>
           <div class="rg-section">
             <div class="rg-title">Encerramento</div>
             <div class="rg-hint">Ao resolver um atendimento comum, envie a pesquisa de satisfação para o cliente avaliar.</div>
@@ -248,6 +301,14 @@
   </div>
 </div>
 
+<div id="toolModal">
+  <div class="tool-card" id="toolCard"></div>
+</div>
+
+<div id="dayPassModal">
+  <div class="tool-card" id="dayPassCard"></div>
+</div>
+
 <footer><div class="foot-in"><span>Uso interno · Confidencial</span><span>Kaizen Gaming · 2026</span></div></footer>
 
 <script>
@@ -258,6 +319,25 @@ const SPORT_NAME={futebol:"Futebol",volei:"Vôlei",basquete:"Basquete",tenis:"T�
 const SPORT_IC={futebol:"⚽",volei:"🏐",basquete:"🏀",tenis:"🎾",f1:"🏎️",ufc:"🥊"};
 const RG_MSG="🔒 Esse cliente recebeu a restrição RG_Withdrawals_Only";
 const SURVEY="{nome}, posso te ajudar com algo mais? Ficou alguma dúvida? Caso esteja tudo certo, a Betano agradece o seu contato. Foi um prazer atender você hoje! 😊 Assim que encerrarmos, vai aparecer uma pesquisa rápida sobre o meu atendimento e a Betano. Sua resposta é muito importante para continuarmos melhorando. Conte com a gente sempre que precisar!";
+const GREETING_TEMPLATE="Oi! Tudo bem? Bem-vindo ao atendimento da Betano!\nMeu nome é {agente}, pode contar comigo por aqui.\nApós o encerramento do chat terá uma pesquisa de satisfação com duas perguntas: uma sobre o meu atendimento, que seria sobre o suporte que te prestei hoje. E outra sobre como você se sente sendo cliente da Betano. Ficaria muito grato se pudesse deixar sua opinião, é rapidinho! Sua avaliação sobre meu atendimento é muito importante para mim, tá?";
+let AGENT_NAME="";
+const BOT_SUMMARY_BY_TAG={
+  "Saque":"Cliente perguntou ao bot sobre o status de um saque, sem solução, e solicitou falar com um atendente.",
+  "Aposta":"Cliente contestou ao bot o resultado de uma aposta e pediu para falar com um atendente humano.",
+  "Bônus":"Cliente questionou o bot sobre um bônus recebido e solicitou atendimento humano.",
+  "Rodadas grátis":"Cliente tirou dúvidas com o bot sobre rodadas grátis e pediu para falar com um atendente.",
+  "Cassino":"Cliente conversou com o bot sobre uma questão do cassino e solicitou atendimento humano.",
+  "Cadastro":"Cliente tentou atualizar um dado cadastral com o bot e pediu para falar com um atendente.",
+  "Acesso":"Cliente relatou ao bot um problema de acesso à conta e solicitou atendimento humano.",
+  "Verificação":"Cliente relatou ao bot que não recebeu um código de verificação e pediu atendimento humano.",
+  "KYC":"Cliente teve dúvidas com o bot sobre a verificação de documentos e solicitou atendimento humano.",
+  "Depósito":"Cliente relatou ao bot um depósito não creditado e pediu para falar com um atendente.",
+  "Reativação":"Cliente perguntou ao bot como reativar a conta e solicitou atendimento humano.",
+  "Limitação":"Cliente questionou o bot sobre uma limitação na conta e pediu atendimento humano.",
+  "Suporte":"Cliente conversou brevemente com o bot e solicitou falar com um atendente.",
+  "Conta":"Cliente conversou com o bot sobre a conta e solicitou atendimento humano."
+};
+function botSummaryFor(c){ return BOT_SUMMARY_BY_TAG[c.sc.tag] || "Cliente conversou com o bot e solicitou atendimento humano."; }
 
 /* s=[acolhimento, precisão, fluxo, fechamento] (0–2.5 cada). rg: cc|psa|psacc|third → fecha por reporte; demais fecham por Pesquisa */
 const SCENARIOS={
@@ -366,6 +446,97 @@ const SCENARIOS={
       {t:"Abre uma reclamação no site.", s:[.6,.8,.6,.5]}]}
   ]},
 
+  /* ===== APOSTAS COMPLEXAS — exigem consultar o Ariadne antes de responder ===== */
+  aposta_complexa1:{tag:"Aposta", cat:"Aposta · contestação complexa (bilhete)", tool:"ariadne",
+    toolData:{
+      "Bilhete":"BR-48213977",
+      "Mercado":"Handicap Asiático (-1.5) · Time A x Time B",
+      "Seleção":"Time A -1.5",
+      "Odd":"1.85",
+      "Stake":"R$ 50,00",
+      "Retorno potencial":"R$ 92,50",
+      "Placar oficial":"Time A 2 x 1 Time B",
+      "Fonte oficial":"Estatística oficial do parceiro de dados (Opta)",
+      "Status da liquidação":"PERDIDA",
+      "Observação técnica":"No Handicap -1.5, o Time A precisava vencer por 2 gols de diferença ou mais para a aposta ser considerada GANHA. Como venceu por apenas 1 gol (2x1), a aposta foi corretamente liquidada como PERDIDA."
+    },
+    turns:[
+    {c:"Vocês me roubaram! Minha aposta no Handicap foi dada como PERDIDA, mas meu time GANHOU o jogo! Quero meu dinheiro de volta agora!", o:[
+      {t:"Entendo sua indignação, {nome}. Consultei seu bilhete no Ariadne: no Handicap -1.5 o seu time precisava vencer por 2 gols de diferença ou mais. Como o resultado oficial foi 2x1 (Opta), só 1 gol de diferença, a aposta foi corretamente liquidada como perdida — deixa eu te explicar certinho como esse mercado funciona.", s:[2.5,2.5,2.4,2.4]},
+      {t:"Verifiquei e a liquidação está correta, não há erro no sistema.", s:[1.2,1.6,1.2,1.1]},
+      {t:"Deve ter sido um erro, vou verificar e te retorno.", s:[.4,.3,.5,.4]}]},
+    {c:"Mas o time ganhou! Como pode ter perdido a aposta?", o:[
+      {t:"Entendo a confusão, {nome}! No Handicap, a aposta considera a vantagem/desvantagem aplicada, não só quem venceu — no seu caso, era preciso 2 gols de vantagem, e o jogo terminou com só 1. Por isso, mesmo com a vitória, a aposta não bateu a margem exigida.", s:[2.4,2.5,2.5,2.3]},
+      {t:"É assim que funciona o Handicap.", s:[1,1.3,1,1]},
+      {t:"Realmente é estranho, vou abrir uma revisão.", s:[.5,.4,.6,.5]}]}
+  ]},
+  aposta_complexa2:{tag:"Aposta", cat:"Aposta · contestação complexa (múltipla anulada)", tool:"ariadne",
+    toolData:{
+      "Bilhete":"BR-77120456",
+      "Tipo":"Aposta Múltipla (3 seleções)",
+      "Seleção 1":"Time C vence — odd 1.60",
+      "Seleção 2":"Mais de 2.5 gols (Jogo Y) — odd 1.75 — ANULADA (partida adiada)",
+      "Seleção 3":"Ambas marcam (Jogo Z) — odd 1.90",
+      "Odd original":"5.32",
+      "Odd recalculada":"2.80 (após remoção da seleção anulada)",
+      "Stake":"R$ 30,00",
+      "Retorno obtido":"R$ 84,00",
+      "Status da liquidação":"GANHA (com recálculo de odd)",
+      "Observação técnica":"Quando uma seleção é anulada por adiamento/cancelamento do evento, ela é removida do cálculo e a odd total é recalculada automaticamente, mantendo as demais seleções válidas. É por isso que o retorno foi menor do que o esperado inicialmente."
+    },
+    turns:[
+    {c:"Minha múltipla venceu, mas o valor que recebi foi bem menor do que eu calculei! Cadê o resto do meu dinheiro?", o:[
+      {t:"Entendo a dúvida, {nome}! Consultei seu bilhete no Ariadne: uma das seleções foi anulada porque a partida foi adiada, e nesses casos a odd total é recalculada automaticamente sem aquela seleção — foi por isso que o valor final ficou menor do que o esperado. Posso te mostrar o detalhe de cada seleção.", s:[2.5,2.5,2.4,2.4]},
+      {t:"O valor pago está correto, deve ter algum motivo.", s:[1,1.3,1,.9]},
+      {t:"Vou verificar e reverter a diferença pra você.", s:[.4,.3,.5,.4]}]},
+    {c:"Mas eu não fui avisado sobre isso!", o:[
+      {t:"Faz sentido a surpresa, {nome}. O recálculo por anulação de seleção é uma regra padrão de apostas múltiplas, prevista nos Termos, mas eu concordo que vale reforçar essa informação — vou te enviar o link explicando esse mecanismo pra próximas vezes.", s:[2.4,2.5,2.4,2.4]},
+      {t:"Está nos Termos e Condições, item sobre anulação de seleções.", s:[1,1.6,1.1,1]},
+      {t:"Realmente deveríamos avisar, vou sugerir isso internamente, mas não posso fazer nada agora.", s:[1.3,.8,1,1]}]}
+  ]},
+
+  /* ===== BÔNUS COMPLEXOS — exigem consultar o Pandora antes de responder ===== */
+  bonus_complexa1:{tag:"Bônus", cat:"Bônus · contestação de cashback (histórico)", tool:"pandora",
+    toolData:{
+      "Tipo":"Cashback Cassino Semanal",
+      "Concedido em":"28/02/2026",
+      "Base de cálculo":"Perdas líquidas de R$ 400,00 no período",
+      "Percentual aplicável":"10% (conforme categoria do cliente)",
+      "Valor creditado":"R$ 40,00",
+      "Status":"Creditado corretamente conforme cálculo do período",
+      "Observação técnica":"O cashback considera a diferença entre ganhos e perdas ao longo de toda a semana, não apenas o valor perdido em uma única sessão ou rodada."
+    },
+    turns:[
+    {c:"O cashback que recebi está errado! Perdi muito mais do que isso essa semana, cadê o resto?", o:[
+      {t:"Entendo a dúvida, {nome}! Consultei no Pandora o seu último bônus: o cashback considera o saldo líquido de ganhos e perdas da semana inteira, não apenas uma sessão isolada — no seu caso, o cálculo bateu certinho com o percentual da sua categoria sobre a perda líquida total. Posso te mostrar o detalhe.", s:[2.5,2.5,2.4,2.4]},
+      {t:"O cálculo está correto, o sistema não erra.", s:[1,1.4,1,1]},
+      {t:"Vou abrir uma revisão pra reanalisar o valor.", s:[.5,.4,.6,.5]}]},
+    {c:"Mas numa rodada só eu perdi bem mais que isso.", o:[
+      {t:"Faz sentido a impressão, {nome}, mas o cashback nunca olha uma rodada isolada — ele soma tudo: o que você ganhou e perdeu na semana toda, e aplica o percentual da sua categoria sobre esse saldo final. Foi exatamente isso que acabei de confirmar no Pandora.", s:[2.5,2.5,2.5,2.4]},
+      {t:"É assim que funciona o cashback.", s:[1,1.2,1,1]},
+      {t:"Realmente parece pouco, vou aumentar manualmente pra compensar.", s:[.3,.2,.4,.3]}]}
+  ]},
+  bonus_complexa2:{tag:"Bônus", cat:"Bônus · elegibilidade de missão (histórico)", tool:"pandora",
+    toolData:{
+      "Tipo":"Rodadas Grátis · Missão Semanal Cassino",
+      "Concedido em":"01/03/2026",
+      "Valor":"20 rodadas grátis de R$1,00 (R$20,00) no jogo Fortune Ox",
+      "Regra de elegibilidade":"Login em 3 dias distintos na semana + 1 depósito mínimo de R$20,00",
+      "Registro do cliente":"Login em apenas 2 dias distintos — requisito não atendido",
+      "Status":"NÃO CREDITADO — requisito de elegibilidade incompleto",
+      "Observação técnica":"O sistema audita automaticamente o cumprimento dos requisitos da missão antes de creditar; não há como conceder manualmente sem o requisito completo."
+    },
+    turns:[
+    {c:"Cumpri a missão de rodadas grátis dessa semana e não recebi nada! Isso é golpe!", o:[
+      {t:"Entendo a frustração, {nome}. Consultei no Pandora o histórico da missão: o requisito era login em 3 dias distintos na semana, e o registro mostra login em apenas 2 dias — por isso o crédito não foi liberado. Posso te mostrar os detalhes de cada dia contabilizado.", s:[2.5,2.5,2.4,2.4]},
+      {t:"Você deve ter esquecido algum requisito da missão.", s:[1,1.3,1,.9]},
+      {t:"Vou creditar manualmente pra você mesmo assim.", s:[.3,.2,.4,.3]}]},
+    {c:"Mas eu tenho certeza que entrei todo dia!", o:[
+      {t:"Entendo, {nome}, mas o registro que tenho aqui no Pandora mostra especificamente 2 dias com login — se quiser, posso te enviar o detalhe de cada data pra você conferir com calma.", s:[2.4,2.5,2.4,2.4]},
+      {t:"O sistema não erra nesse tipo de contagem.", s:[1,1.4,1,1]},
+      {t:"Deve ter sido falha do sistema mesmo, vou liberar pra você.", s:[.3,.2,.4,.3]}]}
+  ]},
+
   /* ===== JOGO RESPONSÁVEL — fluxo completo de perguntas, fecha por reporte ===== */
   cc1:{tag:"Cassino", rg:"cc", cat:"Comentário Preocupante · RG_Withdrawals_Only aplicada", turns:[
     {c:"Cara, tô perdendo tudo nesse cassino… meu hábito de jogar tá me deixando pra baixo e endividado.", o:[
@@ -457,8 +628,8 @@ const DAYS=[
   {d:3, sport:"volei",   screens:3, gap:5, sc:["saque","verificacao","aposta_gratis"]},
   {d:4, sport:"basquete",screens:3, gap:5, sc:["deposito","senha","cc1"]},
   {d:5, sport:"tenis",   screens:3, gap:5, sc:["liquidacao","kyc","psa1"]},
-  {d:6, sport:"f1",      screens:4, gap:4, sc:["saque","dados","third1","aposta_gratis"]},
-  {d:7, sport:"ufc",     screens:4, gap:4, sc:["verificacao","deposito","psacc1","reativacao"]},
+  {d:6, sport:"f1",      screens:4, gap:4, sc:["saque","aposta_complexa1","aposta_complexa2","third1"]},
+  {d:7, sport:"ufc",     screens:4, gap:4, sc:["deposito","bonus_complexa1","bonus_complexa2","psacc1"]},
   {d:8, sport:"futebol", screens:4, gap:4, sc:["liquidacao","bonus","cc2","rng"]},
   {d:9, sport:"volei",   screens:5, gap:3, sc:["saque","aposta_gratis","cc1","psa1","dados"]},
   {d:10,sport:"basquete",screens:5, gap:3, sc:["deposito","verificacao","third1","psacc1","limite"]},
@@ -473,7 +644,23 @@ const $=id=>document.getElementById(id);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const sum=s=>s.reduce((x,y)=>x+y,0);
 const fmt=sec=>{sec=Math.max(0,Math.ceil(sec));return Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0");};
-const fill=(t,c)=>t.replace(/{ev}/g,c.ev).replace(/{nome}/g,c.name);
+const fill=(t,c)=>t.replace(/{ev}/g,c.ev).replace(/{nome}/g,c.name).replace(/{agente}/g,AGENT_NAME||"Atendente");
+const nl2br=t=>t.replace(/\n/g,"<br>");
+function shuffledIndices(n){const arr=[...Array(n).keys()];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+function normScore(s){ return sum(s)/(2.5*s.length)*10; }
+
+/* tela inicial pedindo o nome de quem está treinando */
+function initNameGate(){
+  document.getElementById("agentNameBtn").addEventListener("click",submitAgentName);
+  document.getElementById("agentNameInput").addEventListener("keydown",e=>{ if(e.key==="Enter") submitAgentName(); });
+}
+function submitAgentName(){
+  const v=document.getElementById("agentNameInput").value.trim();
+  if(!v)return;
+  AGENT_NAME=v;
+  document.getElementById("nameGate").style.display="none";
+}
+initNameGate();
 
 /* picker */
 const daysBox=$("days");
@@ -494,15 +681,41 @@ function selectDay(dc){
     <div><div class="bt">Dia ${dc.d} · ${SPORT_NAME[dc.sport]}</div>
       <div class="bd">${dc.screens} telas simultâneas em guias.${hasRG?' Fique atento: pode haver caso(s) de Jogo Responsável hoje.':''}</div></div>
     <div class="go"><button class="btn btn-primary" id="startBtn">Iniciar dia</button></div>`;
-  $("startBtn").addEventListener("click",()=>startDay(dc));
+  $("startBtn").addEventListener("click",()=>openDayPassModal(dc));
   $("briefing").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
+
+/* senha por dia: n1d01, n1d02 ... n1d13 */
+function dayPassword(dc){ return "n1d"+String(dc.d).padStart(2,"0"); }
+function openDayPassModal(dc){
+  $("dayPassCard").innerHTML=`
+    <div class="tc-head"><span class="tc-icon">🔑</span><div><div class="tc-title">Dia ${dc.d}</div><div class="tc-sub">Senha de acesso ao treinamento</div></div></div>
+    <input type="password" class="pass-input" id="dayPassInput" placeholder="Digite a senha do dia" autocomplete="off">
+    <div class="pass-err" id="dayPassErr">Senha incorreta. Confira com o seu trainer.</div>
+    <div class="pass-actions">
+      <button class="btn btn-ghost" id="dayPassCancel">Cancelar</button>
+      <button class="btn btn-primary" id="dayPassConfirm">Confirmar</button>
+    </div>`;
+  $("dayPassModal").classList.add("show");
+  const input=$("dayPassInput"); input.focus();
+  const submit=()=>{
+    const err=$("dayPassErr");
+    if(input.value.trim().toLowerCase()===dayPassword(dc)){
+      closeDayPassModal(); startDay(dc);
+    } else { err.style.display="block"; input.select(); }
+  };
+  $("dayPassConfirm").addEventListener("click",submit);
+  input.addEventListener("keydown",e=>{ if(e.key==="Enter") submit(); });
+  $("dayPassCancel").addEventListener("click",closeDayPassModal);
+}
+function closeDayPassModal(){ $("dayPassModal").classList.remove("show"); }
 
 function startDay(dc){
   cleanup(); cfg=dc; sel=0; dayOver=false;
   chats=dc.sc.map((sid,i)=>{const s=SCENARIOS[sid];return{
     i, sid, sc:s, rg:s.rg||null, name:pick(NAMES), ev:EV[dc.sport],
-    state:"waiting", turn:0, deadline:0, total:SLA_FIRST, sla:"first", slaLabel:"", scores:[], tcsat:0, msgs:[], lostReason:"", tabEl:null
+    state:"waiting", turn:0, deadline:0, total:SLA_FIRST, sla:"first", slaLabel:"", scores:[], tcsat:0, msgs:[], lostReason:"", tabEl:null,
+    turnOrder:null, toolOpened:false, startedAt:0, aht:0
   };});
   $("picker").style.display="none"; $("game").style.display="block"; $("summary").classList.remove("show");
   $("sDay").innerHTML=`Dia <span>${dc.d}</span> · ${SPORT_NAME[dc.sport]}`;
@@ -530,7 +743,7 @@ function updateTab(c){
   const dot=c.tabEl.querySelector(".dot"), mini=c.tabEl.querySelector(".mini");
   c.tabEl.classList.remove("urgent","done","lost");
   let col="#666", mtxt="…";
-  if(c.state==="client"||c.state==="reportpending"||c.state==="surveypending"){ col="var(--orange)";
+  if(c.state==="client"||c.state==="reportpending"||c.state==="surveypending"||c.state==="greetneeded"){ col="var(--orange)";
     const rem=(c.deadline-Date.now())/1000, frac=Math.max(0,rem/c.total);
     mtxt=fmt(rem); if(frac<.35) c.tabEl.classList.add("urgent");
   } else if(c.state==="solvepending"){ col="var(--orange)"; mtxt="•"; }
@@ -541,20 +754,39 @@ function updateTab(c){
 }
 function selectTab(i){ sel=i; markSelTab(); renderPanel(); }
 
-/* chegadas — NÃO troca de aba sozinho */
+/* chegadas — NÃO troca de aba sozinho. Mostra o histórico do bot e exige a
+   saudação padrão antes de qualquer coisa (dentro dos 0:30 iniciais). */
 function arrive(i){
   const c=chats[i]; if(!c||c.state!=="waiting")return;
-  c.msgs.push({who:"c",text:c.sc.turns[0].c});
-  c.state="client"; c.total=SLA_FIRST; c.deadline=Date.now()+SLA_FIRST*1000; c.sla="first";
-  c.slaLabel="Responda a 1ª mensagem (0:30)";
+  c.startedAt=Date.now();
+  c.msgs.push({who:"bot",text:botSummaryFor(c)});
+  c.state="greetneeded"; c.total=SLA_FIRST; c.deadline=Date.now()+SLA_FIRST*1000; c.sla="first";
+  c.slaLabel="Envie a saudação inicial (0:30)";
   updateTab(c); updateStatus();
   if(i===sel) renderPanel();
+}
+
+function sendGreeting(c){
+  if(c.state!=="greetneeded")return;
+  const text=GREETING_TEMPLATE.replace(/{agente}/g,AGENT_NAME||"Atendente");
+  c.msgs.push({who:"a",text});
+  c.state="typing"; c.slaLabel=""; updateTab(c); if(c===chats[sel])renderPanel();
+  setTimeout(()=>{
+    if(c.state!=="typing")return;
+    c.msgs.push({who:"c",text:c.sc.turns[0].c});
+    c.state="client"; c.total=SLA_WAIT; c.deadline=Date.now()+SLA_WAIT*1000; c.sla="wait";
+    c.slaLabel="Cliente aguardando resposta (até 2:59)";
+    c.turnOrder=shuffledIndices(c.sc.turns[0].o.length);
+    updateTab(c); if(c===chats[sel])renderPanel();
+  }, 1200+Math.random()*1200);
 }
 
 function choose(c,idx){
   if(c.state!=="client")return;
   const opt=c.sc.turns[c.turn].o[idx];
-  c.msgs.push({who:"a",text:opt.t}); c.scores.push(opt.s);
+  const s=opt.s.slice();
+  if(c.sc.tool){ s.push(c.toolOpened?2.5:0); }
+  c.msgs.push({who:"a",text:opt.t}); c.scores.push(s);
   if(c.turn < c.sc.turns.length-1){
     c.state="typing"; c.slaLabel=""; if(c===chats[sel])renderPanel(); updateTab(c);
     setTimeout(()=>{
@@ -562,6 +794,7 @@ function choose(c,idx){
       c.turn++; c.msgs.push({who:"c",text:c.sc.turns[c.turn].c});
       c.state="client"; c.total=SLA_WAIT; c.deadline=Date.now()+SLA_WAIT*1000; c.sla="wait";
       c.slaLabel="Cliente aguardando resposta (até 2:59)";
+      c.turnOrder=shuffledIndices(c.sc.turns[c.turn].o.length);
       if(c===chats[sel])renderPanel(); updateTab(c);
     }, 1400+Math.random()*1500);
   } else if(c.rg){
@@ -612,10 +845,30 @@ function flashHint(msg){
   clearTimeout(hintTimer); hintTimer=setTimeout(()=>box.innerHTML="",2800);
 }
 
+/* Ariadne / Pandora */
+const TOOL_META={
+  ariadne:{icon:"🧵", title:"Ariadne", sub:"Consulta de bilhete de aposta"},
+  pandora:{icon:"📦", title:"Pandora", sub:"Consulta de histórico de bônus"}
+};
+function openTool(c){
+  const meta=TOOL_META[c.sc.tool]; if(!meta)return;
+  c.toolOpened=true;
+  const rows=Object.entries(c.sc.toolData).map(([k,v])=>`<div class="tc-row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join("");
+  $("toolCard").innerHTML=`
+    <div class="tc-head"><span class="tc-icon">${meta.icon}</span><div><div class="tc-title">${meta.title}</div><div class="tc-sub">${meta.sub}</div></div></div>
+    ${rows}
+    <div class="tc-note">Use essas informações para responder ao cliente com precisão antes de continuar o atendimento.</div>
+    <button class="btn btn-primary tc-close" id="toolCloseBtn">Fechar</button>`;
+  $("toolModal").classList.add("show");
+  $("toolCloseBtn").addEventListener("click",closeTool);
+  updateTab(c); if(c===chats[sel]) renderPanel();
+}
+function closeTool(){ $("toolModal").classList.remove("show"); }
+
 function tick(){
   const now=Date.now();
   chats.forEach(c=>{
-    if(["client","reportpending","surveypending"].includes(c.state)){
+    if(["client","reportpending","surveypending","greetneeded"].includes(c.state)){
       const rem=(c.deadline-now)/1000;
       if(c===chats[sel]&&pr){ const frac=Math.max(0,rem/c.total);
         pr.bar.style.width=(frac*100)+"%";
@@ -623,7 +876,12 @@ function tick(){
         pr.tleft.textContent=fmt(rem);
       }
       updateTab(c);
-      if(rem<=0) loseReason(c,"Você perdeu esse cliente — o bump bump começou a agir. Fique de olho no relógio de cada guia.");
+      if(rem<=0){
+        const msg=c.state==="greetneeded"
+          ? "Você perdeu esse cliente — a saudação inicial não foi enviada a tempo (0:30)."
+          : "Você perdeu esse cliente — o bump bump começou a agir. Fique de olho no relógio de cada guia.";
+        loseReason(c,msg);
+      }
     }
   });
 }
@@ -631,21 +889,31 @@ function tick(){
 function loseReason(c,reason){ c.state="lost"; c.lostReason=reason; updateTab(c); updateStatus(); if(c===chats[sel])renderPanel(); checkEnd(); }
 function finish(c){
   const n=c.scores.length||1;
-  c.tcsat=c.scores.reduce((a,s)=>a+sum(s),0)/n;
+  c.tcsat=c.scores.reduce((a,s)=>a+normScore(s),0)/n;
+  c.aht=Date.now()-(c.startedAt||Date.now());
   c.state="done"; updateTab(c); updateStatus(); if(c===chats[sel])renderPanel(); checkEnd();
 }
 
 /* painel do chat selecionado */
 function renderPanel(){
-  const c=chats[sel], panel=$("chatpanel"); pr=null; armSV(false); armRG(false);
+  const c=chats[sel], panel=$("chatpanel"); pr=null; armSV(false); armRG(false); armTOOL(false);
   $("surveyBtn").innerHTML="📨 Pesquisa";
+  renderToolSection(c);
   if(!c){panel.innerHTML="";return;}
   if(c.state==="waiting"){ panel.innerHTML=`<div class="cp-empty">Cliente conectando…</div>`; return; }
   const msgs=c.msgs.map(m=> m.who==="sys"
     ? `<div class="sysmsg">${m.text}</div>`
-    : `<div class="msg ${m.who}"><span class="lbl">${m.who==="c"?"Cliente":"Você"}</span>${fill(m.text,c)}</div>`).join("");
+    : m.who==="bot"
+    ? `<div class="bothist"><span class="bh-ic">🤖</span><div><div class="bh-lbl">Histórico do bot</div><div class="bh-txt">${m.text}</div></div></div>`
+    : `<div class="msg ${m.who}"><span class="lbl">${m.who==="c"?"Cliente":"Você"}</span>${nl2br(fill(m.text,c))}</div>`).join("");
   let bottom="";
-  if(c.state==="client") bottom=`<div class="opts">`+c.sc.turns[c.turn].o.map((o,idx)=>`<button class="opt" data-idx="${idx}">${fill(o.t,c)}</button>`).join("")+`</div>`;
+  if(c.state==="greetneeded"){
+    bottom=`<div class="opts"><button class="greet-opt" id="greetBtn">👋 Enviar saudação padrão de abertura</button></div>`;
+  }
+  else if(c.state==="client"){
+    const order=c.turnOrder && c.turnOrder.length===c.sc.turns[c.turn].o.length ? c.turnOrder : c.sc.turns[c.turn].o.map((_,idx)=>idx);
+    bottom=`<div class="opts">`+order.map(idx=>`<button class="opt" data-idx="${idx}">${fill(c.sc.turns[c.turn].o[idx].t,c)}</button>`).join("")+`</div>`;
+  }
   else if(c.state==="typing") bottom=`<div class="typing on">cliente está digitando</div>`;
   else if(c.state==="reportpending") bottom=`<div class="prompt rg">⚠️ Conduta de Jogo Responsável obrigatória: aplique a restrição selecionando o <b>reporte correto</b> ao lado — mesmo que o cliente minimize.</div>`;
   else if(c.state==="surveypending") bottom=`<div class="prompt sv">✅ Dúvida resolvida. Encerre o atendimento enviando a <b>Pesquisa</b> de satisfação (botão ao lado).</div>`;
@@ -661,13 +929,28 @@ function renderPanel(){
   pr={bar:$("cpbar"),tleft:$("cptleft")};
   const mEl=$("cpmsgs"); if(mEl)mEl.scrollTop=mEl.scrollHeight;
   panel.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>choose(c,parseInt(b.dataset.idx))));
+  if(c.state==="greetneeded"){ const gb=$("greetBtn"); if(gb) gb.addEventListener("click",()=>sendGreeting(c)); }
   if(c.state==="reportpending") armRG(true);
   if(c.state==="surveypending") armSV(true);
   if(c.state==="solvepending"){ $("surveyBtn").innerHTML="✅ Solved"; armSV(true); }
+  if(c.state==="client" && c.sc.tool && !c.toolOpened) armTOOL(true);
   if(c.state==="done"||c.state==="lost") renderOverlay(panel,c);
 }
 function armRG(on){ $("rgpanel").classList.toggle("armRG",on); }
 function armSV(on){ $("rgpanel").classList.toggle("armSV",on); }
+function armTOOL(on){ $("rgpanel").classList.toggle("armTOOL",on); }
+
+function renderToolSection(c){
+  const box=$("toolSection");
+  if(!c||!c.sc.tool){ box.style.display="none"; box.innerHTML=""; return; }
+  const meta=TOOL_META[c.sc.tool];
+  box.style.display="block";
+  box.innerHTML=`
+    <div class="rg-title">Ferramenta de análise</div>
+    <div class="rg-hint">Uso opcional, mas é um item avaliado: consultar antes de responder garante mais precisão.</div>
+    <button class="tool-btn ${c.toolOpened?"opened":""}" id="toolBtn">${meta.icon} ${meta.title}${c.toolOpened?" ✓":""}</button>`;
+  $("toolBtn").addEventListener("click",()=>openTool(c));
+}
 
 function renderOverlay(panel,c){
   const ov=document.createElement("div");
@@ -675,18 +958,23 @@ function renderOverlay(panel,c){
     ov.className="overlay lost";
     ov.innerHTML=`<div style="font-size:40px;margin-bottom:6px">📉</div><div class="ot">Cliente perdido</div><div class="od">${c.lostReason}</div>`;
   } else {
-    const dimN=["Acolhimento","Precisão","Fluxo","Fechamento"], n=c.scores.length||1;
-    const dim=[0,1,2,3].map(k=>c.scores.reduce((a,s)=>a+s[k],0)/n);
+    const dimN=["Acolhimento","Precisão","Fluxo","Fechamento"];
+    if(c.sc.tool) dimN.push("Consulta de Ferramentas");
+    const n=c.scores.length||1;
+    const dim=dimN.map((_,k)=>c.scores.reduce((a,s)=>a+(s[k]||0),0)/n);
     const dims=dim.map((v,k)=>`<div class="dim">${dimN[k]}<div class="dbar"><i style="width:${v/2.5*100}%"></i></div></div>`).join("");
+    const ahtSec=Math.round((c.aht||0)/1000);
     ov.className="overlay done";
     ov.innerHTML=`<div class="ot">${c.rg?"Conduta de RG aplicada!":"Muito bem!"}</div><div class="od">Seu TCSAT foi de</div>
-      <div class="score">${c.tcsat.toFixed(1)}</div><div class="dims">${dims}</div><div class="cat">Categorizado como: ${c.sc.cat}</div>`;
+      <div class="score">${c.tcsat.toFixed(1)}</div><div class="dims">${dims}</div>
+      <div class="aht">⏱️ AHT: ${fmt(ahtSec)}</div>
+      <div class="cat">Categorizado como: ${c.sc.cat}</div>`;
   }
   panel.appendChild(ov);
 }
 
 function updateStatus(){
-  $("sActive").textContent=chats.filter(c=>["client","typing","reportpending","surveypending","solvepending","waiting"].includes(c.state)).length;
+  $("sActive").textContent=chats.filter(c=>["client","typing","reportpending","surveypending","solvepending","waiting","greetneeded"].includes(c.state)).length;
   $("sOk").textContent=chats.filter(c=>c.state==="done").length;
   $("sLost").textContent=chats.filter(c=>c.state==="lost").length;
 }
