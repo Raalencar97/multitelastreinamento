@@ -150,7 +150,7 @@
 
 <footer><div class="foot-in"><span>Uso interno · Confidencial</span><span>Kaizen Gaming · 2026</span></div></footer>
 
-<button class="bot-fab" id="botFab"><span class="dot"></span>🤖 Fale com o Bot</button>
+<button class="bot-fab" id="botFab"><span class="dot"></span>🤖 Fale com a Bety</button>
 <div class="bot-panel" id="botPanel">
   <div class="bot-head">
     <span class="av">🤖</span>
@@ -287,6 +287,14 @@ const TEAM_SIMULADORES = {
   cs: ["esportes","refresh-rg","cassino-bonus","multitelas"],
   rgbko: ["n2","recap","cassino-bonus","esportes"]
 };
+const SIMULADOR_DIAS = {
+  multitelas: "Todos os dias do treinamento",
+  esportes: "Dia 2 do treinamento",
+  recap: "Dias 1 a 3 do treinamento",
+  "cassino-bonus": "A partir do dia 3 do treinamento",
+  "refresh-rg": "A partir do dia 5 do treinamento",
+  n2: "A partir do dia 4 do treinamento"
+};
 
 let botStarted = false;
 
@@ -327,20 +335,27 @@ function botAskTeam(){
 function botSelectTeam(teamKey){
   botRemoveOpts();
   botUserMsg(TEAM_LABELS[teamKey]);
+  const ids = TEAM_SIMULADORES[teamKey];
   setTimeout(()=>{
-    const ids = TEAM_SIMULADORES[teamKey];
-    const items = ids.map(id=>{
+    const dias = ids.map(id=>{
       const s = SIMULADORES.find(x=>x.id===id);
-      return `<li><b>${s.titulo}</b> — ${s.desc}</li>`;
+      return `<li><b>${s.titulo}:</b> ${SIMULADOR_DIAS[id]}</li>`;
     }).join("");
-    botMsg(`Pro <b>${TEAM_LABELS[teamKey]}</b>, esses são os simuladores disponíveis pra você:<ul>${items}</ul>`);
+    botMsg(`Antes de tudo, aqui está quando cada simulador é usado no treinamento do <b>${TEAM_LABELS[teamKey]}</b>:<ul>${dias}</ul>`);
     setTimeout(()=>{
-      botAppend(`<div class="bot-warn">⚠️ O acesso a cada simulador é feito por senha, e o dia de treinamento liberado também depende do seu trainer. Aguarde as instruções dele — é ele quem vai te passar a senha certa, na hora certa.</div>`);
+      const items = ids.map(id=>{
+        const s = SIMULADORES.find(x=>x.id===id);
+        return `<li><b>${s.titulo}</b> — ${s.desc}</li>`;
+      }).join("");
+      botMsg(`E aqui um resumo de cada um:<ul>${items}</ul>`);
       setTimeout(()=>{
-        botAppend(`<div class="bot-opts" id="botOptsWrap"><button class="bot-opt" id="botBackBtn">🔁 Ver outro time</button></div>`);
-        $("botBackBtn").addEventListener("click", ()=>{ botRemoveOpts(); botAskTeam(); });
-      }, 350);
-    }, 450);
+        botAppend(`<div class="bot-warn">⚠️ O acesso a cada simulador é feito por senha, e o dia de treinamento liberado também depende do seu trainer. Aguarde as instruções dele — é ele quem vai te passar a senha certa, na hora certa.</div>`);
+        setTimeout(()=>{
+          botAppend(`<div class="bot-opts" id="botOptsWrap"><button class="bot-opt" id="botBackBtn">🔁 Ver outro time</button></div>`);
+          $("botBackBtn").addEventListener("click", ()=>{ botRemoveOpts(); botAskTeam(); });
+        }, 350);
+      }, 450);
+    }, 500);
   }, 350);
 }
 </script>
