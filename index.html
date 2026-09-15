@@ -73,6 +73,32 @@
 
   footer{background:var(--navy);border-top:4px solid var(--orange);margin-top:40px}
   .foot-in{max-width:1240px;margin:0 auto;padding:12px 22px;display:flex;justify-content:space-between;font-size:11px;color:var(--lav);letter-spacing:.5px}
+
+  /* ---- Bot widget ---- */
+  .bot-fab{position:fixed;right:22px;bottom:22px;z-index:80;background:var(--orange);color:#fff;border:none;border-radius:30px;padding:14px 20px;font-family:var(--f);font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 10px 26px rgba(255,60,0,.35);transition:.15s}
+  .bot-fab:hover{filter:brightness(1.05);transform:translateY(-2px)}
+  .bot-fab .dot{width:8px;height:8px;border-radius:50%;background:#7CFF9E;box-shadow:0 0 0 3px rgba(124,255,158,.25)}
+
+  .bot-panel{position:fixed;right:22px;bottom:88px;z-index:80;width:340px;max-width:calc(100vw - 44px);height:460px;max-height:calc(100vh - 130px);background:#fff;border-radius:16px;box-shadow:0 24px 56px rgba(15,15,35,.28);display:none;flex-direction:column;overflow:hidden}
+  .bot-panel.show{display:flex}
+  .bot-head{background:var(--navy);border-bottom:3px solid var(--orange);padding:14px 16px;display:flex;align-items:center;gap:10px}
+  .bot-head .av{width:34px;height:34px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+  .bot-head .bt{font-family:var(--fc);font-weight:700;font-size:16px;color:#fff;line-height:1.1}
+  .bot-head .bs{font-size:10.5px;color:var(--lav)}
+  .bot-head .bx{margin-left:auto;background:transparent;border:none;color:var(--lav);font-size:18px;cursor:pointer;line-height:1;padding:4px}
+  .bot-head .bx:hover{color:#fff}
+
+  .bot-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--cream)}
+  .bot-msg{max-width:88%;font-size:12.5px;line-height:1.4;padding:9px 12px;border-radius:12px}
+  .bot-msg.bot{align-self:flex-start;background:#fff;border:1px solid var(--border);color:var(--navy);border-bottom-left-radius:3px}
+  .bot-msg.user{align-self:flex-end;background:var(--navy);color:#fff;border-bottom-right-radius:3px}
+  .bot-msg ul{margin:6px 0 0 16px;padding:0}
+  .bot-msg li{margin-bottom:4px}
+  .bot-warn{align-self:flex-start;max-width:92%;background:#fff3cd;border:1px solid #e8c760;color:#7a5b00;font-size:11.5px;padding:9px 11px;border-radius:10px;line-height:1.4}
+
+  .bot-opts{display:flex;flex-direction:column;gap:7px;align-self:flex-start;max-width:92%}
+  .bot-opt{appearance:none;text-align:left;cursor:pointer;background:#fff;border:1.5px solid var(--border);border-radius:9px;padding:9px 12px;font-family:var(--f);font-size:12px;font-weight:600;color:var(--navy);transition:.13s}
+  .bot-opt:hover{border-color:var(--orange);background:var(--call,#FFF0EC)}
 </style>
 </head>
 <body>
@@ -123,6 +149,19 @@
 </div>
 
 <footer><div class="foot-in"><span>Uso interno · Confidencial</span><span>Kaizen Gaming · 2026</span></div></footer>
+
+<button class="bot-fab" id="botFab"><span class="dot"></span>🤖 Fale com o Bot</button>
+<div class="bot-panel" id="botPanel">
+  <div class="bot-head">
+    <span class="av">🤖</span>
+    <div>
+      <div class="bt">Bety</div>
+      <div class="bs">Assistente de acesso aos simuladores</div>
+    </div>
+    <button class="bx" id="botClose">✕</button>
+  </div>
+  <div class="bot-body" id="botBody"></div>
+</div>
 
 <script>
 /* ============================================================
@@ -229,6 +268,81 @@ function confirmPass(){
 $("passConfirm").addEventListener("click", confirmPass);
 $("passCancel").addEventListener("click", closePassModal);
 $("passInput").addEventListener("keydown", e=>{ if(e.key==="Enter") confirmPass(); });
+
+/* ============================================================
+   Bety — assistente de acesso (bot local, sem IA/API por trás:
+   é um fluxo de opções fixas, sem custo e sem depender de rede)
+   ============================================================ */
+const TEAM_LABELS = {
+  ouvidoria: "Time de Ouvidoria",
+  reclameaqui: "Time de Reclame Aqui",
+  rgbko: "Time de RG-BKO",
+  bko: "Time de BKO",
+  cs: "Time de CS"
+};
+const TEAM_SIMULADORES = {
+  ouvidoria: ["esportes","refresh-rg","cassino-bonus"],
+  reclameaqui: ["esportes","refresh-rg","cassino-bonus"],
+  bko: ["esportes","refresh-rg","cassino-bonus"],
+  cs: ["esportes","refresh-rg","cassino-bonus","multitelas"],
+  rgbko: ["n2","recap","cassino-bonus","esportes"]
+};
+
+let botStarted = false;
+
+function botAppend(html){
+  const body=$("botBody");
+  body.insertAdjacentHTML("beforeend", html);
+  body.scrollTop = body.scrollHeight;
+}
+function botMsg(text){ botAppend(`<div class="bot-msg bot">${text}</div>`); }
+function botUserMsg(text){ botAppend(`<div class="bot-msg user">${text}</div>`); }
+function botRemoveOpts(){ const o=document.getElementById("botOptsWrap"); if(o) o.remove(); }
+
+function botOpen(){
+  $("botPanel").classList.add("show");
+  if(!botStarted){
+    botStarted = true;
+    botGreeting();
+  }
+}
+function botCloseFn(){ $("botPanel").classList.remove("show"); }
+$("botFab").addEventListener("click", botOpen);
+$("botClose").addEventListener("click", botCloseFn);
+
+function botGreeting(){
+  const name = AGENT_NAME ? AGENT_NAME : "tudo bem";
+  botMsg(`Oi, ${name}! Eu sou a Bety 🤖 — vou te ajudar a entender qual simulador é pra você.`);
+  setTimeout(botAskTeam, 400);
+}
+function botAskTeam(){
+  botMsg("Qual time você faz parte?");
+  const opts = Object.entries(TEAM_LABELS).map(([key,label])=>
+    `<button class="bot-opt" data-team="${key}">${label}</button>`).join("");
+  botAppend(`<div class="bot-opts" id="botOptsWrap">${opts}</div>`);
+  document.querySelectorAll("#botOptsWrap .bot-opt").forEach(b=>{
+    b.addEventListener("click", ()=>botSelectTeam(b.dataset.team));
+  });
+}
+function botSelectTeam(teamKey){
+  botRemoveOpts();
+  botUserMsg(TEAM_LABELS[teamKey]);
+  setTimeout(()=>{
+    const ids = TEAM_SIMULADORES[teamKey];
+    const items = ids.map(id=>{
+      const s = SIMULADORES.find(x=>x.id===id);
+      return `<li><b>${s.titulo}</b> — ${s.desc}</li>`;
+    }).join("");
+    botMsg(`Pro <b>${TEAM_LABELS[teamKey]}</b>, esses são os simuladores disponíveis pra você:<ul>${items}</ul>`);
+    setTimeout(()=>{
+      botAppend(`<div class="bot-warn">⚠️ O acesso a cada simulador é feito por senha, e o dia de treinamento liberado também depende do seu trainer. Aguarde as instruções dele — é ele quem vai te passar a senha certa, na hora certa.</div>`);
+      setTimeout(()=>{
+        botAppend(`<div class="bot-opts" id="botOptsWrap"><button class="bot-opt" id="botBackBtn">🔁 Ver outro time</button></div>`);
+        $("botBackBtn").addEventListener("click", ()=>{ botRemoveOpts(); botAskTeam(); });
+      }, 350);
+    }, 450);
+  }, 350);
+}
 </script>
 </body>
 </html>
