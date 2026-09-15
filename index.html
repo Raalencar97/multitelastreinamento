@@ -295,6 +295,26 @@ const SIMULADOR_DIAS = {
   "refresh-rg": "A partir do dia 5 do treinamento",
   n2: "A partir do dia 4 do treinamento"
 };
+/* Regras estruturadas (mesmas datas acima, em formato que dá pra calcular).
+   Total de dias de treinamento: 13 (mesmo intervalo do Simulador Multitelas). */
+const TOTAL_DIAS_TREINAMENTO = 13;
+const SIMULADOR_REGRA = {
+  multitelas: { tipo:"todos" },
+  esportes: { tipo:"exato", dia:2 },
+  recap: { tipo:"intervalo", de:1, ate:3 },
+  "cassino-bonus": { tipo:"apartir", dia:3 },
+  "refresh-rg": { tipo:"apartir", dia:5 },
+  n2: { tipo:"apartir", dia:4 }
+};
+function diaAplica(id, dia){
+  const r = SIMULADOR_REGRA[id];
+  if(!r) return false;
+  if(r.tipo==="todos") return true;
+  if(r.tipo==="exato") return dia===r.dia;
+  if(r.tipo==="intervalo") return dia>=r.de && dia<=r.ate;
+  if(r.tipo==="apartir") return dia>=r.dia;
+  return false;
+}
 
 let botStarted = false;
 
@@ -332,31 +352,94 @@ function botAskTeam(){
     b.addEventListener("click", ()=>botSelectTeam(b.dataset.team));
   });
 }
+let currentTeam = null;
+
 function botSelectTeam(teamKey){
   botRemoveOpts();
   botUserMsg(TEAM_LABELS[teamKey]);
-  const ids = TEAM_SIMULADORES[teamKey];
+  currentTeam = teamKey;
+  setTimeout(()=>botAskDia(teamKey), 350);
+}
+
+function botAskDia(teamKey){
+  botMsg("Qual o dia de treinamento você está?");
+  botAppend(`<div class="bot-opts" id="botOptsWrap">
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="number" id="botDiaInput" min="1" max="${TOTAL_DIAS_TREINAMENTO}" placeholder="1–${TOTAL_DIAS_TREINAMENTO}"
+        style="width:70px;padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--f);font-size:13px;color:var(--navy)">
+      <button class="bot-opt" id="botDiaConfirm" style="flex:1;margin:0">Confirmar</button>
+    </div>
+    <div id="botDiaErr" style="display:none;color:var(--red);font-size:11px;margin-top:6px">Digite um dia entre 1 e ${TOTAL_DIAS_TREINAMENTO}.</div>
+  </div>`);
+  $("botDiaConfirm").addEventListener("click", ()=>botConfirmDia(teamKey));
+  $("botDiaInput").addEventListener("keydown", e=>{ if(e.key==="Enter") botConfirmDia(teamKey); });
+  $("botDiaInput").focus();
+}
+
+function botConfirmDia(teamKey){
+  const raw = $("botDiaInput").value.trim();
+  const dia = parseInt(raw, 10);
+  if(!Number.isInteger(dia) || dia<1 || dia>TOTAL_DIAS_TREINAMENTO){
+    $("botDiaErr").style.display="block";
+    return;
+  }
+  botRemoveOpts();
+  botUserMsg(`Dia ${dia}`);
   setTimeout(()=>{
-    const dias = ids.map(id=>{
-      const s = SIMULADORES.find(x=>x.id===id);
-      return `<li><b>${s.titulo}:</b> ${SIMULADOR_DIAS[id]}</li>`;
-    }).join("");
-    botMsg(`Antes de tudo, aqui está quando cada simulador é usado no treinamento do <b>${TEAM_LABELS[teamKey]}</b>:<ul>${dias}</ul>`);
-    setTimeout(()=>{
-      const items = ids.map(id=>{
-        const s = SIMULADORES.find(x=>x.id===id);
-        return `<li><b>${s.titulo}</b> — ${s.desc}</li>`;
-      }).join("");
-      botMsg(`E aqui um resumo de cada um:<ul>${items}</ul>`);
-      setTimeout(()=>{
-        botAppend(`<div class="bot-warn">⚠️ O acesso a cada simulador é feito por senha, e o dia de treinamento liberado também depende do seu trainer. Aguarde as instruções dele — é ele quem vai te passar a senha certa, na hora certa.</div>`);
-        setTimeout(()=>{
-          botAppend(`<div class="bot-opts" id="botOptsWrap"><button class="bot-opt" id="botBackBtn">🔁 Ver outro time</button></div>`);
-          $("botBackBtn").addEventListener("click", ()=>{ botRemoveOpts(); botAskTeam(); });
-        }, 350);
-      }, 450);
-    }, 500);
+    const ids = TEAM_SIMULADORES[teamKey].filter(id=>diaAplica(id, dia));
+    if(ids.length){
+      const items = ids.map(id=>`<li>${SIMULADORES.find(x=>x.id===id).titulo}</li>`).join("");
+      botMsg(`Hoje (Dia ${dia}) você vai usar:<ul>${items}</ul>Boa sorte!! 🍀`);
+    } else {
+      botMsg(`Hoje (Dia ${dia}) nenhum simulador do <b>${TEAM_LABELS[teamKey]}</b> está previsto ainda. Aguarde as instruções do seu trainer.`);
+    }
+    setTimeout(()=>botAskTopic(teamKey), 600);
   }, 350);
+}
+
+function botAskTopic(teamKey){
+  botMsg(`Quer saber mais sobre algum simulador específico do <b>${TEAM_LABELS[teamKey]}</b>?`);
+  const ids = TEAM_SIMULADORES[teamKey];
+  const opts = ids.map(id=>{
+    const s = SIMULADORES.find(x=>x.id===id);
+    return `<button class="bot-opt" data-sim="${id}">${s.titulo}</button>`;
+  }).join("");
+  botAppend(`<div class="bot-opts" id="botOptsWrap">${opts}<button class="bot-opt" id="botSwitchTeam" style="color:var(--slate)">🔁 Trocar de time</button></div>`);
+  document.querySelectorAll("#botOptsWrap .bot-opt[data-sim]").forEach(b=>{
+    b.addEventListener("click", ()=>botSelectTopic(b.dataset.sim));
+  });
+  $("botSwitchTeam").addEventListener("click", ()=>{ botRemoveOpts(); botAskTeam(); });
+}
+
+function botSelectTopic(simId){
+  botRemoveOpts();
+  const s = SIMULADORES.find(x=>x.id===simId);
+  botUserMsg(s.titulo);
+  setTimeout(()=>{
+    botMsg(`<b>${s.titulo}</b><br>📅 ${SIMULADOR_DIAS[simId]}<br><br>${s.desc}`);
+    setTimeout(()=>{
+      botAppend(`<div class="bot-warn">⚠️ O acesso é feito por senha, e o dia de treinamento liberado também depende do seu trainer. Aguarde as instruções dele — é ele quem vai te passar a senha certa, na hora certa.</div>`);
+      setTimeout(()=>{
+        botAppend(`<div class="bot-opts" id="botOptsWrap">
+          <button class="bot-opt" id="botEncerrarBtn">✅ Encerrar</button>
+          <button class="bot-opt" id="botMenuBtn">📋 Menu</button>
+        </div>`);
+        $("botEncerrarBtn").addEventListener("click", botEncerrar);
+        $("botMenuBtn").addEventListener("click", ()=>{ botRemoveOpts(); botAskTopic(currentTeam); });
+      }, 350);
+    }, 450);
+  }, 350);
+}
+
+function botEncerrar(){
+  botRemoveOpts();
+  botMsg("Tudo bem! Se precisar de mais alguma coisa, é só clicar em 'Fale com a Bety' de novo. 👋");
+  setTimeout(()=>{
+    botCloseFn();
+    $("botBody").innerHTML = "";
+    botStarted = false;
+    currentTeam = null;
+  }, 1100);
 }
 </script>
 </body>
