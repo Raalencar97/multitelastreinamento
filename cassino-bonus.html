@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bônus & Rodadas Grátis · Trilha CS — Betano / Kaizen Gaming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F0F23; --navycard:#17172E; --orange:#FF3C00; --white:#FFFFFF;
+    --cream:#FAF5F0; --card:#FFFFFF; --border:#E8E3DC; --slate:#3A3A55;
+    --lav:#C9C9D6; --call:#FFF0EC; --div:#4A4A63; --green:#178E33;
+    --greenbg:#ECF6EE; --red:#FF2A21; --bubble:#EEF1F6; --bubbleb:#D6DEEA;
+    --f:"Barlow",system-ui,sans-serif; --fc:"Barlow Condensed",var(--f);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--f);background:var(--cream);color:var(--slate);line-height:1.4;}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+  .masthead{background:var(--navy);border-bottom:4px solid var(--orange);padding:10px 20px;display:flex;align-items:center;gap:14px;}
+  .wordmark{font-family:var(--fc);font-weight:700;font-size:20px;letter-spacing:1px;color:var(--cream);}
+  .wordmark span{color:var(--orange);}
+  .mast-div{width:1px;height:22px;background:var(--div);}
+  .mast-label{font-weight:700;font-size:13px;color:var(--white);}
+  .mast-label small{display:block;font-weight:400;font-size:10px;color:var(--lav);letter-spacing:.5px;}
+
+  /* nav */
+  .nav{background:var(--navycard);padding:0 20px;display:flex;gap:4px;border-bottom:1px solid var(--div);}
+  .nav button{background:transparent;border:none;color:var(--lav);font-family:var(--f);font-weight:600;font-size:13px;padding:12px 16px;cursor:pointer;border-bottom:3px solid transparent;transition:color .15s,border-color .15s;}
+  .nav button:hover{color:var(--white);}
+  .nav button.active{color:var(--white);border-bottom-color:var(--orange);}
+
+  .footer{background:var(--navy);border-top:4px solid var(--orange);padding:10px 20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:11px;color:var(--lav);}
+  .wrap{max-width:1120px;margin:0 auto;padding:22px 20px 40px;}
+  .view{display:none;} .view.active{display:block;}
+
+  .intro{position:fixed;inset:0;background:var(--navy);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .promo{max-width:540px;text-align:center;}
+  .promo .badge{display:inline-block;background:var(--orange);color:var(--navy);font-weight:700;font-size:12px;letter-spacing:2px;padding:6px 14px;border-radius:20px;margin-bottom:18px;text-transform:uppercase;}
+  .promo h1{font-family:var(--fc);font-weight:700;font-size:46px;line-height:.98;color:var(--white);margin-bottom:6px;}
+  .promo h1 span{color:var(--orange);}
+  .promo .coins{font-size:52px;margin-bottom:6px;animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  .promo .disclosure{margin:20px auto 24px;max-width:440px;background:var(--navycard);border:1px solid var(--div);border-left:3px solid var(--orange);border-radius:8px;padding:14px 16px;text-align:left;color:var(--lav);font-size:13.5px;}
+  .promo .disclosure b{color:var(--white);}
+  .btn{font-family:var(--f);font-weight:700;font-size:15px;border:none;border-radius:8px;padding:13px 26px;cursor:pointer;transition:transform .1s ease,filter .15s ease;}
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--orange);color:var(--white);}
+  .btn-primary:hover{filter:brightness(1.06);}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+
+  .eyebrow{font-weight:700;font-size:12px;letter-spacing:3px;color:var(--orange);text-transform:uppercase;margin-bottom:4px;}
+  .h2{font-family:var(--fc);font-weight:700;font-size:30px;color:var(--navy);line-height:1;margin-bottom:4px;}
+  .h2 span{color:var(--orange);}
+  .lead{font-size:13.5px;color:var(--slate);margin-bottom:20px;max-width:780px;}
+
+  .grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start;}
+  @media(max-width:840px){.grid2{grid-template-columns:1fr;}}
+
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;}
+  .panel-title{font-weight:700;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+
+  .slot{background:var(--navy);border-radius:12px;padding:18px;color:var(--white);}
+  .slot .toprow{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .slot .promo-tag{font-family:var(--fc);font-weight:700;font-size:18px;color:var(--orange);letter-spacing:.5px;}
+  .spins-left{text-align:right;}
+  .spins-left .n{font-family:var(--fc);font-weight:700;font-size:34px;line-height:.9;color:var(--white);}
+  .spins-left .l{font-size:10px;letter-spacing:1px;color:var(--lav);text-transform:uppercase;}
+
+  .reels{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--navycard);border:1px solid var(--div);border-radius:10px;padding:10px;}
+  .cell{aspect-ratio:1/1;background:#0B0B1C;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:min(9vw,46px);}
+  .cell.win{background:rgba(23,142,51,.18);box-shadow:inset 0 0 0 2px var(--green);}
+  .cell.spinning{animation:blur .12s linear infinite;}
+  @keyframes blur{0%{opacity:.35}50%{opacity:1}100%{opacity:.35}}
+
+  .result{margin-top:12px;min-height:44px;background:var(--navycard);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--lav);display:flex;align-items:center;gap:10px;}
+  .result .rmult{font-family:var(--fc);font-weight:700;font-size:22px;white-space:nowrap;}
+  .result.win .rmult{color:var(--green);}
+  .result.loss .rmult{color:var(--lav);}
+  .result.near{border:1px solid var(--orange);}
+  .result .rnote b{color:var(--white);}
+
+  .spinbtn{width:100%;margin-top:12px;background:var(--orange);color:var(--white);font-family:var(--fc);font-weight:700;font-size:22px;letter-spacing:1px;border:none;border-radius:8px;padding:14px;cursor:pointer;transition:transform .1s,filter .15s;}
+  .spinbtn:hover{filter:brightness(1.06);}
+  .spinbtn:active{transform:translateY(1px);}
+  .spinbtn:disabled{opacity:.4;cursor:not-allowed;}
+
+  .metric{border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:9px;}
+  .metric:last-child{margin-bottom:0;}
+  .metric .k{font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--slate);display:flex;align-items:center;gap:6px;font-weight:600;flex-wrap:wrap;}
+  .metric .v{font-family:var(--fc);font-weight:700;font-size:26px;color:var(--navy);line-height:1;margin-top:3px;}
+  .metric .cap{font-size:11.5px;color:var(--slate);margin-top:4px;}
+  .metric .cap b{color:var(--navy);}
+  .tag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:20px;}
+  .tag-ok{background:var(--greenbg);color:var(--green);border:1px solid var(--green);}
+  .metric.good{background:var(--greenbg);border-color:var(--green);}
+  .metric.good .v{color:var(--green);}
+
+  .nearmiss{border:1px dashed var(--border);border-radius:9px;padding:11px 13px;opacity:.5;transition:all .2s;}
+  .nearmiss.on{opacity:1;border:1px solid var(--orange);background:var(--call);}
+  .nearmiss .k{font-weight:700;color:var(--orange);font-size:12px;letter-spacing:.5px;text-transform:uppercase;}
+  .nearmiss .cap{font-size:11.5px;color:var(--slate);margin-top:3px;}
+  .nearmiss .cap b{color:var(--navy);}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px;}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);}
+  th{font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--slate);}
+  td.sym{font-size:18px;} td.num{text-align:right;font-variant-numeric:tabular-nums;}
+  .rtp-line{margin-top:12px;background:var(--greenbg);border:1px solid var(--green);border-radius:8px;padding:12px 14px;font-size:12.5px;color:var(--navy);}
+  .rtp-line b{color:var(--green);}
+
+  .returnbar{margin-top:14px;}
+  .returnbar .bar{height:26px;border-radius:6px;overflow:hidden;display:flex;border:1px solid var(--border);}
+  .returnbar .players{background:var(--green);} .returnbar .margin{background:var(--slate);}
+  .returnbar .lbls{display:flex;justify-content:space-between;font-size:11px;margin-top:5px;font-weight:600;}
+  .returnbar .lbls .p{color:var(--green);} .returnbar .lbls .m{color:var(--slate);}
+
+  .explaingrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;}
+  @media(max-width:720px){.explaingrid{grid-template-columns:1fr;}}
+  .explain{border:1px solid var(--border);border-radius:10px;padding:16px;background:var(--card);}
+  .explain h4{font-family:var(--fc);font-weight:700;font-size:19px;color:var(--navy);margin-bottom:6px;}
+  .explain h4 span{color:var(--orange);}
+  .explain p{font-size:13px;color:var(--slate);}
+  .explain p b{color:var(--navy);}
+
+  .converge{margin-top:18px;border:1px solid var(--border);border-radius:12px;padding:18px;background:var(--card);}
+  .converge .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .converge .cbtn{background:var(--navy);color:var(--white);border:none;border-radius:8px;padding:9px 15px;font-family:var(--f);font-weight:600;font-size:13px;cursor:pointer;}
+  .converge .cbtn:hover{filter:brightness(1.15);}
+  .converge .out{margin-top:14px;display:none;}
+  .converge .out.show{display:block;}
+  .converge .big{font-family:var(--fc);font-weight:700;font-size:38px;color:var(--green);line-height:1;}
+  .converge .sub{font-size:12.5px;color:var(--slate);margin-top:4px;}
+  .converge .sub b{color:var(--navy);}
+
+  .reveal{margin-top:22px;border:1px solid var(--green);border-radius:12px;overflow:hidden;display:none;}
+  .reveal.show{display:block;animation:rise .4s ease;}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .reveal .head{background:var(--navy);color:var(--white);padding:18px 20px;}
+  .reveal .head .eyebrow{color:var(--orange);}
+  .reveal .head h3{font-family:var(--fc);font-weight:700;font-size:28px;line-height:1;}
+  .reveal .head h3 span{color:var(--green);}
+  .reveal .body{padding:20px;background:var(--card);}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+  @media(max-width:720px){.steps{grid-template-columns:1fr;}}
+  .step{border:1px solid var(--border);border-radius:10px;padding:14px;}
+  .step .n{font-family:var(--fc);font-weight:700;font-size:22px;color:var(--orange);}
+  .step .t{font-weight:700;color:var(--navy);font-size:13.5px;margin:2px 0 4px;}
+  .step .d{font-size:12.5px;} .step .d b{color:var(--navy);}
+  .punch{background:var(--call);border:1px solid var(--orange);border-radius:10px;padding:16px;font-size:14px;color:var(--navy);}
+  .punch b{color:var(--orange);}
+  .bridge{margin-top:16px;background:var(--navycard);color:var(--lav);border-radius:10px;padding:16px 18px;}
+  .bridge .eyebrow{color:var(--orange);}
+  .bridge b{color:var(--white);}
+  .actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;}
+
+  .rg-note{margin-top:18px;font-size:11px;color:var(--slate);border-top:1px solid var(--border);padding-top:12px;}
+</style>
+</head>
+<body>
+
+<!-- ============ INTRO (a visão do cliente) ============ -->
+<div class="intro" id="intro">
+  <div class="promo">
+    <div class="badge">Oferta especial</div>
+    <div class="coins">🎁</div>
+    <h1>VOCÊ GANHOU<br><span>10 RODADAS GRÁTIS!</span></h1>
+    <div class="disclosure">
+      <b>É assim que a promoção aparece para o cliente.</b> Neste simulador você vê os mesmos 10 giros
+      com a mecânica à mostra — como o resultado é sorteado, o que o cliente realmente ganha e como
+      funciona o RTP. A ideia é você <b>dominar a funcionalidade para explicá-la com clareza</b>.
+    </div>
+    <button class="btn btn-primary" onclick="startSim()">Abrir o capô →</button>
+  </div>
+</div>
+
+<!-- ============ MASTHEAD + NAV ============ -->
+<div class="masthead">
+  <div class="wordmark">Beta<span>no</span></div>
+  <div class="mast-div"></div>
+  <div class="mast-label">Trilha Bônus<small>Como funcionam as rodadas grátis</small></div>
+</div>
+<div class="nav">
+  <button id="tab-slot" class="active" onclick="showPage('slot')">Slot com capô aberto</button>
+  <button id="tab-table" onclick="showPage('table')">Tabela de probabilidades</button>
+</div>
+
+<!-- ============ PÁGINA 1: SLOT ============ -->
+<div class="view active" id="page-slot"><div class="wrap">
+  <div class="eyebrow">Entendendo por dentro</div>
+  <div class="h2">O SLOT, <span>COM O CAPÔ ABERTO</span></div>
+  <p class="lead">Aqui você acompanha 10 rodadas grátis com a mecânica visível ao lado. Apostar é uma
+    forma de <b>lazer</b>, e o seu papel é explicar a funcionalidade ao cliente com calma e clareza.
+    Cada informação deste painel é algo que você vai traduzir para o cliente no atendimento.</p>
+
+  <div class="grid2">
+    <div class="slot">
+      <div class="toprow">
+        <div class="promo-tag">🎁 10 rodadas grátis</div>
+        <div class="spins-left"><div class="n" id="spinsLeft">10</div><div class="l">rodadas restantes</div></div>
+      </div>
+      <div class="reels" id="reels"></div>
+      <div class="result loss" id="result"><span class="rmult" id="rmult">—</span><span class="rnote" id="rnote">Gire para começar. Acompanhe o painel ao lado a cada rodada.</span></div>
+      <button class="spinbtn" id="spinbtn" onclick="spin()">GIRAR</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">🔍 Como funciona por dentro</div>
+
+      <div class="metric good">
+        <div class="k">💰 Ganho das rodadas grátis <span class="tag tag-ok">✓ dinheiro real · sacável</span></div>
+        <div class="v" id="mGain">R$ 0,00</div>
+        <div class="cap">Na nossa plataforma, o que o cliente ganha nas rodadas grátis é <b>dinheiro real</b> e pode ser sacado normalmente — não fica travado. Muitos clientes não sabem disso: informar é meio caminho para um atendimento tranquilo.</div>
+      </div>
+
+      <div class="metric">
+        <div class="k">🎲 Resultado sorteado (RNG)</div>
+        <div class="v" id="mRng" style="font-size:19px">aguardando 1º giro</div>
+        <div class="cap">Cada rodada é gerada por um <b>RNG</b> (gerador de números aleatórios): é única, aleatória e independente das anteriores. <b>Ninguém prevê nem altera</b> o resultado — nem o cliente, nem a Betano.</div>
+      </div>
+
+      <div class="metric">
+        <div class="k">🎯 RTP — retorno teórico ao jogador</div>
+        <div class="v"><span id="mRtpTheo">95%</span> <span style="font-size:13px;color:var(--slate)">teórico</span> · <span id="mRtpReal" style="font-size:20px">—</span> <span style="font-size:12px;color:var(--slate)">nesta sessão</span></div>
+        <div class="cap">É uma média de <b>longo prazo</b>: ao longo de milhões de rodadas, cerca de 95% de tudo que é apostado volta aos jogadores em prêmios. Em 10 rodadas o número oscila muito — veja o RTP se formar na aba <b>Tabela de probabilidades</b>.</div>
+      </div>
+
+      <div class="nearmiss" id="nearmiss">
+        <div class="k">⚡ Quando dá "quase"</div>
+        <div class="cap">Às vezes dois símbolos altos param lado a lado. Isso é só a forma como os símbolos aparecem: <b>não deixa a próxima rodada "mais perto" de nada</b>. Como cada giro é independente, não existe "estou quase ganhando" — vale explicar isso ao cliente.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" id="reveal">
+    <div class="head">
+      <div class="eyebrow">As 10 rodadas grátis terminaram</div>
+      <h3>O QUE VOCÊ GANHOU É <span>REAL E SACÁVEL</span></h3>
+    </div>
+    <div class="body">
+      <div class="steps">
+        <div class="step"><div class="n">01</div><div class="t">Ganho real</div><div class="d">Você ganhou <b id="rvGain">R$ 0,00</b>. É dinheiro real e pode ser sacado normalmente — não é bônus travado. Boa parte dos clientes não sabe disso.</div></div>
+        <div class="step"><div class="n">02</div><div class="t">Foi sorteado</div><div class="d">Cada rodada foi sorteada de forma aleatória e independente (RNG). No curto prazo o resultado é imprevisível — por isso apostar é <b>lazer</b>, não uma forma de ganhar dinheiro.</div></div>
+        <div class="step"><div class="n">03</div><div class="t">A dúvida real</div><div class="d">Na prática, a maior parte dos contatos sobre bônus <b>não</b> é sobre saque. É: "por que eu não recebo bônus com mais frequência?"</div></div>
+      </div>
+      <div class="punch">
+        <b>Bônus e rodadas grátis são cortesias promocionais.</b> São ocasionais, com critérios de elegibilidade e regras próprias — não um direito garantido nem algo frequente. Quando o cliente entende isso com clareza, a frustração diminui e a conversa fica leve.
+      </div>
+      <div class="bridge">
+        <div class="eyebrow">Ponte para o atendimento</div>
+        <p style="margin-top:6px">Seu papel é <b>educar, com calma e sem jargão</b>: explicar como os bônus funcionam, quando o cliente pode recebê-los, que os ganhos das rodadas grátis são reais e sacáveis, e reforçar que apostar é uma forma de entretenimento. Pratique essa conversa no <b>Simulador de Chat</b> da trilha.</p>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="resetSim()">↻ Rodar de novo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="rg-note" id="rg1"></div>
+</div></div>
+
+<!-- ============ PÁGINA 2: TABELA DE PROBABILIDADES ============ -->
+<div class="view" id="page-table"><div class="wrap">
+  <div class="eyebrow">Transparência</div>
+  <div class="h2">TABELA DE <span>PROBABILIDADES</span></div>
+  <p class="lead">As chances de cada prêmio são definidas e públicas. Conhecer esses números ajuda você a
+    explicar ao cliente, de forma educacional, como o jogo funciona — e por que ele é entretenimento,
+    não uma fonte de renda.</p>
+
+  <div class="panel">
+    <div class="panel-title">📊 Chance de cada resultado por giro</div>
+    <table id="paytable">
+      <thead><tr><th>Símbolo</th><th>Prêmio</th><th class="num">Chance por giro</th><th class="num">1 a cada</th></tr></thead>
+      <tbody id="paytableBody"></tbody>
+    </table>
+    <div class="rtp-line">Somando prêmio × chance de cada símbolo, o <b>retorno teórico ao jogador (RTP)</b> é
+      <b id="rtpCalc">95%</b>. Ou seja: ao longo de milhões de rodadas, cerca de 95% de tudo que é apostado
+      volta aos jogadores em prêmios. Os ~5% restantes são a <b>margem do jogo</b> — o custo do entretenimento, informado de forma transparente.</div>
+
+    <div class="returnbar">
+      <div class="bar"><div class="players" id="barPlayers" style="width:95%"></div><div class="margin" id="barMargin" style="width:5%"></div></div>
+      <div class="lbls"><span class="p">≈ <span id="playerCut">95%</span> retorna aos jogadores</span><span class="m"><span id="marginCut">5%</span> margem do jogo</span></div>
+    </div>
+  </div>
+
+  <div class="explaingrid">
+    <div class="explain">
+      <h4>O que é <span>RNG</span></h4>
+      <p>O resultado de cada giro vem de um <b>gerador de números aleatórios</b>. Cada rodada é única,
+        aleatória e independente das anteriores. Não há sequência, "hora de pagar" nem resultado
+        acumulado: um giro ruim não deixa o próximo mais perto de ganhar. <b>Ninguém consegue prever
+        ou alterar</b> o resultado.</p>
+    </div>
+    <div class="explain">
+      <h4>O que é <span>RTP</span></h4>
+      <p>É uma medida <b>estatística de longo prazo</b>, não uma promessa por aposta. No curto prazo, o
+        resultado de cada pessoa varia bastante — dá para ganhar bem mais que o apostado ou perder.
+        Por isso o slot é <b>entretenimento</b>, não uma forma de ganhar dinheiro — e é assim que vale
+        a pena explicar ao cliente.</p>
+    </div>
+  </div>
+
+  <div class="converge">
+    <div class="panel-title" style="margin-bottom:6px">🔬 Veja o RTP se formar</div>
+    <p style="font-size:13px;color:var(--slate)">Em poucas rodadas, o retorno é pura variação — pode ser bem acima ou abaixo de 95%.
+      Quanto mais rodadas, mais o resultado se aproxima do RTP teórico. Simule:</p>
+    <div class="btns">
+      <button class="cbtn" onclick="converge(10)">10 rodadas</button>
+      <button class="cbtn" onclick="converge(100)">100 rodadas</button>
+      <button class="cbtn" onclick="converge(1000)">1.000 rodadas</button>
+      <button class="cbtn" onclick="converge(100000)">100.000 rodadas</button>
+    </div>
+    <div class="out" id="convOut">
+      <div class="big" id="convBig">—</div>
+      <div class="sub" id="convSub"></div>
+    </div>
+  </div>
+
+  <div class="rg-note" id="rg2"></div>
+</div></div>
+
+<div class="footer">
+  <span>Uso interno · Confidencial</span>
+  <span>Kaizen Gaming · 2026</span>
+</div>
+
+<script>
+/* ================= MODELO ================= */
+const BET = 1.00;          // valor nominal por rodada grátis (custeado pela Betano)
+const TOTAL_SPINS = 10;
+
+const SYM = {
+  tiger:{c:'🐯',m:250}, seven:{c:'7️⃣',m:50}, gem:{c:'💎',m:15},
+  star:{c:'⭐',m:5}, bell:{c:'🔔',m:2}, melon:{c:'🍉',m:1}, cherry:{c:'🍒',m:0.5}
+};
+const FILLERS = ['tiger','seven','gem','star','bell','melon','cherry'];
+
+const OUTCOMES = [
+  {sym:'tiger',  m:250, p:0.0008},
+  {sym:'seven',  m:50,  p:0.004 },
+  {sym:'gem',    m:15,  p:0.011 },
+  {sym:'star',   m:5,   p:0.025 },
+  {sym:'bell',   m:2,   p:0.05  },
+  {sym:'melon',  m:1,   p:0.09  },
+  {sym:'cherry', m:0.5, p:0.14  },
+  {sym:null,     m:0,   p:0.6792}
+];
+const RTP = OUTCOMES.reduce((a,o)=>a+o.p*o.m,0);   // 0.95
+const MARGIN = 1 - RTP;
+
+/* ================= ESTADO ================= */
+let spinsLeft, gain, totalWon, totalStaked, spinning;
+function initState(){ spinsLeft=TOTAL_SPINS; gain=0; totalWon=0; totalStaked=0; spinning=false; }
+
+/* ================= UTIL ================= */
+const brl = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+function pickOutcome(){ let r=Math.random(),acc=0; for(const o of OUTCOMES){acc+=o.p; if(r<=acc) return o;} return OUTCOMES[OUTCOMES.length-1]; }
+function randSym(exclude){ let s; do{ s=FILLERS[Math.floor(Math.random()*FILLERS.length)]; }while(s===exclude); return s; }
+
+/* ================= GRADE ================= */
+function buildGrid(o){
+  const cells=new Array(9);
+  if(o.sym){ [3,4,5].forEach(i=>cells[i]=o.sym); for(let i=0;i<9;i++) if(cells[i]===undefined) cells[i]=randSym(o.sym); return {cells,winRow:1,near:false}; }
+  const near = Math.random()<0.30;
+  if(near){ const hi=Math.random()<0.5?'tiger':'seven'; cells[3]=hi;cells[4]=hi;cells[5]=randSym(hi);
+    for(let i=0;i<9;i++) if(cells[i]===undefined) cells[i]=randSym(); fixNoWin(cells); return {cells,winRow:-1,near:true}; }
+  for(let i=0;i<9;i++) cells[i]=randSym(); fixNoWin(cells); return {cells,winRow:-1,near:false};
+}
+function fixNoWin(cells){ for(let r=0;r<3;r++){const a=cells[r*3],b=cells[r*3+1],c=cells[r*3+2]; if(a===b&&b===c) cells[r*3+2]=randSym(a);} }
+
+/* ================= RENDER ================= */
+function renderReels(cells,winRow){ const reels=document.getElementById('reels'); reels.innerHTML='';
+  for(let i=0;i<9;i++){ const d=document.createElement('div'); d.className='cell'+(winRow>=0&&Math.floor(i/3)===winRow?' win':''); d.textContent=SYM[cells[i]].c; reels.appendChild(d);} }
+function renderReelsSpinning(){ const reels=document.getElementById('reels');
+  [...reels.children].forEach(c=>{ c.classList.add('spinning'); c.classList.remove('win'); c.textContent=SYM[FILLERS[Math.floor(Math.random()*FILLERS.length)]].c; }); }
+function updatePanel(){
+  document.getElementById('spinsLeft').textContent=spinsLeft;
+  document.getElementById('mGain').textContent=brl(gain);
+  const realRtp = totalStaked>0 ? (totalWon/totalStaked) : null;
+  document.getElementById('mRtpReal').textContent = realRtp===null ? '—' : Math.round(realRtp*100)+'%';
+  document.getElementById('spinbtn').disabled = spinning || spinsLeft<=0;
+}
+
+/* ================= GIRO ================= */
+function spin(){
+  if(spinning||spinsLeft<=0) return;
+  spinning=true; updatePanel();
+  document.getElementById('nearmiss').classList.remove('on');
+  const o=pickOutcome(); const grid=buildGrid(o);
+  let ticks=0;
+  const iv=setInterval(()=>{ renderReelsSpinning(); if(++ticks>=7){ clearInterval(iv); settle(o,grid); } },90);
+}
+function settle(o,grid){
+  renderReels(grid.cells,grid.winRow);
+  const won=BET*o.m; gain+=won; totalWon+=won; totalStaked+=BET; spinsLeft--;
+  const res=document.getElementById('result'), rmult=document.getElementById('rmult'), rnote=document.getElementById('rnote');
+  res.classList.remove('win','loss','near');
+  document.getElementById('mRng').textContent='sorteado · independente';
+  if(o.m>0){
+    res.classList.add('win'); rmult.textContent='+'+brl(won);
+    rnote.innerHTML='Você ganhou <b>'+brl(won)+'</b> — dinheiro real e sacável. Veja o ganho acumular ao lado.';
+  } else if(grid.near){
+    res.classList.add('loss','near'); rmult.textContent='quase';
+    rnote.innerHTML='Dois símbolos altos lado a lado. É só a exibição — <b>não muda</b> a chance da próxima rodada. Cada giro é independente.';
+    document.getElementById('nearmiss').classList.add('on');
+  } else {
+    res.classList.add('loss'); rmult.textContent='R$ 0,00';
+    rnote.textContent='Sem prêmio nesta rodada. Faz parte: o resultado é sorteado e não segue nenhum padrão.';
+  }
+  spinning=false; updatePanel();
+  if(spinsLeft<=0) showReveal();
+}
+
+/* ================= REVEAL ================= */
+function showReveal(){
+  document.getElementById('rvGain').textContent=brl(gain);
+  const r=document.getElementById('reveal'); r.classList.add('show'); r.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ================= PÁGINA 2 ================= */
+function renderPaytable(){
+  const body=document.getElementById('paytableBody'); body.innerHTML='';
+  OUTCOMES.filter(o=>o.sym).forEach(o=>{ const tr=document.createElement('tr');
+    tr.innerHTML='<td class="sym">'+SYM[o.sym].c+'</td><td><b style="color:var(--navy)">'+o.m+'×</b> a aposta</td><td class="num">'+(o.p*100).toFixed(2)+'%</td><td class="num">'+Math.round(1/o.p).toLocaleString('pt-BR')+' giros</td>';
+    body.appendChild(tr); });
+  const loss=OUTCOMES.find(o=>!o.sym); const tr=document.createElement('tr');
+  tr.innerHTML='<td>—</td><td>sem prêmio</td><td class="num">'+(loss.p*100).toFixed(2)+'%</td><td class="num">~'+(1/loss.p).toFixed(1)+' giros</td>';
+  body.appendChild(tr);
+  document.getElementById('mRtpTheo').textContent=Math.round(RTP*100)+'%';
+  document.getElementById('rtpCalc').textContent=(RTP*100).toFixed(0)+'%';
+  document.getElementById('playerCut').textContent=(RTP*100).toFixed(0)+'%';
+  document.getElementById('marginCut').textContent=(MARGIN*100).toFixed(0)+'%';
+  document.getElementById('barPlayers').style.width=(RTP*100)+'%';
+  document.getElementById('barMargin').style.width=(MARGIN*100)+'%';
+}
+function converge(n){
+  let wagered=0, returned=0;
+  for(let i=0;i<n;i++){ const o=pickOutcome(); wagered+=BET; returned+=BET*o.m; }
+  const rtp=returned/wagered;
+  const out=document.getElementById('convOut'); out.classList.add('show');
+  document.getElementById('convBig').textContent=(rtp*100).toFixed(1)+'%';
+  const diff=Math.abs(rtp-RTP)*100;
+  let msg;
+  if(n<=10) msg='Com só '+n+' rodadas, o retorno é <b>pura sorte</b> — pode dar muito acima ou abaixo do teórico.';
+  else if(n<=100) msg='Com '+n+' rodadas ainda há bastante variação em torno dos 95%.';
+  else if(n<=1000) msg='Com '+n.toLocaleString('pt-BR')+' rodadas o resultado já se aproxima do RTP teórico.';
+  else msg='Com '+n.toLocaleString('pt-BR')+' rodadas, o retorno praticamente encontra os <b>95%</b> teóricos.';
+  document.getElementById('convSub').innerHTML=msg+' Apostado: <b>'+brl(wagered)+'</b> · retornou: <b>'+brl(returned)+'</b> · diferença para o teórico: '+diff.toFixed(1)+' p.p.';
+}
+
+/* ================= NAV / CICLO ================= */
+function showPage(p){
+  document.getElementById('page-slot').classList.toggle('active',p==='slot');
+  document.getElementById('page-table').classList.toggle('active',p==='table');
+  document.getElementById('tab-slot').classList.toggle('active',p==='slot');
+  document.getElementById('tab-table').classList.toggle('active',p==='table');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function startSim(){ document.getElementById('intro').style.display='none'; }
+function resetSim(){
+  initState();
+  document.getElementById('reveal').classList.remove('show');
+  document.getElementById('nearmiss').classList.remove('on');
+  document.getElementById('mRng').textContent='aguardando 1º giro';
+  const res=document.getElementById('result'); res.className='result loss';
+  document.getElementById('rmult').textContent='—';
+  document.getElementById('rnote').textContent='Gire para começar. Acompanhe o painel ao lado a cada rodada.';
+  renderReels(['cherry','melon','bell','star','gem','bell','melon','cherry','star'],-1);
+  updatePanel(); window.scrollTo({top:0,behavior:'smooth'});
+}
+const RG='Simulação interna de treinamento — não é um jogo real e não envolve dinheiro. Existe para ensinar a mecânica de bônus e apoiar o atendimento. Apostas são uma forma de entretenimento para maiores de 18 anos e devem caber no seu orçamento e no seu tempo. Se o jogo deixou de ser diversão, procure apoio: CVV 188.';
+
+/* boot */
+initState();
+renderPaytable();
+renderReels(['cherry','melon','bell','star','gem','bell','melon','cherry','star'],-1);
+updatePanel();
+document.getElementById('rg1').textContent=RG;
+document.getElementById('rg2').textContent=RG;
+</script>
+</body>
+</html>

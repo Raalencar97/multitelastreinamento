@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Esportes · Treinamento CS · Betano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F0F23; --navycard:#17172E; --orange:#FF3C00; --white:#FFFFFF;
+    --cream:#FAF5F0; --card:#FFFFFF; --border:#E8E3DC; --slate:#3A3A55;
+    --lav:#C9C9D6; --call:#FFF0EC; --green:#178E33; --greenbg:#ECF6EE; --red:#FF2A21;
+    --bubble:#EEF1F6; --bubbleb:#D6DEEA;
+    --f:"Barlow",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    --fc:"Barlow Condensed",var(--f);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--f);background:var(--cream);color:var(--slate);line-height:1.45;-webkit-font-smoothing:antialiased}
+
+  header.masthead{background:var(--navy);border-bottom:4px solid var(--orange)}
+  .mast-in{max-width:1200px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .wordmark{font-family:var(--fc);font-weight:700;letter-spacing:.5px;font-size:22px;color:var(--cream)}
+  .wordmark b{color:var(--orange)}
+  .mast-sep{width:1px;height:22px;background:#4A4A63}
+  .mast-title{font-weight:700;font-size:13px;color:var(--white);letter-spacing:.3px}
+  .mast-tag{margin-left:auto;font-size:11px;color:var(--lav);letter-spacing:2px;text-transform:uppercase}
+
+  main{max-width:1200px;margin:0 auto;padding:26px 22px 60px}
+  .eyebrow{font-family:var(--f);font-weight:700;font-size:11.5px;letter-spacing:3px;color:var(--orange);text-transform:uppercase}
+  h1.h2{font-family:var(--fc);font-weight:700;font-size:32px;color:var(--navy);line-height:1.05;margin:6px 0 4px}
+  h1.h2 span{color:var(--orange)}
+  .sub{font-size:13.5px;color:var(--slate);max-width:78ch}
+
+  /* sport selector */
+  .sports{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 4px}
+  .sport-btn{appearance:none;cursor:pointer;font-family:var(--f);font-weight:700;font-size:13px;letter-spacing:.3px;
+    border:1.5px solid var(--border);background:#fff;color:var(--slate);border-radius:22px;padding:9px 18px;transition:.16s;display:flex;align-items:center;gap:8px}
+  .sport-btn:hover{border-color:var(--orange);color:var(--navy)}
+  .sport-btn[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+  .sport-btn[aria-pressed="true"] .ic{filter:none}
+  .sport-btn .ic{font-size:16px}
+  .sport-btn:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+  .stage-grid{display:grid;grid-template-columns:minmax(360px,1.35fr) minmax(280px,340px);gap:22px;margin-top:20px;align-items:start}
+  @media(max-width:900px){.stage-grid{grid-template-columns:1fr}}
+
+  .field-wrap{background:var(--navycard);border-radius:16px;padding:16px;box-shadow:0 16px 36px rgba(15,15,35,.16)}
+  .field-svg{width:100%;height:auto;display:block;border-radius:10px}
+  .field-hint{display:flex;align-items:center;gap:8px;color:var(--lav);font-size:11.5px;margin-top:12px;justify-content:center;text-align:center}
+  .field-hint b{color:var(--orange)}
+
+  /* markers & token */
+  .mk{cursor:pointer}
+  .mk circle{fill:#0F0F23;stroke:var(--orange);stroke-width:2;transition:.18s}
+  .mk text{fill:var(--cream);font-family:var(--f);font-weight:700;font-size:11px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+  .mk:hover circle{fill:#2a2a45}
+  .mk.active circle{fill:var(--orange);stroke:#fff;r:13}
+  .mk.active text{fill:#fff}
+  #tok{transition:transform .55s cubic-bezier(.2,.72,.2,1);pointer-events:none}
+  #tok .pdot{fill:var(--orange);stroke:#fff;stroke-width:1.5}
+  #tok .pring{fill:none;stroke:var(--orange);stroke-width:2.5;transform-box:fill-box;transform-origin:center;opacity:0}
+  #tok.go .pring{animation:pr 1.15s ease-out}
+  @keyframes pr{0%{transform:scale(.35);opacity:.8}100%{transform:scale(2.6);opacity:0}}
+
+  /* term list */
+  .terms-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .terms-head{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+  .terms-head .t{font-family:var(--fc);font-weight:700;font-size:18px}
+  .terms-head .c{font-size:11px;color:var(--lav);letter-spacing:1px;text-transform:uppercase}
+  .terms-list{max-height:420px;overflow-y:auto}
+  .term{width:100%;text-align:left;appearance:none;cursor:pointer;background:#fff;border:none;border-bottom:1px solid var(--border);
+    padding:11px 14px;display:flex;align-items:center;gap:11px;transition:.14s;font-family:var(--f)}
+  .term:hover{background:#faf7f3}
+  .term[aria-current="true"]{background:var(--call);box-shadow:inset 3px 0 0 var(--orange)}
+  .term .badge{width:22px;height:22px;flex:none;border-radius:6px;display:grid;place-items:center;font-size:11px;font-weight:700;
+    background:var(--bubble);color:var(--slate);border:1px solid var(--bubbleb)}
+  .term[data-spot="1"] .badge{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .term[aria-current="true"] .badge{background:var(--orange);color:#fff;border-color:var(--orange)}
+  .term .nm{font-weight:700;color:var(--navy);font-size:13px;line-height:1.15}
+  .term .tg{font-size:10.5px;color:var(--slate);opacity:.7}
+
+  /* detail */
+  .detail{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 22px;margin-top:22px;box-shadow:0 8px 22px rgba(15,15,35,.06)}
+  .detail .d-empty{color:var(--slate);font-style:italic;text-align:center;padding:16px}
+  .d-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .d-name{font-family:var(--fc);font-weight:700;font-size:26px;color:var(--navy);line-height:1}
+  .d-tag{font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:4px 10px;border-radius:20px;background:var(--navy);color:#fff}
+  .d-tag.zona{background:#1f6f8b}.d-tag.regra{background:#8b5a1f}.d-tag.acao{background:#8b1f4f}.d-tag.tatica{background:#4a2f8b}.d-tag.conceito{background:#3A3A55}
+  .d-def{font-size:14px;color:var(--slate);margin-top:12px}
+  .d-ex{background:var(--call);border:1.5px solid var(--orange);border-radius:11px;padding:13px 15px;margin-top:14px}
+  .d-ex .k{font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--orange);display:block;margin-bottom:4px}
+  .d-ex .v{font-size:13.5px;color:var(--navy)}
+
+  .callout{background:var(--greenbg);border:1px solid #bfe4c6;border-radius:11px;padding:12px 15px;margin-top:24px;font-size:12.5px;color:#0f5d24}
+  .callout b{color:var(--green)}
+
+  footer{background:var(--navy);border-top:4px solid var(--orange);margin-top:40px}
+  .foot-in{max-width:1200px;margin:0 auto;padding:12px 22px;display:flex;justify-content:space-between;font-size:11px;color:var(--lav);letter-spacing:.5px}
+
+  @media(prefers-reduced-motion:reduce){#tok{transition:transform .2s ease}#tok.go .pring{animation:none;opacity:.4}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mast-in">
+    <span class="wordmark">bet<b>ano</b></span>
+    <span class="mast-sep"></span>
+    <span class="mast-title">Simulador de Esportes · Treinamento CS</span>
+    <span class="mast-tag">Uso interno</span>
+  </div>
+</header>
+
+<main>
+  <span class="eyebrow">Jargões esportivos para o atendimento</span>
+  <h1 class="h2">Conheça o <span>campo</span> e os <span>termos</span> de cada esporte</h1>
+  <p class="sub">Escolha um esporte, explore o campo/quadra/pista e clique nos pontos ou nos termos da lista. Cada jargão traz a definição e um exemplo de como o cliente costuma citá-lo nas apostas — para o agente atender com segurança e sem “achismo”.</p>
+
+  <div class="sports" id="sports" role="group" aria-label="Escolher esporte"></div>
+
+  <div class="stage-grid">
+    <div>
+      <div class="field-wrap">
+        <div id="fieldHost"></div>
+        <div class="field-hint">👆 <span>Clique nos <b>pontos do campo</b> ou nos termos da lista ao lado</span></div>
+      </div>
+    </div>
+    <div class="terms-card">
+      <div class="terms-head">
+        <span class="t" id="termsTitle">—</span>
+        <span class="c" id="termsCount">0 termos</span>
+      </div>
+      <div class="terms-list" id="termsList"></div>
+    </div>
+  </div>
+
+  <div class="detail" id="detail">
+    <div class="d-empty">Selecione um termo para ver a explicação e o exemplo.</div>
+  </div>
+
+  <div class="callout">
+    <b>Dica de sala:</b> peça ao agente para explicar o termo com as próprias palavras antes de abrir o exemplo — o objetivo é traduzir o jargão em linguagem simples para o cliente, posicionando o esporte e as apostas como entretenimento.
+  </div>
+</main>
+
+<footer>
+  <div class="foot-in">
+    <span>Uso interno · Confidencial</span>
+    <span>Kaizen Gaming · 2026</span>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   DADOS — campos (SVG) + termos por esporte
+   tag: zona | regra | acao | tatica | conceito
+   spot:true  → aparece como ponto clicável no campo (x,y)
+   ============================================================ */
+const NC="#17172E", LN="#FAF5F0", OR="#FF3C00", NV="#0F0F23", MUT="#3A3A55";
+function board(inner){ return `<rect x='0' y='0' width='480' height='300' rx='14' fill='${NC}'/>${inner}`; }
+
+const DATA = {
+  futebol:{
+    nome:"Futebol", ic:"⚽", origin:{x:240,y:150},
+    field: board(`
+      <rect x='24' y='24' width='432' height='252' rx='4' fill='none' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <line x1='240' y1='24' x2='240' y2='276' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <circle cx='240' cy='150' r='40' fill='none' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <circle cx='240' cy='150' r='3' fill='${LN}'/>
+      <rect x='24' y='95' width='60' height='110' fill='none' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <rect x='24' y='122' width='24' height='56' fill='none' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <rect x='14' y='131' width='10' height='38' fill='${NV}' stroke='${OR}' stroke-width='2'/>
+      <circle cx='64' cy='150' r='2.5' fill='${LN}'/>
+      <rect x='396' y='95' width='60' height='110' fill='none' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <rect x='432' y='122' width='24' height='56' fill='none' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <rect x='456' y='131' width='10' height='38' fill='${NV}' stroke='${OR}' stroke-width='2'/>
+      <circle cx='416' cy='150' r='2.5' fill='${LN}'/>
+    `),
+    terms:[
+      {n:"Impedimento",tag:"regra",spot:true,x:362,y:118,def:"Posição irregular do atacante à frente do último defensor no momento do passe.",ex:"Um gol anulado por impedimento não conta para quem apostou naquele placar ou marcador de gols."},
+      {n:"Escanteio",tag:"zona",spot:true,x:452,y:30,def:"Tiro de canto concedido quando a bola sai pela linha de fundo tocada pela defesa.",ex:"Existem mercados de 'total de escanteios'; o cliente pode perguntar se um escanteio no fim conta para a aposta."},
+      {n:"Pênalti",tag:"regra",spot:true,x:416,y:150,def:"Falta gravíssima dentro da grande área, cobrada a 11 metros do gol.",ex:"Há mercado de 'haverá pênalti'; um pênalti perdido não vira gol, então não conta para mercados de gol."},
+      {n:"Lance na trave",tag:"zona",spot:true,x:461,y:131,def:"Chute ou cabeceio direto na estrutura do gol (travessão ou traves) sem entrar.",ex:"Bola na trave não é gol: mesmo quase entrando, não conta para mercados de gol."},
+      {n:"Defesas",tag:"zona",spot:true,x:446,y:168,def:"Intervenções do goleiro para evitar que a bola entre no gol.",ex:"Há mercado de 'defesas do goleiro'; cada intervenção conta no total."},
+      {n:"Gol contra",tag:"regra",spot:true,x:30,y:150,def:"Quando o jogador acidentalmente marca um gol na própria meta.",ex:"Conta como gol normal para o placar nas apostas, mesmo sendo na própria meta."},
+      {n:"VAR",tag:"regra",def:"Video Assistant Referee: o árbitro de vídeo usado para revisar lances decisivos.",ex:"Uma revisão do VAR pode anular um gol ou pênalti já comemorado — e isso muda o resultado das apostas."},
+      {n:"Contra-ataque",tag:"acao",def:"Transição rápida para a frente logo após recuperar a posse de bola.",ex:"Momento clássico de gol; muito relevante em apostas ao vivo de 'próximo gol'."},
+      {n:"Chapéu (Sombreiro)",tag:"acao",def:"Drible encobrindo o adversário por cima da bola.",ex:"Lance de efeito sem mercado próprio, mas aparece em transmissões e comentários de jogo."},
+      {n:"Shot on target (Chute no gol)",tag:"acao",def:"Arremesso na direção do gol que entraria se não fosse defendido ou bloqueado na linha.",ex:"Mercado de 'chutes no gol' só conta finalização na direção da meta — não os que vão para fora."},
+      {n:"Assistência",tag:"acao",def:"O último passe decisivo que resulta diretamente em gol de um companheiro.",ex:"Existe mercado de 'jogador para dar assistência'; vale o último passe antes do gol."},
+      {n:"Chutes para fora",tag:"acao",def:"Arremessos que saem pela linha de fundo sem ir na direção do gol e sem toque do goleiro.",ex:"É o oposto do 'chute no gol': não conta para o mercado de chutes no alvo."},
+      {n:"Desarmes",tag:"acao",def:"Ação defensiva bem-sucedida de tirar a bola da posse do adversário.",ex:"Algumas casas têm mercado de 'desarmes do jogador', medindo ações defensivas."},
+      {n:"Passes",tag:"acao",def:"Enviar a bola intencionalmente a um companheiro para manter a posse e construir jogadas.",ex:"Base de mercados estatísticos como posse de bola e passes certos."}
+    ]
+  },
+
+  volei:{
+    nome:"Vôlei", ic:"🏐", origin:{x:240,y:150},
+    field: board(`
+      <rect x='70' y='50' width='340' height='200' fill='none' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <line x1='180' y1='50' x2='180' y2='250' stroke='${LN}' stroke-opacity='.3' stroke-width='2' stroke-dasharray='5 5'/>
+      <line x1='300' y1='50' x2='300' y2='250' stroke='${LN}' stroke-opacity='.3' stroke-width='2' stroke-dasharray='5 5'/>
+      <line x1='240' y1='40' x2='240' y2='260' stroke='${OR}' stroke-width='3' stroke-dasharray='2 6'/>
+      <text x='240' y='34' fill='${LN}' fill-opacity='.6' font-family='Barlow' font-size='11' text-anchor='middle'>rede</text>
+    `),
+    terms:[
+      {n:"Bloqueio",tag:"zona",spot:true,x:240,y:82,def:"Ação junto à rede para interceptar o ataque adversário com as mãos.",ex:"Ponto feito na rede; algumas casas têm mercado de bloqueios por set."},
+      {n:"Invasão",tag:"regra",spot:true,x:240,y:150,def:"Falta ao ultrapassar a linha central sob a rede ou tocar na rede.",ex:"Gera ponto para o time adversário — detalhe que o cliente pode contestar em apostas ao vivo."},
+      {n:"Corte (Cortada)",tag:"acao",spot:true,x:300,y:104,def:"Ataque potente feito no ar para finalizar a jogada na quadra adversária.",ex:"Principal forma de pontuar; tem peso alto em mercados de pontos por set."},
+      {n:"Toque (Levantamento)",tag:"acao",spot:true,x:214,y:128,def:"Ação com a ponta dos dedos para preparar a bola para o ataque.",ex:"Prepara o ataque; um erro aqui costuma entregar o ponto ao adversário."},
+      {n:"Manchete",tag:"acao",spot:true,x:120,y:150,def:"Técnica de recepção ou defesa usando os antebraços unidos.",ex:"Ligada à qualidade defensiva do time; base para virar o rali a favor."},
+      {n:"Saque (Ace)",tag:"acao",spot:true,x:432,y:150,def:"Ponto direto feito na cobrança do saque sem que o adversário rebata.",ex:"Ponto imediato; relevante em mercados de pontos e de primeiro a pontuar."},
+      {n:"Líbero",tag:"regra",spot:true,x:120,y:212,def:"Jogador especialista em recepção e defesa que usa uniforme diferente.",ex:"Não ataca nem saca; entender a função ajuda a explicar substituições ao cliente."},
+      {n:"Rodízio",tag:"regra",spot:true,x:392,y:70,def:"Rotação obrigatória dos jogadores a cada mudança de posse de saque.",ex:"Erro de rodízio gera ponto ao adversário — motivo comum de dúvida em apostas ao vivo."},
+      {n:"Rali",tag:"conceito",def:"O intervalo em que a bola permanece em jogo desde o saque até o ponto.",ex:"A duração do ponto influencia o ritmo em apostas ao vivo."},
+      {n:"Inversão (5x1)",tag:"tatica",def:"Tática tradicional de posicionamento e substituição dos atletas em quadra.",ex:"Sistema com um levantador fixo; contexto tático que o cliente pode citar."}
+    ]
+  },
+
+  basquete:{
+    nome:"Basquete", ic:"🏀", origin:{x:330,y:150},
+    field: board(`
+      <rect x='24' y='40' width='420' height='220' fill='none' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <rect x='344' y='110' width='100' height='80' fill='none' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <circle cx='344' cy='150' r='28' fill='none' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <path d='M 356 46 Q 210 150 356 254' fill='none' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <line x1='440' y1='132' x2='440' y2='168' stroke='${OR}' stroke-width='3'/>
+      <circle cx='430' cy='150' r='7' fill='none' stroke='${OR}' stroke-width='2'/>
+    `),
+    terms:[
+      {n:"Enterrada",tag:"acao",spot:true,x:428,y:150,def:"Jogada em que o atleta salta e crava a bola diretamente no aro.",ex:"Vale 2 pontos como qualquer cesta de dentro do garrafão — o efeito é visual, não muda a pontuação."},
+      {n:"Cesta de Três",tag:"zona",spot:true,x:250,y:150,def:"Arremesso convertido atrás da linha dos 6,75 m (7,24 m na NBA).",ex:"Vale 3 pontos; o mercado de 'cestas de 3 do jogador' é muito comum."},
+      {n:"Toco (Bloco)",tag:"zona",spot:true,x:408,y:120,def:"Bloqueio legítimo do arremesso do adversário antes de a bola descer.",ex:"Há mercado de 'tocos do jogador' em jogos de NBA."},
+      {n:"Pick and Roll",tag:"tatica",spot:true,x:330,y:150,def:"Jogada de bloqueio no marcador e infiltração do bloqueador em direção à cesta.",ex:"Base ofensiva citada em transmissões; ajuda a explicar como o time cria pontos."},
+      {n:"And-One",tag:"regra",spot:true,x:400,y:182,def:"O atleta sofre falta ao arremessar, converte a cesta e ganha um lance livre extra.",ex:"Soma 3 pontos na jogada (2 + 1 lance livre) — detalhe que muda o placar da aposta."},
+      {n:"Airball",tag:"acao",spot:true,x:300,y:92,def:"Arremesso que não toca nem no aro nem na tabela.",ex:"Não conta como cesta; é erro de arremesso."},
+      {n:"Ponte Aérea",tag:"acao",def:"Passe alto para um companheiro pegar a bola no ar e finalizar sem tocar o chão.",ex:"Jogada de destaque; vale os pontos da finalização normal."},
+      {n:"Triple-Double (Trebucha)",tag:"conceito",def:"Quando um jogador atinge dois dígitos em três estatísticas (ex.: pontos, rebotes, assistências).",ex:"Existe mercado de 'jogador para triple-double' em jogos NBA."},
+      {n:"Piso (Walk / Anda)",tag:"regra",def:"Falta ao caminhar sem quicar a bola.",ex:"Gera perda de posse (turnover) para a equipe."},
+      {n:"Turnover",tag:"acao",def:"Perda da posse de bola para a equipe adversária antes do arremesso.",ex:"Há mercado de 'turnovers'; mede erros de posse do time ou jogador."}
+    ]
+  },
+
+  tenis:{
+    nome:"Tênis", ic:"🎾", origin:{x:110,y:150},
+    field: board(`
+      <rect x='70' y='50' width='340' height='200' fill='none' stroke='${LN}' stroke-opacity='.45' stroke-width='2'/>
+      <line x1='240' y1='42' x2='240' y2='258' stroke='${OR}' stroke-width='3'/>
+      <line x1='155' y1='50' x2='155' y2='250' stroke='${LN}' stroke-opacity='.35' stroke-width='2'/>
+      <line x1='325' y1='50' x2='325' y2='250' stroke='${LN}' stroke-opacity='.35' stroke-width='2'/>
+      <line x1='155' y1='150' x2='325' y2='150' stroke='${LN}' stroke-opacity='.35' stroke-width='2'/>
+      <text x='240' y='36' fill='${LN}' fill-opacity='.6' font-family='Barlow' font-size='11' text-anchor='middle'>rede</text>
+    `),
+    terms:[
+      {n:"Ace",tag:"acao",spot:true,x:298,y:110,def:"Saque perfeito em que o adversário sequer encosta a raquete na bola.",ex:"O mercado de 'total de aces' é um dos mais populares no tênis."},
+      {n:"Forehand",tag:"acao",spot:true,x:108,y:118,def:"Golpe dado com a palma da mão dominante voltada para a frente.",ex:"Base do jogo de fundo de quadra; define o estilo do jogador."},
+      {n:"Backhand",tag:"acao",spot:true,x:108,y:182,def:"Golpe dado com as costas da mão voltadas para a frente (a uma ou duas mãos).",ex:"Junto ao forehand, compõe o jogo de base citado nas análises."},
+      {n:"Smash",tag:"acao",spot:true,x:206,y:96,def:"Golpe potente acima da cabeça, semelhante à cortada do vôlei.",ex:"Costuma finalizar o ponto; jogada de força perto da rede."},
+      {n:"Drop shot (Deixadinha)",tag:"acao",spot:true,x:266,y:150,def:"Golpe curto e suave projetado para cair logo atrás da rede.",ex:"Muda o ritmo do ponto; surpreende quem joga no fundo."},
+      {n:"Drive Volley (Voleio)",tag:"acao",spot:true,x:300,y:150,def:"Golpe dado na bola antes que ela quique no chão.",ex:"Jogado perto da rede para encurtar o ponto."},
+      {n:"Break Point",tag:"conceito",def:"Ponto de quebra que dá ao recebedor a chance de vencer o game do sacador.",ex:"Momento-chave; muito acompanhado em apostas ao vivo."},
+      {n:"Deuce (Igualdade)",tag:"regra",def:"Empate em 40-40 dentro de um game, exigindo dois pontos seguidos para vencer.",ex:"Alonga o game; influencia mercados de duração e de games."},
+      {n:"Tie-break",tag:"regra",def:"Desempate rápido jogado até 7 pontos quando um set empata em 6-6.",ex:"Há mercado de 'haverá tie-break' no set."},
+      {n:"Grand Slam",tag:"conceito",def:"Os quatro maiores torneios do ano (Australian Open, Roland Garros, Wimbledon e US Open).",ex:"Contexto que o cliente cita muito ao falar de favoritismo e importância do jogo."}
+    ]
+  },
+
+  f1:{
+    nome:"Fórmula 1", ic:"🏎️", origin:{x:200,y:220},
+    field: board(`
+      <rect x='120' y='80' width='240' height='140' rx='58' fill='none' stroke='${MUT}' stroke-width='30'/>
+      <rect x='120' y='80' width='240' height='140' rx='58' fill='none' stroke='${LN}' stroke-opacity='.35' stroke-width='2' stroke-dasharray='6 8'/>
+      <rect x='170' y='236' width='150' height='16' rx='8' fill='none' stroke='${LN}' stroke-opacity='.4' stroke-width='2'/>
+      <text x='245' y='248' fill='${LN}' fill-opacity='.6' font-family='Barlow' font-size='9' text-anchor='middle'>pit lane</text>
+      <line x1='250' y1='205' x2='250' y2='235' stroke='${OR}' stroke-width='2' stroke-dasharray='3 3'/>
+      <rect x='224' y='262' width='52' height='22' rx='4' fill='none' stroke='${LN}' stroke-opacity='.4' stroke-width='2'/>
+      <text x='250' y='277' fill='${LN}' fill-opacity='.6' font-family='Barlow' font-size='9' text-anchor='middle'>paddock</text>
+      <rect x='246' y='214' width='8' height='12' fill='${LN}' fill-opacity='.7'/>
+    `),
+    terms:[
+      {n:"Pole Position",tag:"zona",spot:true,x:168,y:220,def:"Primeira posição no grid, conquistada pelo mais rápido no classificatório.",ex:"Existe mercado de 'pole position' decidido no treino de sábado."},
+      {n:"Grid",tag:"zona",spot:true,x:210,y:220,def:"O alinhamento dos carros na reta de largada antes do início da prova.",ex:"Base para apostas de posição inicial e de largada."},
+      {n:"Volta Mais Rápida",tag:"regra",spot:true,x:250,y:220,def:"A volta concluída no menor tempo durante a corrida (que garante ponto extra).",ex:"Tem mercado próprio de 'volta mais rápida' e ainda dá ponto ao piloto."},
+      {n:"Pit Stop",tag:"zona",spot:true,x:250,y:244,def:"Parada nos boxes para troca de pneus, reparos ou ajustes táticos.",ex:"O timing da parada afeta muito apostas ao vivo de vencedor e pódio."},
+      {n:"DRS",tag:"regra",spot:true,x:346,y:150,def:"Drag Reduction System (asa móvel) que reduz o arrasto para facilitar ultrapassagens.",ex:"Relevante em mercados de ultrapassagem e de duelo entre pilotos."},
+      {n:"Safety Car",tag:"regra",spot:true,x:240,y:82,def:"Carro de segurança que agrupa e desacelera o pelotão após acidentes.",ex:"Há mercado de 'haverá safety car'; também embaralha estratégias e apostas ao vivo."},
+      {n:"Oversteer / Understeer",tag:"conceito",spot:true,x:340,y:96,def:"Saída de traseira (over) e de frente (under): perda de aderência do carro nas curvas.",ex:"Explica erros e rodadas; ajuda a entender ritmo e abandonos."},
+      {n:"Bandeira Vermelha",tag:"regra",spot:true,x:134,y:150,def:"Paralisação imediata e total da corrida por grave perigo ou chuva extrema.",ex:"Pode afetar a liquidação de apostas ao vivo se a prova for interrompida."},
+      {n:"Paddock",tag:"zona",spot:true,x:250,y:273,def:"Área restrita atrás dos boxes com caminhões, motorhomes e equipes.",ex:"Contexto de bastidores; o cliente pode citar novidades vindas do paddock."},
+      {n:"Undercut",tag:"tatica",def:"Antecipar a parada nos boxes para ultrapassar um rival com pneus novos mais rápidos.",ex:"Estratégia comum; muda a ordem sem ultrapassagem na pista."}
+    ]
+  },
+
+  ufc:{
+    nome:"UFC (MMA)", ic:"🥊", origin:{x:240,y:150},
+    field: board(`
+      <polygon points='349,195 285,259 195,259 131,195 131,105 195,41 285,41 349,105' fill='#12121f' stroke='${LN}' stroke-opacity='.5' stroke-width='3'/>
+      <circle cx='240' cy='150' r='30' fill='none' stroke='${LN}' stroke-opacity='.35' stroke-width='2'/>
+      <circle cx='240' cy='150' r='3' fill='${LN}'/>
+      <line x1='240' y1='41' x2='240' y2='259' stroke='${LN}' stroke-opacity='.15' stroke-width='1'/>
+      <line x1='131' y1='105' x2='349' y2='195' stroke='${LN}' stroke-opacity='.15' stroke-width='1'/>
+      <line x1='131' y1='195' x2='349' y2='105' stroke='${LN}' stroke-opacity='.15' stroke-width='1'/>
+    `),
+    terms:[
+      {n:"Octógono",tag:"zona",spot:true,x:340,y:150,def:"A gaiola de oito lados fechada por tela onde ocorrem as lutas.",ex:"É o 'campo' do MMA; base para entender controle de posição e encosto na grade."},
+      {n:"Clinch",tag:"acao",spot:true,x:322,y:150,def:"Luta agarrada em pé, colado ao adversário para prender ou desferir joelhadas.",ex:"Fase de controle em pé; antecede quedas e golpes de curta distância."},
+      {n:"Takedown",tag:"acao",spot:true,x:240,y:150,def:"Projeção ou derrubada para levar a luta do pé para o solo.",ex:"Existe mercado de 'total de takedowns' e de 'a luta vai ao chão'."},
+      {n:"Guarda",tag:"zona",spot:true,x:198,y:198,def:"Posição defensiva no solo em que o lutador usa as pernas para controlar quem está por cima.",ex:"Base do jiu-jitsu no MMA; contexto para finalizações e controle."},
+      {n:"Ground and Pound",tag:"acao",spot:true,x:240,y:214,def:"Golpeamento com socos e cotoveladas contra o adversário caído no chão.",ex:"Leva a muitos TKOs; relevante em mercados de método de vitória."},
+      {n:"Nocaute (KO)",tag:"regra",def:"Vitória imediata quando o adversário fica incapacitado de continuar devido a um golpe.",ex:"Mercado 'método de vitória: KO/TKO' é um dos mais buscados."},
+      {n:"Nocaute Técnico (TKO)",tag:"regra",def:"Interrupção pelo árbitro para proteger o atleta que não se defende mais.",ex:"Normalmente conta junto com o KO no mesmo mercado de vitória."},
+      {n:"Finalização (Submission)",tag:"regra",def:"Vitória por chave de articulação ou estrangulamento, fazendo o rival desistir (tap out).",ex:"Há mercado de 'vitória por finalização', separado do nocaute."},
+      {n:"Card (Principal e Preliminar)",tag:"conceito",def:"A lista de lutas programadas para o evento.",ex:"O cliente pode perguntar em qual card está determinada luta e o horário."},
+      {n:"Corte de Peso",tag:"conceito",def:"Processo extremo de desidratação antes da pesagem para bater o limite da categoria.",ex:"Pode afetar o desempenho do atleta — contexto citado em análises de aposta."}
+    ]
+  }
+};
+
+/* ============================================================
+   ENGINE
+   ============================================================ */
+const SPORT_ORDER=["futebol","volei","basquete","tenis","f1","ufc"];
+const TAG_LABEL={zona:"Zona",regra:"Regra",acao:"Ação",tatica:"Tática",conceito:"Conceito"};
+
+const sportsBox=document.getElementById("sports");
+const fieldHost=document.getElementById("fieldHost");
+const termsList=document.getElementById("termsList");
+const termsTitle=document.getElementById("termsTitle");
+const termsCount=document.getElementById("termsCount");
+const detail=document.getElementById("detail");
+
+let curSport=null, curTerm=-1;
+
+// botões de esporte
+SPORT_ORDER.forEach(key=>{
+  const s=DATA[key];
+  const b=document.createElement("button");
+  b.className="sport-btn"; b.dataset.key=key; b.setAttribute("aria-pressed","false");
+  b.innerHTML=`<span class="ic">${s.ic}</span>${s.nome}`;
+  b.addEventListener("click",()=>selectSport(key));
+  sportsBox.appendChild(b);
+});
+
+function selectSport(key){
+  curSport=key; curTerm=-1;
+  const s=DATA[key];
+  [...sportsBox.children].forEach(b=>b.setAttribute("aria-pressed", b.dataset.key===key?"true":"false"));
+
+  // monta o campo com marcadores + token
+  let spotNum=0, markers="";
+  s.terms.forEach((t,i)=>{
+    if(t.spot){ spotNum++; t._num=spotNum;
+      markers+=`<g class="mk" data-i="${i}"><circle cx="${t.x}" cy="${t.y}" r="11"/><text x="${t.x}" y="${t.y}">${spotNum}</text></g>`;
+    }
+  });
+  const ori=s.origin;
+  fieldHost.innerHTML=`<svg class="field-svg" viewBox="0 0 480 300" id="fsvg" role="img" aria-label="Campo de ${s.nome}">
+    ${s.field}${markers}
+    <g id="tok" transform="translate(${ori.x},${ori.y})"><circle class="pring" r="12"/><circle class="pdot" r="7"/></g>
+  </svg>`;
+
+  // delegação de clique nos marcadores
+  document.getElementById("fsvg").addEventListener("click",e=>{
+    const g=e.target.closest(".mk"); if(g) selectTerm(parseInt(g.dataset.i,10));
+  });
+
+  // lista de termos
+  termsTitle.textContent=s.nome;
+  termsCount.textContent=s.terms.length+" termos";
+  termsList.innerHTML="";
+  s.terms.forEach((t,i)=>{
+    const btn=document.createElement("button");
+    btn.className="term"; btn.dataset.i=i; btn.dataset.spot=t.spot?"1":"0";
+    btn.setAttribute("aria-current","false");
+    btn.innerHTML=`<span class="badge">${t.spot?t._num:"•"}</span>
+      <span><span class="nm">${t.n}</span> · <span class="tg">${TAG_LABEL[t.tag]}</span></span>`;
+    btn.addEventListener("click",()=>selectTerm(i));
+    termsList.appendChild(btn);
+  });
+
+  selectTerm(0); // demonstra já com o 1º termo
+}
+
+function selectTerm(i){
+  const s=DATA[curSport]; const t=s.terms[i]; if(!t) return;
+  curTerm=i;
+
+  // lista
+  [...termsList.children].forEach(b=>b.setAttribute("aria-current", parseInt(b.dataset.i,10)===i?"true":"false"));
+  const activeBtn=termsList.querySelector(`.term[data-i="${i}"]`);
+  if(activeBtn) activeBtn.scrollIntoView({block:"nearest"});
+
+  // marcadores
+  [...document.querySelectorAll("#fsvg .mk")].forEach(g=>g.classList.toggle("active", parseInt(g.dataset.i,10)===i));
+
+  // token: vai até o ponto (ou até a origem, se termo sem local)
+  const tok=document.getElementById("tok");
+  const pos = t.spot ? {x:t.x,y:t.y} : s.origin;
+  tok.style.transform=`translate(${pos.x}px,${pos.y}px)`;
+  tok.classList.remove("go"); void tok.offsetWidth; tok.classList.add("go");
+
+  // detalhe
+  const local = t.spot ? "" : `<span class="d-tag conceito" style="background:#6b6b7a">sem local fixo no campo</span>`;
+  detail.innerHTML=`
+    <div class="d-top">
+      <span class="d-name">${t.n}</span>
+      <span class="d-tag ${t.tag}">${TAG_LABEL[t.tag]}</span>
+      ${local}
+    </div>
+    <p class="d-def">${t.def}</p>
+    <div class="d-ex"><span class="k">Exemplo no atendimento</span><span class="v">${t.ex}</span></div>`;
+}
+
+// inicia no futebol
+selectSport("futebol");
+</script>
+</body>
+</html>

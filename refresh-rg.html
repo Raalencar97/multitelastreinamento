@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Jogo Responsável · Refresh CS · Betano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F0F23; --navycard:#17172E; --orange:#FF3C00; --white:#FFFFFF;
+    --cream:#FAF5F0; --card:#FFFFFF; --border:#E8E3DC; --slate:#3A3A55;
+    --lav:#C9C9D6; --call:#FFF0EC; --green:#178E33; --greenbg:#ECF6EE; --red:#FF2A21; --amber:#E8A21C;
+    --bubble:#EEF1F6; --bubbleb:#D6DEEA; --crit:#B3001B;
+    --f:"Barlow",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    --fc:"Barlow Condensed",var(--f);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--f);background:var(--cream);color:var(--slate);line-height:1.45;-webkit-font-smoothing:antialiased}
+
+  header.masthead{background:var(--navy);border-bottom:4px solid var(--orange)}
+  .mast-in{max-width:1240px;margin:0 auto;padding:13px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .wordmark{font-family:var(--fc);font-weight:700;letter-spacing:.5px;font-size:22px;color:var(--cream)}
+  .wordmark b{color:var(--orange)}
+  .mast-sep{width:1px;height:22px;background:#4A4A63}
+  .mast-title{font-weight:700;font-size:13px;color:var(--white);letter-spacing:.3px}
+  .mast-tag{margin-left:auto;font-size:11px;color:var(--lav);letter-spacing:2px;text-transform:uppercase}
+
+  main{max-width:1240px;margin:0 auto;padding:24px 22px 60px}
+  .eyebrow{font-family:var(--f);font-weight:700;font-size:11.5px;letter-spacing:3px;color:var(--orange);text-transform:uppercase}
+  h1.h2{font-family:var(--fc);font-weight:700;font-size:32px;color:var(--navy);line-height:1.05;margin:6px 0 4px}
+  h1.h2 span{color:var(--orange)}
+  .sub{font-size:13.5px;color:var(--slate);max-width:82ch}
+
+  .btn{appearance:none;border:none;cursor:pointer;font-family:var(--f);font-weight:700;font-size:13px;letter-spacing:.3px;border-radius:10px;padding:12px 22px;transition:.16s;text-transform:uppercase}
+  .btn-primary{background:var(--orange);color:#fff}
+  .btn-primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .btn-ghost{background:transparent;color:var(--slate);border:1.5px solid var(--border)}
+  .btn-ghost:hover{border-color:var(--orange);color:var(--navy)}
+  .btn:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+  .slas{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0 4px}
+  .sla{background:#fff;border:1px solid var(--border);border-radius:12px;padding:11px 15px;display:flex;align-items:center;gap:11px}
+  .sla .n{font-family:var(--fc);font-weight:700;font-size:24px;color:var(--orange);line-height:1}
+  .sla .l{font-size:12px;color:var(--slate)} .sla .l b{color:var(--navy)}
+  .tomvoz{background:var(--call);border:1.5px solid var(--orange);border-radius:12px;padding:12px 16px;font-size:12.5px;color:var(--navy);margin-top:12px;line-height:1.45}
+  .tomvoz b{color:var(--orange)}
+  .porta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  @media(max-width:640px){.porta{grid-template-columns:1fr}}
+  .porta .pc{border:1px solid var(--border);border-radius:12px;padding:12px 15px;background:#fff;font-size:12px;line-height:1.4}
+  .porta .pc .pt{font-family:var(--fc);font-weight:700;font-size:15px;margin-bottom:4px}
+  .porta .pc.keep .pt{color:var(--green)} .porta .pc.leave .pt{color:var(--red)}
+  .porta .pc b{color:var(--navy)}
+
+  .days{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin:18px 0}
+  .day{position:relative;border:1.5px solid var(--border);background:#fff;border-radius:12px;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:12px 13px;transition:.15s;text-align:left}
+  .day:hover{border-color:var(--orange);transform:translateY(-2px)}
+  .day[aria-pressed="true"]{background:var(--navy);border-color:var(--navy)}
+  .day .dn{font-family:var(--fc);font-weight:700;font-size:15px;color:var(--navy);line-height:1.05}
+  .day .ds{font-size:10px;letter-spacing:.3px;color:var(--slate);text-transform:uppercase}
+  .day[aria-pressed="true"] .dn{color:#fff} .day[aria-pressed="true"] .ds{color:var(--lav)}
+  .day .scr{margin-top:5px;display:flex;gap:3px} .day .scr i{width:6px;height:6px;border-radius:50%;background:var(--orange);opacity:.85}
+  .day .em{position:absolute;top:10px;right:11px;font-size:18px}
+  .day .lk{position:absolute;bottom:11px;right:12px;font-size:11px;color:var(--slate)}
+  .day[aria-pressed="true"] .lk{color:var(--lav)}
+
+  .briefing{background:var(--navycard);border-radius:16px;padding:22px;color:#fff;display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:8px}
+  .briefing .bg-emoji{font-size:44px}
+  .briefing .bt{font-family:var(--fc);font-weight:700;font-size:26px}
+  .briefing .bd{font-size:13px;color:var(--lav);max-width:56ch;margin-top:2px}
+  .gate{margin-left:auto;display:flex;flex-direction:column;gap:7px;align-items:flex-end}
+  .gate .ghint{font-size:11px;color:var(--lav);letter-spacing:.2px}
+  .gate .pwrow{display:flex;gap:8px;align-items:center}
+  .gate input{font-family:var(--f);font-size:15px;font-weight:700;padding:10px 12px;border-radius:10px;border:1.5px solid #3a3a55;background:#0f0f23;color:#fff;width:130px;letter-spacing:2px;text-align:center}
+  .gate input:focus{outline:2px solid var(--orange);outline-offset:1px;border-color:var(--orange)}
+  .gate input::placeholder{color:#6b6b85;letter-spacing:1px;font-weight:600}
+  .gate .err{font-size:11px;color:#ff6a5f;min-height:14px;text-align:right}
+  @keyframes shake{10%,90%{transform:translateX(-1px)}30%,70%{transform:translateX(2px)}50%{transform:translateX(-3px)}}
+  .gate.bad input{animation:shake .3s}
+
+  #game{display:none}
+  .status{position:sticky;top:0;z-index:30;background:var(--navy);border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:16px;box-shadow:0 6px 18px rgba(15,15,35,.2)}
+  .status .s-day{font-family:var(--fc);font-weight:700;font-size:20px;color:#fff}
+  .status .s-day span{color:var(--orange)}
+  .status .s-pill{display:flex;flex-direction:column;line-height:1.05}
+  .status .s-pill .n{font-family:var(--fc);font-weight:700;font-size:20px}
+  .status .s-pill .l{font-size:10px;letter-spacing:1px;color:var(--lav);text-transform:uppercase}
+  .s-pill .n.ok{color:var(--green)} .s-pill .n.lost{color:var(--red)} .s-pill .n.act{color:#fff}
+  .status .s-end{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .status .btn{padding:9px 16px}
+  #dayDoneNote{color:var(--lav);font-size:11.5px}
+
+  .browser{background:var(--navycard);border-radius:16px;padding:14px;box-shadow:0 16px 36px rgba(15,15,35,.16)}
+  .tabbar{display:flex;gap:6px;overflow-x:auto}
+  .tab-chat{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#20203a;color:#cfcfe0;border:1px solid #2f2f4d;border-bottom:none;border-radius:10px 10px 0 0;padding:9px 13px;cursor:pointer;font-size:12.5px;font-weight:700;max-width:190px;white-space:nowrap;transition:.15s}
+  .tab-chat:hover{background:#2a2a48}
+  .tab-chat.sel{background:#fff;color:var(--navy);border-color:#fff}
+  .tab-chat .dot{width:8px;height:8px;border-radius:50%;flex:none;background:#666}
+  .tab-chat .nm{overflow:hidden;text-overflow:ellipsis}
+  .tab-chat .mini{font-family:var(--fc);font-weight:700;font-size:12px;opacity:.85}
+  .tab-chat.urgent{animation:tabpulse .8s infinite}
+  @keyframes tabpulse{50%{background:#5a1616;color:#fff}}
+  .tab-chat.done,.tab-chat.lost{opacity:.55}
+
+  .workspace{display:grid;grid-template-columns:1fr 246px;gap:14px;background:#fff;border-radius:0 12px 12px 12px;padding:14px}
+  @media(max-width:820px){.workspace{grid-template-columns:1fr}}
+  .chatpanel{position:relative;min-height:420px;display:flex;flex-direction:column}
+  .cp-empty{margin:auto;color:var(--slate);font-style:italic;font-size:13px}
+  .cp-head{border-bottom:1px solid var(--border);padding-bottom:11px;margin-bottom:11px}
+  .cp-row1{display:flex;align-items:center;gap:9px}
+  .cp-row1 .who{font-family:var(--fc);font-weight:700;font-size:20px;color:var(--navy)}
+  .cp-row1 .tag{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;background:var(--bubble);color:var(--slate);border:1px solid var(--bubbleb);padding:3px 9px;border-radius:12px}
+  .cp-timerrow{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .timer{flex:1;height:8px;border-radius:5px;background:#eee3d8;overflow:hidden}
+  .timer .bar{height:100%;width:100%;background:var(--green);transition:width .12s linear,background .3s}
+  .tleft{font-family:var(--fc);font-weight:700;font-size:17px;color:var(--navy);min-width:48px;text-align:right}
+  .sla-lbl{font-size:10px;color:var(--slate);letter-spacing:.4px;text-transform:uppercase;margin-top:4px;display:block;min-height:12px}
+
+  .msgs{flex:1;display:flex;flex-direction:column;gap:9px;overflow-y:auto;max-height:300px;padding:2px}
+  .msg{max-width:82%;font-size:13px;padding:9px 12px;border-radius:12px;line-height:1.35}
+  .msg.c{align-self:flex-start;background:var(--bubble);border:1px solid var(--bubbleb);color:var(--navy);border-bottom-left-radius:3px}
+  .msg.a{align-self:flex-end;background:var(--call);border:1px solid var(--orange);color:var(--navy);border-bottom-right-radius:3px}
+  .msg .lbl{display:block;font-size:8.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.6;margin-bottom:2px}
+  .sysmsg{align-self:center;background:var(--navy);color:#fff;font-size:12px;font-weight:600;padding:8px 14px;border-radius:20px;text-align:center;max-width:94%}
+  .typing{font-size:11.5px;color:var(--slate);font-style:italic;padding:6px 2px}
+  .typing.on::after{content:"";animation:dots 1.2s steps(4,end) infinite}
+  @keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+
+  .opts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .opt{appearance:none;text-align:left;cursor:pointer;background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-family:var(--f);font-size:12.5px;color:var(--navy);transition:.13s;line-height:1.3}
+  .opt:hover{border-color:var(--orange);background:var(--call)}
+  .prompt{margin-top:12px;border-radius:10px;padding:11px 13px;font-size:12.5px;line-height:1.35}
+  .prompt.rg{background:#fff3cd;border:1.5px solid #e8c760;color:#7a5b00}
+  .prompt.sv{background:var(--greenbg);border:1.5px solid #bfe4c6;color:#0f5d24}
+
+  .rgpanel{background:#fbf9f6;border:1px solid var(--border);border-radius:12px;padding:14px;height:fit-content}
+  .rg-section+.rg-section{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+  .rg-title{font-family:var(--fc);font-weight:700;font-size:15px;color:var(--navy)}
+  .rg-hint{font-size:10.5px;color:var(--slate);line-height:1.35;margin:2px 0 8px}
+  .rg-btn{appearance:none;cursor:pointer;text-align:left;width:100%;border:1.5px solid var(--border);background:#fff;border-radius:10px;padding:9px 11px;font-family:var(--f);font-weight:700;font-size:12px;color:var(--navy);transition:.14s;display:flex;align-items:center;gap:9px;margin-bottom:7px}
+  .rg-btn:last-child{margin-bottom:0}
+  .rg-btn:hover{border-color:var(--red);background:#fff5f4}
+  .rg-btn .ri{width:9px;height:9px;border-radius:2px;background:var(--red);flex:none}
+  .rg-btn .ri.crit{background:var(--crit)}
+  .rgpanel.armRG .rg-btn{border-color:var(--orange);animation:armO 1s infinite}
+  @keyframes armO{50%{box-shadow:0 0 0 3px rgba(255,60,0,.14)}}
+  .survey-btn{appearance:none;cursor:pointer;width:100%;text-align:left;border:1.5px solid var(--green);background:#eefaf0;color:#0f5d24;border-radius:10px;padding:11px 12px;font-family:var(--f);font-weight:700;font-size:12.5px;transition:.14s;display:flex;align-items:center;gap:8px}
+  .survey-btn:hover{background:#dff3e4}
+  .rgpanel.armSV .survey-btn{animation:armG 1s infinite}
+  @keyframes armG{50%{box-shadow:0 0 0 3px rgba(23,142,51,.18)}}
+  .rg-btn:focus-visible,.survey-btn:focus-visible{outline:2px solid var(--orange);outline-offset:1px}
+  .flash{font-size:10.5px;color:var(--red);margin-top:8px;line-height:1.3}
+
+  .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22px;border-radius:10px}
+  .overlay.lost{background:rgba(255,42,33,.95);color:#fff}
+  .overlay.done{background:rgba(23,142,51,.96);color:#fff}
+  .overlay .ot{font-family:var(--fc);font-weight:700;font-size:24px;line-height:1.05}
+  .overlay .od{font-size:12.5px;opacity:.94;margin-top:8px;max-width:34ch}
+  .overlay .score{font-family:var(--fc);font-weight:700;font-size:54px;margin-top:4px;line-height:1}
+  .dims{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:12px;width:100%;max-width:280px}
+  .dim{font-size:10px;text-align:left}
+  .dim .dbar{height:5px;border-radius:3px;background:rgba(255,255,255,.3);margin-top:2px;overflow:hidden}
+  .dim .dbar i{display:block;height:100%;background:#fff}
+  .cat{font-size:11px;opacity:.92;margin-top:12px;border-top:1px solid rgba(255,255,255,.3);padding-top:8px}
+
+  #summary{display:none;position:fixed;inset:0;background:rgba(15,15,35,.6);z-index:60;align-items:center;justify-content:center;padding:22px}
+  #summary.show{display:flex}
+  .sum-card{background:#fff;border-radius:18px;max-width:520px;width:100%;padding:28px;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,.3)}
+  .sum-card .eyebrow{justify-content:center}
+  .sum-title{font-family:var(--fc);font-weight:700;font-size:30px;color:var(--navy);margin:4px 0 14px}
+  .sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+  .sum-stat{background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:14px 8px}
+  .sum-stat .n{font-family:var(--fc);font-weight:700;font-size:30px;line-height:1}
+  .sum-stat .n.ok{color:var(--green)} .sum-stat .n.lost{color:var(--red)} .sum-stat .n.ts{color:var(--orange)}
+  .sum-stat .l{font-size:10.5px;letter-spacing:.8px;color:var(--slate);text-transform:uppercase;margin-top:4px}
+  .sum-msg{font-size:13.5px;color:var(--slate);margin:6px 0 18px}
+  .sum-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+  footer{background:var(--navy);border-top:4px solid var(--orange);margin-top:40px}
+  .foot-in{max-width:1240px;margin:0 auto;padding:12px 22px;display:flex;justify-content:space-between;font-size:11px;color:var(--lav);letter-spacing:.5px}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mast-in">
+    <span class="wordmark">bet<b>ano</b></span>
+    <span class="mast-sep"></span>
+    <span class="mast-title">Simulador de Jogo Responsável · Refresh CS</span>
+    <span class="mast-tag">Uso interno</span>
+  </div>
+</header>
+
+<main>
+  <section id="picker">
+    <span class="eyebrow">Refresh · Responsible Gaming (RG)</span>
+    <h1 class="h2">É Jogo Responsável ou não? <span>Você decide, com o processo</span></h1>
+    <p class="sub">Vários chats abrem em guias ao mesmo tempo — e a tela não muda sozinha: fique de olho nas abas que piscam. Em cada atendimento você precisa <b>analisar se há sinal de RG</b>, conduzir o fluxo de perguntas certo (uma de cada vez), <b>classificar o caso</b> e aplicar a conduta correta. Nem todo contato é RG: convencionais e pedidos de bônus normais se encerram pela pesquisa.</p>
+
+    <div class="slas">
+      <div class="sla"><span class="n">0:30</span><span class="l"><b>Primeira mensagem.</b> Se estourar, o cliente vai embora na hora.</span></div>
+      <div class="sla"><span class="n">2:59</span><span class="l"><b>Espera máxima</b> nas mensagens seguintes antes do abandono.</span></div>
+    </div>
+
+    <div class="tomvoz"><b>Empatia é o tom; o processo é o conteúdo.</b> Acolha sem reforçar a emoção negativa — prefira <i>“entendo como você se sente”</i> a <i>“entendo sua frustração/indignação”</i>. Conduza <b>uma pergunta por vez</b>, pare no primeiro sinal vermelho e <b>resolva também a dúvida inicial</b> do cliente.</div>
+
+    <div class="porta">
+      <div class="pc keep"><div class="pt">🧡 Leve com você</div><b>Escuta genuína</b> sem pressa · <b>empatia no tom</b> · <b>processo como bússola</b> (o mesmo caminho, sempre) · <b>transparência</b>.</div>
+      <div class="pc leave"><div class="pt">🚪 Deixe na porta</div><b>Opinião pessoal</b> sobre o cliente · <b>crenças religiosas</b> · <b>comparações</b> com sua família/experiência · <b>promessas fora do processo</b> (“resolvo agora”, “vamos te reembolsar”).</div>
+    </div>
+
+    <h1 class="h2" style="font-size:22px;margin-top:26px">Escolha o <span>plantão</span></h1>
+    <div class="days" id="days"></div>
+    <div class="briefing" id="briefing"></div>
+  </section>
+
+  <section id="game">
+    <div class="status">
+      <span class="s-day" id="sDay">Plantão 1</span>
+      <div class="s-pill"><span class="n act" id="sActive">0</span><span class="l">Ativos</span></div>
+      <div class="s-pill"><span class="n ok" id="sOk">0</span><span class="l">Concluídos</span></div>
+      <div class="s-pill"><span class="n lost" id="sLost">0</span><span class="l">Perdidos</span></div>
+      <div class="s-end">
+        <span id="dayDoneNote" style="display:none">Todos encerrados — revise as guias</span>
+        <button class="btn btn-primary" id="endDayBtn" style="display:none">Encerrar plantão</button>
+        <button class="btn btn-ghost" id="quitBtn" style="color:var(--lav);border-color:#3a3a55">Sair do plantão</button>
+      </div>
+    </div>
+
+    <div class="browser">
+      <div class="tabbar" id="tabbar"></div>
+      <div class="workspace">
+        <div class="chatpanel" id="chatpanel"></div>
+        <div class="rgpanel" id="rgpanel">
+          <div class="rg-section">
+            <div class="rg-title">Encerramento comum</div>
+            <div class="rg-hint">Cliente convencional ou pedido de bônus normal, <b>sem sinal de RG</b>: resolva a dúvida e envie a pesquisa.</div>
+            <button class="survey-btn" id="surveyBtn">📨 Enviar pesquisa</button>
+          </div>
+          <div class="rg-section">
+            <div class="rg-title">Classificar &amp; aplicar conduta de RG</div>
+            <div class="rg-hint">Só em casos de Jogo Responsável. Conduza o fluxo, confirme o sinal e <b>classifique corretamente</b> — cada tipo tem uma conduta.</div>
+            <button class="rg-btn" data-kind="cc"><span class="ri"></span>Comentário Preocupante</button>
+            <button class="rg-btn" data-kind="psa"><span class="ri crit"></span>PSA · Risco de Suicídio</button>
+            <button class="rg-btn" data-kind="vicio"><span class="ri"></span>Declaração de Vício</button>
+            <button class="rg-btn" data-kind="bonus_frustracao"><span class="ri"></span>Bônus · Frustração</button>
+            <button class="rg-btn" data-kind="bonus_perdas"><span class="ri"></span>Bônus · Perdas / Dívida</button>
+            <div id="rgFlash"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="summary">
+  <div class="sum-card">
+    <span class="eyebrow">Fim do plantão</span>
+    <div class="sum-title" id="sumTitle">Plantão concluído</div>
+    <div class="sum-grid">
+      <div class="sum-stat"><div class="n ok" id="sumOk">0</div><div class="l">Atendidos</div></div>
+      <div class="sum-stat"><div class="n lost" id="sumLost">0</div><div class="l">Perdidos</div></div>
+      <div class="sum-stat"><div class="n ts" id="sumTcsat">0</div><div class="l">TCSAT médio</div></div>
+    </div>
+    <p class="sum-msg" id="sumMsg"></p>
+    <div class="sum-actions">
+      <button class="btn btn-primary" id="againBtn">Refazer o plantão</button>
+      <button class="btn btn-ghost" id="backBtn">Escolher outro plantão</button>
+    </div>
+  </div>
+</div>
+
+<footer><div class="foot-in"><span>Uso interno · Confidencial</span><span>Kaizen Gaming · 2026</span></div></footer>
+
+<script>
+const SLA_FIRST=30, SLA_WAIT=179;
+const NAMES=["Ana","Bruno","Carla","Diego","Marina","Felipe","Paula","Lucas","Juliana","Marcos","Renata","Tiago","Bianca","André","Camila","Rodrigo","Letícia","Gustavo","Vinícius","Priscila","Otávio","Débora","Ramon","Sabrina"];
+const SURVEY="{nome}, posso te ajudar com algo mais? Se estiver tudo certo, a Betano agradece o seu contato — foi um prazer te atender! 😊 Ao encerrarmos, vai aparecer uma pesquisa rápida sobre o meu atendimento e sobre a Betano. Sua resposta é muito importante pra gente continuar melhorando. Conte com a gente sempre!";
+const TYPELABEL={cc:"Comentário Preocupante",psa:"PSA · Risco de Suicídio",vicio:"Declaração de Vício",bonus_frustracao:"Bônus · Frustração",bonus_perdas:"Bônus · Perdas / Dívida",bonus_normal:"Bônus · Normal (não é RG)"};
+
+/* Um caso é RG quando rgType existe e não é 'bonus_normal'. Casos RG fecham por CLASSIFICAÇÃO; os demais fecham por PESQUISA.
+   s=[acolhimento, precisão, fluxo/processo, fechamento] (0–2,5 cada → TCSAT 0–10). */
+const SCENARIOS={
+
+  /* ===================== NÃO É RG (Cliente Convencional — gabaritos do deck) ===================== */
+  conv_travou:{tag:"Cassino", nome:"Bruno", cat:"Cliente convencional · falha técnica", turns:[
+    {c:"Esse jogo travou. To com muita raiva!", o:[
+      {t:"Poxa, {nome}, que situação chata! Já vou verificar a rodada e o registro no sistema pra esclarecer certinho o que aconteceu, tá?", s:[2.5,2.4,2.5,2.4]},
+      {t:"Entendo a sua raiva. Falhas acontecem, é só tentar de novo.", s:[1.3,1.2,1.3,1.1]},
+      {t:"Percebo que o jogo tem te afetado bastante. Você sente que está no controle?", s:[.6,.5,.5,.5]}]},
+    {c:"Só quero saber se a minha aposta foi registrada!", o:[
+      {t:"Já localizei aqui: a sua aposta consta registrada e o resultado seguiu o mercado oficial. Vou te enviar o comprovante. Posso ajudar com mais alguma coisa, {nome}?", s:[2.4,2.5,2.5,2.4]},
+      {t:"Deve ter registrado sim, fica tranquilo.", s:[1,.9,1,.9]},
+      {t:"Não sei, o sistema é assim mesmo.", s:[.4,.5,.4,.3]}]}
+  ]},
+  conv_saudavel:{tag:"Suporte", nome:"Marina", cat:"Cliente convencional · jogo com equilíbrio", turns:[
+    {c:"Perdi o valor do depósito, ainda bem que era só um dinheiro separado para brincar mesmo. Queria saber como vejo meu histórico.", o:[
+      {t:"Que bom que você joga assim, com equilíbrio, {nome}! 🧡 Pra ver o seu histórico: Conta > Histórico de Apostas. Quer que eu te guie no caminho?", s:[2.5,2.4,2.5,2.4]},
+      {t:"Fiquei preocupado com o que você mencionou sobre ter perdido. Você está no controle do seu jogo?", s:[.8,.6,.6,.6]},
+      {t:"Perder faz parte, boa sorte na próxima!", s:[.6,.5,.6,.5]}]}
+  ]},
+  conv_anular:{tag:"Aposta", nome:"Rodrigo", cat:"Cliente convencional · figura de linguagem", turns:[
+    {c:"Vocês anularem essa aposta, é para matar o cidadão! Isso é um roubo!", o:[
+      {t:"Entendo o quanto isso é importante pra você, {nome}. Vou revisar a liquidação e o resultado oficial agora pra esclarecer o que aconteceu, combinado?", s:[2.5,2.4,2.5,2.4]},
+      {t:"Fiquei preocupado com o que você disse. Você está pensando em se machucar?", s:[.7,.5,.5,.6]},
+      {t:"Não fui eu que anulei, reclama com o sistema.", s:[.4,.5,.4,.3]}]},
+    {c:"Eu tinha ganhado, tô revoltado!", o:[
+      {t:"Se a evidência mostrar qualquer divergência, eu abro a correção na hora. Já estou conferindo o mercado e o resultado oficial pra você, {nome}.", s:[2.4,2.5,2.5,2.4]},
+      {t:"Aí a gente vê o que dá pra fazer.", s:[1.1,1,1,.9]},
+      {t:"Dificilmente você tem razão.", s:[.4,.6,.4,.3]}]}
+  ]},
+  bonus_normal:{tag:"Bônus", rgType:"bonus_normal", nome:"Camila", cat:"Solicitação de Bônus · Normal (não é RG)", turns:[
+    {c:"Olá, sou cliente há bastante tempo e gostaria de um bônus.", o:[
+      {t:"Oi, {nome}! Que bom te ver por aqui 🧡 Deixa eu dar uma olhada na sua conta e nos critérios de elegibilidade. Já te trago as promoções ativas que combinam com o seu perfil, tá?", s:[2.5,2.4,2.5,2.4]},
+      {t:"A gente não libera bônus manualmente, é automático.", s:[1.2,1.4,1.2,1.1]},
+      {t:"Percebo uma preocupação no seu pedido. Você está no controle do seu jogo?", s:[.6,.5,.5,.5]}]},
+    {c:"Ah, entendi. E como faço pra receber mais ofertas?", o:[
+      {t:"Fique de olho na aba Promoções e ative as que exigem opt-in. Sem garantir liberação, é assim que aumentam as suas chances, combinado {nome}?", s:[2.4,2.5,2.5,2.4]},
+      {t:"Continua apostando que uma hora vem.", s:[.6,.6,.6,.5]},
+      {t:"Não tem como saber.", s:[.5,.5,.5,.4]}]}
+  ]},
+
+  /* ===================== COMENTÁRIO PREOCUPANTE — aluguel (recuperar perdas) ===================== */
+  cc_fabio:{tag:"Suporte", rgType:"cc", restrict:true, nome:"Diego", cat:"Comentário Preocupante · RG_Withdrawals_Only", turns:[
+    {c:"Usei o dinheiro do aluguel tentando recuperar o que perdi ontem, agora não sei o que fazer.", o:[
+      {t:"Entendo, {nome}. Fiquei preocupado com o que você mencionou (usei o dinheiro do aluguel tentando recuperar o que perdi ontem). Você pode me contar mais sobre isso?", s:[2.5,2.5,2.5,2.4]},
+      {t:"Você pode definir um limite de depósito nas configurações.", s:[1.4,1.7,1.3,1.3]},
+      {t:"Isso acontece com todo mundo, é só maneirar.", s:[.4,.5,.4,.3]}]},
+    {c:"É que eu já tinha perdido bastante essa semana e fiquei tentando repor de qualquer jeito, sem pensar direito.", o:[
+      {t:"Obrigado por compartilhar isso comigo, {nome}. Sabemos que não é fácil falar sobre isso, e você está sendo ouvido com todo o cuidado. Como medida de proteção, vou aplicar uma restrição temporária de depósitos e apostas enquanto a nossa equipe de Jogo Responsável avalia o melhor apoio. Entraremos em contato por telefone ou e-mail — as nossas ligações são pelo (11) 4935-1035. Há canais de apoio como o CVV, no 188, 24h.", s:[2.5,2.5,2.5,2.5]},
+      {t:"Você está no controle? Já pensou em usar as nossas ferramentas? Quer um limite? Quer pausa?", s:[.9,1,.7,.8]},
+      {t:"Pode deixar que eu resolvo tudo e te devolvo esse dinheiro agora.", s:[.4,.5,.4,.4]}]}
+  ]},
+
+  /* ===================== PSA — prestes a fazer uma besteira ===================== */
+  psa_pietro:{tag:"Suporte", rgType:"psa", restrict:true, nome:"Lucas", cat:"PSA · Jira Critical + canais de apoio", turns:[
+    {c:"Me ajuda aí! Não aguento mais perder dinheiro! Estou prestes a fazer uma besteira!", o:[
+      {t:"Certo, {nome}, fiquei preocupado com o que você mencionou. Poderia esclarecer o que você quis dizer com (prestes a fazer uma besteira)? Você está bem?", s:[2.5,2.5,2.5,2.5]},
+      {t:"Ah, isso é só cansaço, amanhã melhora.", s:[.2,.3,.3,.2]},
+      {t:"Vamos resolver a sua aposta primeiro, tá?", s:[.4,.5,.4,.4]}]},
+    {c:"É isso, estou perdendo a cabeça! Prestes a fazer uma besteira com a minha vida!", o:[
+      {t:"{nome}, obrigado por entrar em contato conosco. Queremos que saiba que você não está sozinho, o seu bem-estar é a nossa prioridade e estamos aqui para ajudar. Um dos nossos especialistas de Jogo Responsável vai entrar em contato com você em breve para entender como está e oferecer o suporte necessário. Esse contato poderá ser feito por telefone ou e-mail, a qualquer momento. Nossas ligações são realizadas pelo número (11) 4935-1035. Por favor, fique atento aos seus canais de contato para não perder a nossa mensagem. Se sentir que precisa de apoio emocional imediato, você pode entrar em contato com o Centro de Valorização da Vida pelo telefone 188, disponível gratuitamente 24 horas por dia, em todo o Brasil. Também é possível buscar apoio por chat, e-mail ou atendimento presencial por meio do site oficial do CVV.", s:[2.5,2.5,2.5,2.5]},
+      {t:"Pensa na sua família, confie em Deus que isso passa!", s:[.2,.2,.3,.2]},
+      {t:"Vou resolver tudo isso e te devolver o dinheiro agora mesmo.", s:[.3,.4,.4,.3]}]}
+  ]},
+
+  /* ===================== PSA com menção de religião (falas da agente-exemplo = distratores do que NÃO fazer) ===================== */
+  psa_jonas:{tag:"Suporte", rgType:"psa", restrict:true, nome:"André", cat:"PSA · Jira Critical + canais de apoio", turns:[
+    {c:"Eu preciso recuperar meu dinheiro. Me ajuda, me ajuda, por favor! Não tô me aguentando, tô a ponto de me jogar daqui.", o:[
+      {t:"Fiquei muito preocupado com o que você mencionou, {nome}. Poderia me esclarecer o que você quis dizer com isso? Você está bem?", s:[2.5,2.5,2.5,2.5]},
+      {t:"A sua vida importa, você importa. Vai dar tudo certo, a nossa equipe vai entrar em contato com você.", s:[1.1,.5,.5,.6]},
+      {t:"Vamos focar em recuperar o seu dinheiro primeiro.", s:[.3,.4,.4,.3]}]},
+    {c:"Tá doendo demais. Tô perdendo tudo, família, tudo. Eu preciso recuperar esse dinheiro.", o:[
+      {t:"{nome}, obrigado por entrar em contato conosco. Queremos que saiba que você não está sozinho, o seu bem-estar é a nossa prioridade e estamos aqui para ajudar. Um dos nossos especialistas de Jogo Responsável vai entrar em contato com você em breve para entender como está e oferecer o suporte necessário. Esse contato poderá ser feito por telefone ou e-mail, a qualquer momento. Nossas ligações são realizadas pelo número (11) 4935-1035. Por favor, fique atento aos seus canais de contato para não perder a nossa mensagem. Se sentir que precisa de apoio emocional imediato, você pode entrar em contato com o Centro de Valorização da Vida pelo telefone 188, disponível gratuitamente 24 horas por dia, em todo o Brasil. Também é possível buscar apoio por chat, e-mail ou atendimento presencial por meio do site oficial do CVV.", s:[2.5,2.5,2.5,2.5]},
+      {t:"Pense na sua família! No que você tem fé? Acredite, você é forte, eu acredito em você!", s:[1,.3,.3,.4]},
+      {t:"Fica aqui comigo, me conta tudo, não vou te deixar sozinho a noite toda.", s:[1,.5,.4,.5]}]}
+  ]},
+
+  /* ===================== DECLARAÇÃO DE VÍCIO — (SEM perguntas) ===================== */
+  vicio_flavio:{tag:"Financeiro", rgType:"vicio", restrict:true, nome:"Otávio", cat:"Declaração de Vício · restrição imediata", turns:[
+    {c:"Essa casa de aposta só quer sugar! Joguei 5000 agora e não pagou nada. Isso é surreal.", o:[
+      {t:"O que houve, {nome}? Sei o quanto essa situação é importante pra você e vou te ajudar, tá? Pode me explicar o que aconteceu?", s:[2.5,2.4,2.4,2.4]},
+      {t:"Entendo a sua frustração. Saques podem levar até 24h pra cair.", s:[1.5,1.4,1.4,1.3]},
+      {t:"Se não pagou, é porque você não ganhou.", s:[.3,.4,.4,.3]}]},
+    {c:"Vocês estão acabando com a nossa vida pessoal. Viciando as pessoas. Sei que você não tem nada a ver, mas tá complicado.", o:[
+      {t:"Obrigado por compartilhar isso comigo, {nome}. Sabemos que não é fácil falar sobre isso, e você está sendo ouvido com todo o cuidado. Como medida de proteção, vou aplicar uma restrição temporária de depósitos e apostas enquanto a nossa equipe de Jogo Responsável avalia o melhor apoio. Entraremos em contato por telefone ou e-mail — as nossas ligações são pelo (11) 4935-1035. Há canais de apoio como o CVV, no 188, 24h.", s:[2.5,2.5,2.5,2.5]},
+      {t:"Você sente que está totalmente no controle do seu jogo?", s:[1.2,.8,.8,1]},
+      {t:"Ninguém obriga ninguém a jogar, é escolha sua.", s:[.3,.4,.3,.3]}]}
+  ]},
+
+  /* ===================== BÔNUS · PERDAS/DÍVIDA — dívida/aluguel ===================== */
+  bonus_perdas:{tag:"Bônus", rgType:"bonus_perdas", restrict:true, nome:"Renata", cat:"Bônus · Perdas/Dívida · RG_Withdrawals_Only", turns:[
+    {c:"Não sei por que não recebo bônus de apostas grátis ou benefícios, eu aposto bastante. Você pode ver se consegue uma aposta grátis pra mim?", o:[
+      {t:"Vou verificar o que está acontecendo e se a sua conta está elegível, {nome}. Não conseguimos liberar bônus manualmente, mas posso te enviar as ofertas disponíveis hoje. Só um momento, por favor.", s:[2.5,2.5,2.5,2.4]},
+      {t:"Deixa comigo que eu libero uma aposta grátis pra você.", s:[.3,.4,.4,.3]},
+      {t:"Bônus é automático, não tem o que eu fazer.", s:[.6,1,.7,.6]}]},
+    {c:"Eu preciso de uma aposta grátis. Porque já gastei o dinheiro e não tinha oferta.", o:[
+      {t:"Sobre o seu bônus, está tudo certo com a sua conta. A concessão depende de critérios de elegibilidade definidos pela plataforma, tá {nome}?", s:[2.4,2.5,2.4,2.3]},
+      {t:"Vou abrir uma exceção e liberar pra você.", s:[.3,.4,.4,.3]},
+      {t:"Se você gastou, o problema é seu.", s:[.3,.5,.4,.3]}]},
+    {c:"Então vocês tão ruim de bônus, viu. Vou mudar de plataforma.", o:[
+      {t:"Estou preocupada com o que você mencionou (que já gastou o dinheiro e precisa de uma aposta grátis). Você poderia me contar mais sobre isso, {nome}?", s:[2.5,2.5,2.5,2.4]},
+      {t:"Tudo bem, sentiremos a sua falta.", s:[.6,.7,.6,.6]},
+      {t:"Você está no controle? Já usou as nossas ferramentas? Quer um limite?", s:[.9,1,.7,.8]}]},
+    {c:"Preciso recuperar todo o dinheiro do aluguel que eu perdi.", o:[
+      {t:"Obrigada por compartilhar isso comigo, {nome}. Como medida de proteção, vou aplicar uma restrição temporária de depósitos e apostas enquanto a nossa equipe de Jogo Responsável avalia o melhor apoio. Entraremos em contato por telefone ou e-mail, pelo (11) 4935-1035. Há canais de apoio como o CVV, no 188, 24h.", s:[2.5,2.5,2.5,2.5]},
+      {t:"Vou liberar um bônus pra você tentar recuperar.", s:[.3,.4,.4,.3]},
+      {t:"Nunca aposte o dinheiro do aluguel, isso é irresponsável.", s:[.4,.5,.4,.4]}]}
+  ]},
+
+  /* ===================== BÔNUS · FRUSTRAÇÃO NÃO CONFIRMADA (sem restrição) ===================== */
+  bonus_frustracao_nao:{tag:"Bônus", rgType:"bonus_frustracao", restrict:false, nome:"Tiago", cat:"Bônus · Frustração (não confirmada) · sem restrição", turns:[
+    {c:"Vocês me devem um bônus! Deveriam me dar um pelo tempo que sou cliente aqui!", o:[
+      {t:"Vou verificar a sua elegibilidade, {nome}. A concessão de bônus segue critérios definidos pela plataforma e não conseguimos liberar manualmente. Sobre o que você mencionou (que deveríamos te dar um bônus pelo tempo de cliente), fiquei atento — você poderia me contar um pouco mais sobre isso?", s:[2.5,2.5,2.5,2.4]},
+      {t:"Entendo a sua frustração.", s:[1.5,1.6,1.5,1.4]},
+      {t:"Pode deixar que já libero o seu bônus.", s:[.3,.4,.4,.3]}]},
+    {c:"Ô, é uma forma de falar! Sou cliente há muito tempo, só quero mais um bônus!", o:[
+      {t:"Por que você se sente assim, {nome}?", s:[2.4,2.5,2.5,2.3]},
+      {t:"Vou aplicar uma restrição por segurança.", s:[.6,.6,.6,.6]},
+      {t:"Então continua cliente e espera.", s:[.5,.5,.5,.4]}]},
+    {c:"Era só uma brincadeira, tá tudo bem comigo.", o:[
+      {t:"Certo, {nome}. Você sente que está totalmente no controle do seu jogo?", s:[2.4,2.5,2.5,2.3]},
+      {t:"Se está tudo bem, então encerro por aqui.", s:[.7,.8,.7,.7]},
+      {t:"Brincadeira com isso não tem graça.", s:[.4,.5,.4,.4]}]},
+    {c:"Sinto sim, tô tranquilo.", o:[
+      {t:"{nome}, você já considerou utilizar as ferramentas de Jogo Responsável do site — limites de depósito e aposta, limites de perda e gestão de tempo? Sobre o bônus, ele segue critérios de elegibilidade; já te mostro as promoções ativas que combinam com você.", s:[2.5,2.5,2.5,2.5]},
+      {t:"Mesmo assim vou restringir a sua conta.", s:[.7,.7,.7,.7]},
+      {t:"Não tem bônus. Tchau.", s:[.4,.6,.5,.4]}]}
+  ]},
+
+  /* ===================== BÔNUS · FRUSTRAÇÃO CONFIRMADA (com restrição) ===================== */
+  bonus_frustracao_conf:{tag:"Bônus", rgType:"bonus_frustracao", restrict:true, nome:"Paula", cat:"Bônus · Frustração (confirmada) · restrição aplicada", turns:[
+    {c:"Não entendo por que meu amigo ganhou bônus e eu não, isso é injusto.", o:[
+      {t:"Vou verificar o que está acontecendo e se a sua conta está elegível para receber bônus, {nome}. Não conseguimos disponibilizar bônus manualmente.", s:[2.5,2.5,2.5,2.4]},
+      {t:"Cada conta tem os seus critérios, não dá pra comparar.", s:[1,1.3,1.1,1]},
+      {t:"Pode deixar que já libero o seu bônus.", s:[.3,.4,.4,.3]}]},
+    {c:"Verifica aí, por favor. Porque é muito injusto isso que vocês fazem!", o:[
+      {t:"{nome}, estou preocupada com o que você mencionou (que é muito injusto isso que fazemos). Você poderia me contar mais sobre isso?", s:[2.5,2.5,2.5,2.4]},
+      {t:"Entendo a sua indignação.", s:[1.5,1.6,1.5,1.4]},
+      {t:"Não é injusto, são as regras.", s:[.6,1,.7,.6]}]},
+    {c:"É, eu tô frustrado! Indico vários amigos e nunca ganho bônus de vocês!", o:[
+      {t:"Por que você se sente assim, {nome}?", s:[2.4,2.5,2.5,2.3]},
+      {t:"Você está no controle? Já pensou em limites? Quer autoexclusão?", s:[.9,1,.7,.8]},
+      {t:"Indicar amigo não garante bônus.", s:[.6,1,.7,.6]}]},
+    {c:"Porque toda vez é isso! Os outros ganham e eu nada!", o:[
+      {t:"Certo, {nome}. Você sente que está totalmente no controle do seu jogo?", s:[2.4,2.5,2.5,2.3]},
+      {t:"Já vou aplicar uma restrição na sua conta.", s:[.7,.7,.7,.7]},
+      {t:"Calma, não precisa se exaltar.", s:[.5,.6,.5,.5]}]},
+    {c:"Não né. Eu jogo bastante e me irrito quando não vem nada.", o:[
+      {t:"Obrigada pela sinceridade, {nome}. Como medida de proteção, vou aplicar uma restrição temporária na sua conta e te apresentar as nossas ferramentas de Jogo Responsável. Sobre os bônus, eles seguem critérios de elegibilidade — sem garantir liberação.", s:[2.5,2.5,2.5,2.5]},
+      {t:"Então ativa um limite e tenta segurar.", s:[.8,1,.9,.8]},
+      {t:"Vou liberar um bônus pra te acalmar.", s:[.4,.4,.4,.4]}]}
+  ]}
+};
+
+/* ===== PLANTÕES (mirror da agenda do material · casos reais do doc de Cases) ===== */
+const DAYS=[
+  {d:1, tema:"Comentário Preocupante", emoji:"💬", screens:2, gap:6, sc:["cc_fabio","conv_travou"]},
+  {d:2, tema:"PSA · Situação crítica", emoji:"🚨", screens:3, gap:5, sc:["psa_pietro","conv_anular","psa_jonas"]},
+  {d:3, tema:"Declaração de Vício", emoji:"🩺", screens:3, gap:5, sc:["vicio_flavio","conv_saudavel","bonus_normal"]},
+  {d:4, tema:"Solicitação de Bônus RG", emoji:"🎁", screens:4, gap:4, sc:["bonus_normal","bonus_frustracao_nao","bonus_frustracao_conf","bonus_perdas"]},
+  {d:5, tema:"Plantão misto · O exame", emoji:"🎯", screens:5, gap:4, sc:["psa_pietro","vicio_flavio","bonus_perdas","cc_fabio","conv_anular"]}
+];
+
+/* ===== ENGINE ===== */
+let cfg=null, chats=[], loop=null, arrivals=[], sel=0, pr=null, dayOver=false;
+const $=id=>document.getElementById(id);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const sum=s=>s.reduce((x,y)=>x+y,0);
+const fmt=sec=>{sec=Math.max(0,Math.ceil(sec));return Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0");};
+const fill=(t,c)=>t.replace(/{nome}/g,c.name);
+const isRGcase=c=>!!c.rgType && c.rgType!=="bonus_normal";
+/* Senha por plantão: Plantão 1 = bet12, Plantão 2 = bet13, … (o trainer informa) */
+const pwFor=d=>"bet"+(d+11);
+
+/* resumo da conduta correta por tipo (momento de aprendizado) */
+function recap(c){
+  const R={
+    cc:["🔒 Restrição RG_Withdrawals_Only aplicada no BackOffice.",
+        "🎫 Supervisor abriu Jira de RG · Concerning Comment."],
+    psa:["🔒 Restrição RG_Withdrawals_Only aplicada no BackOffice.",
+         "🎫 Supervisor abriu Jira de RG · PSA — prioridade CRITICAL.",
+         "📞 Canais de apoio enviados: CVV 188 (24h), Gambling Therapy, RAPS e Meu SUS Digital."],
+    vicio:["🔒 Restrição RG_Withdrawals_Only aplicada de imediato (sem perguntas).",
+           "🎫 Supervisor abriu Jira de RG · Concerning Comment.",
+           "📞 Canais de apoio enviados ao cliente."],
+    bonus_perdas:["🎫 Supervisor abriu Jira de RG.",
+                  "🔒 Restrição RG_Withdrawals_Only aplicada no BackOffice.",
+                  "❓ Perguntas de Concerning Comment conduzidas como evidência."],
+    bonus_frustracao: c.restrict
+      ? ["🎫 Supervisor abriu Jira de RG.",
+         "❓ Perguntas de Concerning Comment conduzidas — preocupação confirmada.",
+         "🔒 Restrição RG_Withdrawals_Only aplicada no BackOffice."]
+      : ["🎫 Supervisor abriu Jira de RG.",
+         "❓ Perguntas de Concerning Comment conduzidas — cliente segue no controle.",
+         "✅ Sem restrição: dúvida de bônus resolvida com as promoções elegíveis."]
+  };
+  return R[c.rgType]||[];
+}
+
+/* picker */
+const daysBox=$("days");
+DAYS.forEach(dc=>{
+  const b=document.createElement("button");
+  b.className="day"; b.setAttribute("aria-pressed","false"); b.dataset.d=dc.d;
+  let dots=""; for(let i=0;i<dc.screens;i++)dots+="<i></i>";
+  b.innerHTML=`<span class="em">${dc.emoji}</span><span class="dn">Plantão ${dc.d}</span><span class="ds">${dc.tema}</span><span class="ds">${dc.screens} telas</span><span class="scr">${dots}</span><span class="lk">🔒</span>`;
+  b.addEventListener("click",()=>selectDay(dc));
+  daysBox.appendChild(b);
+});
+function selectDay(dc){
+  [...daysBox.children].forEach(b=>b.setAttribute("aria-pressed", +b.dataset.d===dc.d?"true":"false"));
+  $("briefing").innerHTML=`
+    <span class="bg-emoji">${dc.emoji}</span>
+    <div><div class="bt">Plantão ${dc.d} · ${dc.tema}</div>
+      <div class="bd">${dc.screens} telas simultâneas em guias. Analise cada contato: pode ser RG ou não. Classifique e aplique a conduta correta — ou encerre pela pesquisa.</div></div>
+    <div class="gate" id="gate">
+      <span class="ghint">🔒 Digite a senha do plantão (o trainer informa)</span>
+      <div class="pwrow">
+        <input id="pwInput" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="senha" maxlength="12" aria-label="Senha do plantão ${dc.d}">
+        <button class="btn btn-primary" id="startBtn">Desbloquear</button>
+      </div>
+      <span class="err" id="pwErr"></span>
+    </div>`;
+  const tryStart=()=>{
+    const v=($("pwInput").value||"").trim().toLowerCase();
+    if(v===pwFor(dc.d)){ startDay(dc); return; }
+    $("pwErr").textContent="Senha incorreta. Peça a senha ao seu trainer.";
+    const g=$("gate"); g.classList.remove("bad"); void g.offsetWidth; g.classList.add("bad");
+    $("pwInput").focus(); $("pwInput").select();
+  };
+  $("startBtn").addEventListener("click",tryStart);
+  $("pwInput").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); tryStart(); } });
+  $("pwInput").addEventListener("input",()=>{ $("pwErr").textContent=""; });
+  $("briefing").scrollIntoView({behavior:"smooth",block:"nearest"});
+  $("pwInput").focus();
+}
+
+function startDay(dc){
+  cleanup(); cfg=dc; sel=0; dayOver=false;
+  chats=dc.sc.map((sid,i)=>{const s=SCENARIOS[sid];return{
+    i, sid, sc:s, rgType:s.rgType||null, restrict:!!s.restrict, name:s.nome||pick(NAMES),
+    state:"waiting", turn:0, deadline:0, total:SLA_FIRST, sla:"first", slaLabel:"", scores:[], tcsat:0, msgs:[], lostReason:"", tabEl:null
+  };});
+  $("picker").style.display="none"; $("game").style.display="block"; $("summary").classList.remove("show");
+  $("sDay").innerHTML=`Plantão <span>${dc.d}</span> · ${dc.tema}`;
+  $("endDayBtn").style.display="none"; $("dayDoneNote").style.display="none";
+  buildTabs(); renderPanel(); updateStatus();
+  dc.sc.forEach((_,i)=>arrivals.push(setTimeout(()=>arrive(i), i*dc.gap*1000 + 500)));
+  loop=setInterval(tick,100);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* tabs — sem sigla que entregue o tipo do caso */
+function buildTabs(){
+  const bar=$("tabbar"); bar.innerHTML="";
+  chats.forEach((c,i)=>{
+    const t=document.createElement("button"); t.className="tab-chat"; t.dataset.i=i;
+    t.innerHTML=`<span class="dot"></span><span class="nm">${c.name}</span><span class="mini">…</span>`;
+    t.addEventListener("click",()=>selectTab(i));
+    bar.appendChild(t); c.tabEl=t;
+  });
+  markSelTab();
+}
+function markSelTab(){ chats.forEach((c,i)=>c.tabEl&&c.tabEl.classList.toggle("sel",i===sel)); }
+function updateTab(c){
+  if(!c.tabEl)return;
+  const dot=c.tabEl.querySelector(".dot"), mini=c.tabEl.querySelector(".mini");
+  c.tabEl.classList.remove("urgent","done","lost");
+  let col="#666", mtxt="…";
+  if(c.state==="client"||c.state==="classifypending"||c.state==="surveypending"){ col="var(--orange)";
+    const rem=(c.deadline-Date.now())/1000, frac=Math.max(0,rem/c.total);
+    mtxt=fmt(rem); if(frac<.35) c.tabEl.classList.add("urgent");
+  } else if(c.state==="solvepending"){ col="var(--orange)"; mtxt="•"; }
+  else if(c.state==="typing"){ col="var(--orange)"; mtxt="✎"; }
+  else if(c.state==="done"){ col="var(--green)"; mtxt="✓"; c.tabEl.classList.add("done"); }
+  else if(c.state==="lost"){ col="var(--red)"; mtxt="✕"; c.tabEl.classList.add("lost"); }
+  dot.style.background=col; mini.textContent=mtxt;
+}
+function selectTab(i){ sel=i; markSelTab(); renderPanel(); }
+
+/* chegadas — não troca de aba sozinho */
+function arrive(i){
+  const c=chats[i]; if(!c||c.state!=="waiting")return;
+  c.msgs.push({who:"c",text:c.sc.turns[0].c});
+  c.state="client"; c.total=SLA_FIRST; c.deadline=Date.now()+SLA_FIRST*1000; c.sla="first";
+  c.slaLabel="Responda a 1ª mensagem (0:30)";
+  updateTab(c); updateStatus();
+  if(i===sel) renderPanel();
+}
+
+function choose(c,idx){
+  if(c.state!=="client")return;
+  const opt=c.sc.turns[c.turn].o[idx];
+  c.msgs.push({who:"a",text:opt.t}); c.scores.push(opt.s);
+  if(c.turn < c.sc.turns.length-1){
+    c.state="typing"; c.slaLabel=""; if(c===chats[sel])renderPanel(); updateTab(c);
+    setTimeout(()=>{
+      if(c.state!=="typing")return;
+      c.turn++; c.msgs.push({who:"c",text:c.sc.turns[c.turn].c});
+      c.state="client"; c.total=SLA_WAIT; c.deadline=Date.now()+SLA_WAIT*1000; c.sla="wait";
+      c.slaLabel="Cliente aguardando resposta (até 2:59)";
+      if(c===chats[sel])renderPanel(); updateTab(c);
+    }, 1400+Math.random()*1500);
+  } else if(isRGcase(c)){
+    c.state="classifypending"; c.total=SLA_WAIT; c.deadline=Date.now()+SLA_WAIT*1000; c.sla="wait";
+    c.slaLabel="Classifique o caso e aplique a conduta (até 2:59)";
+    if(c===chats[sel])renderPanel(); updateTab(c);
+  } else {
+    c.state="surveypending"; c.total=SLA_WAIT; c.deadline=Date.now()+SLA_WAIT*1000; c.sla="wait";
+    c.slaLabel="Encerre enviando a pesquisa (até 2:59)";
+    if(c===chats[sel])renderPanel(); updateTab(c);
+  }
+}
+
+/* Pesquisa (encerramento comum) */
+$("surveyBtn").addEventListener("click",pesquisa);
+function pesquisa(){
+  const c=chats[sel]; if(!c)return;
+  if(["done","lost","typing"].includes(c.state))return;
+  if(c.state==="solvepending"){ finish(c); return; }
+  if(isRGcase(c)){ flashHint("Casos de Jogo Responsável não se encerram pela pesquisa — conduza o fluxo e aplique a conduta correta ao lado."); return; }
+  if(c.state==="client"){ flashHint("Resolva a dúvida do cliente antes de enviar a pesquisa."); return; }
+  if(c.state==="surveypending"){
+    c.msgs.push({who:"a",text:SURVEY});
+    c.state="solvepending"; c.slaLabel="Atendimento resolvido — clique em Solved para encerrar";
+    updateTab(c); renderPanel();
+  }
+}
+
+/* Classificação + conduta de RG */
+document.querySelectorAll(".rg-btn").forEach(b=>b.addEventListener("click",()=>classify(b.dataset.kind)));
+function classify(kind){
+  const c=chats[sel]; if(!c)return;
+  if(["done","lost","typing","solvepending"].includes(c.state))return;
+  if(!isRGcase(c)){
+    if(c.state==="surveypending"||c.state==="classifypending")
+      loseReason(c,"Este contato não era Jogo Responsável — abrir restrição/Jira aqui é indevido. Convencionais e pedidos de bônus normais se encerram pela pesquisa.");
+    else
+      flashHint("Sem sinal de Jogo Responsável? Não classifique como RG — resolva a dúvida e encerre pela pesquisa.");
+    return;
+  }
+  if(c.state!=="classifypending"){ flashHint("Conduza todo o fluxo de perguntas antes de classificar e aplicar a conduta."); return; }
+  if(kind===c.rgType){
+    recap(c).forEach(t=>c.msgs.push({who:"sys",text:t}));
+    c.state="solvepending"; c.slaLabel="Conduta aplicada — clique em Solved para encerrar";
+    updateTab(c); renderPanel();
+  } else {
+    loseReason(c,"Classificação incorreta — reveja os sinais. Este caso era “"+TYPELABEL[c.rgType]+"”.");
+  }
+}
+
+let hintTimer=null;
+function flashHint(msg){
+  const box=$("rgFlash"); box.innerHTML=`<div class="flash">${msg}</div>`;
+  clearTimeout(hintTimer); hintTimer=setTimeout(()=>box.innerHTML="",3200);
+}
+
+function tick(){
+  const now=Date.now();
+  chats.forEach(c=>{
+    if(["client","classifypending","surveypending"].includes(c.state)){
+      const rem=(c.deadline-now)/1000;
+      if(c===chats[sel]&&pr){ const frac=Math.max(0,rem/c.total);
+        pr.bar.style.width=(frac*100)+"%";
+        pr.bar.style.background=frac>.5?"var(--green)":frac>.2?"var(--amber)":"var(--red)";
+        pr.tleft.textContent=fmt(rem);
+      }
+      updateTab(c);
+      if(rem<=0) loseReason(c,"Você perdeu esse cliente — o tempo estourou. Fique de olho no relógio de cada guia.");
+    }
+  });
+}
+
+function loseReason(c,reason){ c.state="lost"; c.lostReason=reason; updateTab(c); updateStatus(); if(c===chats[sel])renderPanel(); checkEnd(); }
+function finish(c){
+  const n=c.scores.length||1;
+  c.tcsat=c.scores.reduce((a,s)=>a+sum(s),0)/n;
+  c.state="done"; updateTab(c); updateStatus(); if(c===chats[sel])renderPanel(); checkEnd();
+}
+
+/* painel do chat selecionado */
+function renderPanel(){
+  const c=chats[sel], panel=$("chatpanel"); pr=null; armSV(false); armRG(false);
+  $("surveyBtn").innerHTML="📨 Enviar pesquisa";
+  if(!c){panel.innerHTML="";return;}
+  if(c.state==="waiting"){ panel.innerHTML=`<div class="cp-empty">Cliente conectando…</div>`; return; }
+  const msgs=c.msgs.map(m=> m.who==="sys"
+    ? `<div class="sysmsg">${m.text}</div>`
+    : `<div class="msg ${m.who}"><span class="lbl">${m.who==="c"?"Cliente":"Você"}</span>${fill(m.text,c)}</div>`).join("");
+  let bottom="";
+  if(c.state==="client") bottom=`<div class="opts">`+c.sc.turns[c.turn].o.map((o,idx)=>`<button class="opt" data-idx="${idx}">${fill(o.t,c)}</button>`).join("")+`</div>`;
+  else if(c.state==="typing") bottom=`<div class="typing on">cliente está digitando</div>`;
+  else if(c.state==="classifypending") bottom=`<div class="prompt rg">⚠️ Sinal de Jogo Responsável confirmado. <b>Classifique o caso</b> ao lado e aplique a conduta correta — mesmo que o cliente minimize.</div>`;
+  else if(c.state==="surveypending") bottom=`<div class="prompt sv">✅ Dúvida resolvida, sem sinal de RG. Encerre enviando a <b>pesquisa</b> de satisfação (botão ao lado).</div>`;
+  else if(c.state==="solvepending") bottom=`<div class="prompt sv">${isRGcase(c)?"🔒 Conduta de RG aplicada":"📨 Pesquisa enviada"} — leia o resumo acima. Clique em <b>Solved</b> para encerrar o atendimento.</div>`;
+  panel.innerHTML=`
+    <div class="cp-head">
+      <div class="cp-row1"><span class="who">${c.name}</span><span class="tag">${c.sc.tag}</span></div>
+      <div class="cp-timerrow"><div class="timer"><div class="bar" id="cpbar"></div></div><span class="tleft" id="cptleft">–</span></div>
+      <span class="sla-lbl">${c.slaLabel||""}</span>
+    </div>
+    <div class="msgs" id="cpmsgs">${msgs}</div>
+    ${bottom}`;
+  pr={bar:$("cpbar"),tleft:$("cptleft")};
+  const mEl=$("cpmsgs"); if(mEl)mEl.scrollTop=mEl.scrollHeight;
+  panel.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>choose(c,parseInt(b.dataset.idx))));
+  if(c.state==="classifypending") armRG(true);
+  if(c.state==="surveypending") armSV(true);
+  if(c.state==="solvepending"){ $("surveyBtn").innerHTML="✅ Solved"; armSV(true); }
+  if(c.state==="done"||c.state==="lost") renderOverlay(panel,c);
+}
+function armRG(on){ $("rgpanel").classList.toggle("armRG",on); }
+function armSV(on){ $("rgpanel").classList.toggle("armSV",on); }
+
+function renderOverlay(panel,c){
+  const ov=document.createElement("div");
+  if(c.state==="lost"){
+    ov.className="overlay lost";
+    ov.innerHTML=`<div style="font-size:40px;margin-bottom:6px">📉</div><div class="ot">Cliente perdido</div><div class="od">${c.lostReason}</div>`;
+  } else {
+    const dimN=["Acolhimento","Precisão","Fluxo/Processo","Fechamento"], n=c.scores.length||1;
+    const dim=[0,1,2,3].map(k=>c.scores.reduce((a,s)=>a+s[k],0)/n);
+    const dims=dim.map((v,k)=>`<div class="dim">${dimN[k]}<div class="dbar"><i style="width:${v/2.5*100}%"></i></div></div>`).join("");
+    ov.className="overlay done";
+    ov.innerHTML=`<div class="ot">${isRGcase(c)?"Conduta de RG aplicada!":"Muito bem!"}</div><div class="od">Seu TCSAT foi de</div>
+      <div class="score">${c.tcsat.toFixed(1)}</div><div class="dims">${dims}</div><div class="cat">Classificação: ${c.sc.cat}</div>`;
+  }
+  panel.appendChild(ov);
+}
+
+function updateStatus(){
+  $("sActive").textContent=chats.filter(c=>["client","typing","classifypending","surveypending","solvepending","waiting"].includes(c.state)).length;
+  $("sOk").textContent=chats.filter(c=>c.state==="done").length;
+  $("sLost").textContent=chats.filter(c=>c.state==="lost").length;
+}
+function checkEnd(){
+  if(!dayOver && chats.every(c=>c.state==="done"||c.state==="lost")){
+    dayOver=true; clearInterval(loop); loop=null; arrivals.forEach(clearTimeout); arrivals=[];
+    $("endDayBtn").style.display="inline-block"; $("dayDoneNote").style.display="inline";
+  }
+}
+function showSummary(){
+  const done=chats.filter(c=>c.state==="done"), lost=chats.filter(c=>c.state==="lost").length;
+  const avg=done.length?done.reduce((a,c)=>a+c.tcsat,0)/done.length:0;
+  $("sumTitle").textContent=`Plantão ${cfg.d} concluído`;
+  $("sumOk").textContent=done.length; $("sumLost").textContent=lost;
+  $("sumTcsat").textContent=done.length?avg.toFixed(1):"–";
+  let msg;
+  if(lost===0&&avg>=9) msg="Atendimento impecável — no prazo, com acolhimento sem reforçar a emoção, classificação de RG correta e a conduta certa. É esse o padrão.";
+  else if(lost===0) msg="Nenhum cliente perdido! Agora é lapidar a condução das perguntas e a classificação para subir o TCSAT.";
+  else msg="Alguns clientes se perderam. Priorize a 1ª mensagem (0:30), vigie as abas e lembre: é RG ou não? Classifique antes de agir.";
+  $("sumMsg").textContent=msg; $("summary").classList.add("show");
+}
+function cleanup(){ if(loop){clearInterval(loop);loop=null;} arrivals.forEach(clearTimeout); arrivals=[]; chats=[]; }
+
+$("endDayBtn").addEventListener("click",showSummary);
+$("quitBtn").addEventListener("click",()=>{cleanup();$("game").style.display="none";$("summary").classList.remove("show");$("picker").style.display="block";window.scrollTo({top:0});});
+$("againBtn").addEventListener("click",()=>{$("summary").classList.remove("show");startDay(cfg);});
+$("backBtn").addEventListener("click",()=>{cleanup();$("summary").classList.remove("show");$("game").style.display="none";$("picker").style.display="block";window.scrollTo({top:0});});
+
+selectDay(DAYS[0]);
+</script>
+</body>
+</html>

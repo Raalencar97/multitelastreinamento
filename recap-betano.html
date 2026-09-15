@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recap Betano · Simulador de Revisão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12081f;
+    --bg2:#1a0f2e;
+    --card:#211334;
+    --card-border:#3a2159;
+    --purple:#7b2ff7;
+    --purple-dark:#5a1fc4;
+    --orange:#ff6b1a;
+    --orange-soft:#ffb27a;
+    --green:#2ecc71;
+    --red:#ff4d5e;
+    --text:#f4f0fb;
+    --text-dim:#b7a7d6;
+    --text-faint:#8672a8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:radial-gradient(circle at 20% 0%, #2b1550 0%, var(--bg) 55%);
+    color:var(--text);
+    min-height:100vh;
+    padding:24px 16px 60px;
+  }
+  h1,h2,h3{font-family:'Poppins',sans-serif;}
+  .wrap{max-width:760px;margin:0 auto;}
+  .top{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+  .badge{
+    width:46px;height:46px;border-radius:12px;
+    background:linear-gradient(135deg, var(--purple), var(--orange));
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:20px;color:white;flex-shrink:0;
+  }
+  .top h1{font-size:20px;margin:0;line-height:1.2;}
+  .top p{margin:2px 0 0;color:var(--text-dim);font-size:13px;}
+
+  .cards{display:flex;flex-direction:column;gap:14px;}
+  .card{
+    background:var(--card);border:1px solid var(--card-border);border-radius:16px;
+    padding:20px 20px;cursor:pointer;
+    transition:transform .15s ease, border-color .15s ease, background .15s ease;
+    position:relative;overflow:hidden;
+  }
+  .card:hover{transform:translateY(-2px);border-color:var(--purple);background:#271640;}
+  .card .tag{
+    display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--orange-soft);
+    background:rgba(255,107,26,.12);border:1px solid rgba(255,107,26,.3);
+    padding:3px 10px;border-radius:999px;margin-bottom:10px;
+  }
+  .card h3{margin:0 0 6px;font-size:18px;}
+  .card p{margin:0;color:var(--text-dim);font-size:14px;line-height:1.5;}
+  .card .meta{margin-top:12px;font-size:12px;color:var(--text-faint);display:flex;gap:14px;flex-wrap:wrap;}
+  .card .lockicon{
+    position:absolute;right:18px;top:20px;font-size:18px;color:var(--text-faint);
+  }
+
+  .screen{display:none;}
+  .screen.active{display:block;}
+
+  .quiz-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;}
+  .quiz-head .backbtn{
+    background:none;border:1px solid var(--card-border);color:var(--text-dim);
+    padding:8px 14px;border-radius:10px;font-size:13px;cursor:pointer;font-family:'Inter';
+  }
+  .quiz-head .backbtn:hover{border-color:var(--purple);color:var(--text);}
+  .qcount{font-size:12px;color:var(--text-faint);letter-spacing:.03em;text-transform:uppercase;}
+
+  .timer-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .timer-num{
+    font-family:'Poppins';font-weight:800;font-size:15px;min-width:38px;text-align:right;
+    color:var(--orange-soft);
+  }
+  .timer-track{
+    flex:1;background:#1c1030;border:1px solid var(--card-border);border-radius:999px;
+    height:8px;overflow:hidden;
+  }
+  .timer-bar{height:100%;width:100%;background:linear-gradient(90deg, var(--purple), var(--orange));transition:width 1s linear, background .3s ease;}
+
+  .progress-wrap{
+    background:var(--card);border-radius:999px;height:6px;overflow:hidden;margin-bottom:20px;
+    border:1px solid var(--card-border);
+  }
+  .progress-bar{height:100%;background:linear-gradient(90deg, var(--purple), var(--orange));transition:width .3s ease;width:0%;}
+
+  .question{
+    background:var(--card);border:1px solid var(--card-border);border-radius:16px;
+    padding:22px 20px;margin-bottom:16px;
+  }
+  .question h3{font-size:17px;line-height:1.45;margin:0 0 18px;font-weight:600;}
+  .option{
+    display:block;width:100%;text-align:left;
+    background:#180c2b;border:1px solid var(--card-border);color:var(--text);
+    padding:13px 16px;border-radius:12px;margin-bottom:10px;font-size:14.5px;font-family:'Inter';
+    cursor:pointer;transition:border-color .15s ease, background .15s ease;
+  }
+  .option:hover:not(:disabled){border-color:var(--purple);background:#20123a;}
+  .option:disabled{cursor:default;}
+  .option.correct{border-color:var(--green);background:rgba(46,204,113,.12);}
+  .option.incorrect{border-color:var(--red);background:rgba(255,77,94,.12);}
+  .option .oletter{
+    display:inline-flex;width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.08);
+    align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-right:10px;
+  }
+  .feedback{
+    border-radius:14px;padding:16px 18px;margin-bottom:12px;font-size:14px;line-height:1.55;
+    border:1px solid;
+  }
+  .feedback.ok{background:rgba(46,204,113,.08);border-color:rgba(46,204,113,.35);color:#c6f7d6;}
+  .feedback.no{background:rgba(255,77,94,.08);border-color:rgba(255,77,94,.35);color:#ffd3d7;}
+  .feedback b{display:block;margin-bottom:4px;font-family:'Poppins';font-size:14px;}
+  .pointer{
+    display:flex;gap:10px;align-items:flex-start;
+    background:rgba(255,107,26,.08);border:1px solid rgba(255,107,26,.3);
+    border-radius:14px;padding:14px 16px;margin-bottom:16px;font-size:13.5px;line-height:1.5;color:var(--orange-soft);
+  }
+  .pointer .picon{font-size:18px;flex-shrink:0;}
+  .pointer b{display:block;color:var(--text);font-family:'Poppins';font-size:13.5px;margin-bottom:2px;}
+  .points-tag{
+    display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;margin-left:8px;
+  }
+  .points-tag.plus{background:rgba(46,204,113,.15);color:var(--green);}
+  .points-tag.zero{background:rgba(255,77,94,.15);color:var(--red);}
+
+  .nextbtn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:linear-gradient(135deg, var(--purple), var(--purple-dark));
+    color:white;border:none;padding:12px 22px;border-radius:12px;font-size:14.5px;font-weight:600;
+    cursor:pointer;font-family:'Inter';box-shadow:0 6px 18px rgba(123,47,247,.35);
+  }
+  .nextbtn:hover{filter:brightness(1.08);}
+
+  .result{
+    text-align:center;padding:34px 20px;background:var(--card);border:1px solid var(--card-border);
+    border-radius:18px;
+  }
+  .result .ring{
+    width:130px;height:130px;border-radius:50%;margin:0 auto 18px;
+    display:flex;align-items:center;justify-content:center;
+    background:conic-gradient(var(--gradcolor) calc(var(--pct)*1%), #2a1a44 0);
+  }
+  .result .ring-inner{
+    width:104px;height:104px;border-radius:50%;background:var(--bg2);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+  }
+  .result .ring-inner span{font-size:28px;font-weight:800;font-family:'Poppins';}
+  .result .ring-inner small{font-size:11px;color:var(--text-faint);}
+  .result h2{margin:6px 0 4px;font-size:22px;}
+  .result p{color:var(--text-dim);font-size:14px;margin-bottom:6px;}
+  .result .subrow{color:var(--text-faint);font-size:12.5px;margin-bottom:22px;}
+  .result-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .btn-secondary{
+    background:none;border:1px solid var(--card-border);color:var(--text);
+    padding:12px 20px;border-radius:12px;font-size:14px;cursor:pointer;font-family:'Inter';font-weight:600;
+  }
+  .btn-secondary:hover{border-color:var(--purple);}
+  .pass{color:var(--green);}
+  .fail{color:var(--orange-soft);}
+
+  .review-list{text-align:left;margin-top:24px;border-top:1px solid var(--card-border);padding-top:18px;}
+  .review-item{
+    display:flex;justify-content:space-between;gap:10px;padding:10px 4px;font-size:13px;
+    border-bottom:1px solid rgba(255,255,255,.05);color:var(--text-dim);
+  }
+  .review-item b{color:var(--text);font-weight:600;font-family:'Inter';}
+
+  .footer-note{text-align:center;color:var(--text-faint);font-size:12px;margin-top:30px;}
+
+  /* modal senha */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(10,4,20,.75);backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;z-index:50;padding:20px;
+  }
+  .modal-overlay.active{display:flex;}
+  .modal-box{
+    background:var(--card);border:1px solid var(--card-border);border-radius:18px;
+    padding:26px 24px;max-width:340px;width:100%;text-align:center;
+  }
+  .modal-box h3{margin:0 0 8px;font-size:17px;}
+  .modal-box p{color:var(--text-dim);font-size:13.5px;margin:0 0 18px;}
+  .modal-box input{
+    width:100%;background:#180c2b;border:1px solid var(--card-border);color:var(--text);
+    padding:12px 14px;border-radius:10px;font-size:15px;text-align:center;letter-spacing:.08em;
+    font-family:'Poppins';font-weight:600;margin-bottom:10px;text-transform:uppercase;
+  }
+  .modal-box input:focus{outline:none;border-color:var(--purple);}
+  .modal-err{color:var(--red);font-size:12.5px;min-height:16px;margin-bottom:10px;}
+  .modal-actions{display:flex;gap:10px;}
+  .modal-actions button{flex:1;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="badge">B</div>
+    <div>
+      <h1>Recap Betano</h1>
+      <p>Simulador de perguntas e respostas · Onboarding CS</p>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <div id="screen-menu" class="screen active">
+    <div class="cards" id="cards-container"></div>
+    <p class="footer-note">Cada pergunta vale até 100 pontos: acertar rápido rende mais pontos que acertar no fim do tempo. Você tem 40 segundos por pergunta.</p>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-head">
+      <button class="backbtn" onclick="confirmExit()">← Voltar ao menu</button>
+      <div class="qcount" id="qcount"></div>
+    </div>
+    <div class="timer-row">
+      <div class="timer-track"><div class="timer-bar" id="timerbar"></div></div>
+      <div class="timer-num" id="timernum">40s</div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="progressbar"></div></div>
+    <div id="question-container"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result" class="screen">
+    <div class="result">
+      <div class="ring" id="resultring">
+        <div class="ring-inner">
+          <span id="resultpct">0</span>
+          <small>pontos / 100</small>
+        </div>
+      </div>
+      <h2 id="resulttitle"></h2>
+      <p id="resultsub"></p>
+      <div class="subrow" id="resultsubrow"></div>
+      <div class="result-actions">
+        <button class="btn-secondary" onclick="goMenu()">Voltar ao menu</button>
+        <button class="nextbtn" id="retrybtn" onclick="retryQuiz()">Refazer este recap</button>
+      </div>
+      <div class="review-list" id="reviewlist"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL DE SENHA -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box">
+    <h3 id="modal-title">Digite a senha do dia</h3>
+    <p id="modal-desc">Peça a senha ao seu trainer para liberar este recap.</p>
+    <input type="text" id="modal-input" maxlength="10" placeholder="SENHA" autocomplete="off">
+    <div class="modal-err" id="modal-err"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="nextbtn" onclick="checkPassword()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   BANCO DE PERGUNTAS
+   cada pergunta tem: q, options[4], correct(index original),
+   explain (por que a certa é certa), topic (módulo/tema) e
+   where (onde encontrar o conteúdo, para revisão em caso de erro)
+   ========================================================= */
+const QUIZZES = {
+
+/* ---------------- RECAP DIA 1 : conhecimentos gerais ---------------- */
+dia1: {
+  label: "Recap · Início do Dia 1",
+  title: "Conhecimentos Gerais",
+  desc: "Aquecimento antes do primeiro conteúdo Betano: bases de atendimento, apostas e mercado regulamentado.",
+  password: "RG01",
+  questions: [
+    { q:"Qual é a idade mínima legal para apostar em jogos de azar e apostas esportivas no Brasil?",
+      options:["16 anos","18 anos","21 anos","Não há idade mínima"], correct:1,
+      explain:"A legislação brasileira exige que o apostador seja maior de 18 anos.",
+      topic:"Legal & Compliance", where:"Você vai revisar esse tema no Beedoo, trilha Legal & Compliance." },
+    { q:"O que significa a sigla \"CS\" no atendimento ao cliente?",
+      options:["Customer Service","Client Solutions","Care System","Customer Sales"], correct:0,
+      explain:"CS é a abreviação de Customer Service, a linha de frente do atendimento ao cliente.",
+      topic:"Nossos Departamentos", where:"Confira no Beedoo, módulo Nossos Departamentos." },
+    { q:"O que é \"empatia\" no atendimento ao cliente?",
+      options:["Concordar com tudo que o cliente diz","Se colocar no lugar do outro e entender como ele se sente","Falar sempre com formalidade","Resolver o problema sem se importar com o sentimento do cliente"], correct:1,
+      explain:"Empatia é a capacidade de se colocar no lugar do outro, entendendo o que ele sente.",
+      topic:"Tom de Voz & Soft Skills", where:"Aprofundado no Beedoo, módulo Tom de Voz & Soft Skills." },
+    { q:"Em uma plataforma de apostas esportivas, o que são \"odds\"?",
+      options:["O valor mínimo de depósito","As cotações que indicam o retorno potencial de uma aposta","Um tipo de bônus","O tempo de duração da partida"], correct:1,
+      explain:"Odds são as cotações: multiplicam o valor apostado em caso de acerto.",
+      topic:"Conhecimento do Produto", where:"Você vai ver em detalhes no módulo Conhecimento do Produto (Dia 2)." },
+    { q:"O que significa um atendimento \"24/7\"?",
+      options:["Disponível 24 horas por dia, 7 dias por semana","24 atendentes por turno","Atendimento por 24 minutos","7 canais de atendimento diferentes"], correct:0,
+      explain:"24/7 indica disponibilidade contínua, todos os dias da semana.",
+      topic:"Legal & Compliance", where:"Consulte o Beedoo, módulo Legal & Compliance, seção Canais de Atendimento." },
+    { q:"O que é a LGPD?",
+      options:["Uma lei que regula apostas esportivas","A Lei Geral de Proteção de Dados Pessoais","Um sistema interno de atendimento","Uma sigla de departamento financeiro"], correct:1,
+      explain:"LGPD é a Lei Geral de Proteção de Dados Pessoais, que rege o tratamento de dados no Brasil.",
+      topic:"Legal & Compliance", where:"Revise no Beedoo, módulo Legal & Compliance, seção Segurança de Dados." },
+    { q:"O que diferencia uma aposta \"pré-evento\" de uma aposta \"ao vivo\" (in-play)?",
+      options:["Não há diferença entre elas","Pré-evento é antes do jogo começar; ao vivo é durante a partida em andamento","Pré-evento só existe no cassino","Ao vivo é exclusiva para clientes VIP"], correct:1,
+      explain:"Pré-evento ocorre antes do início da partida; ao vivo (in-play) acontece durante o jogo.",
+      topic:"Conhecimento do Produto", where:"Detalhado no módulo Conhecimento do Produto, seção Apostas Esportivas." },
+    { q:"O que é \"Jogo Responsável\" no contexto de apostas online?",
+      options:["Um jogo de tabuleiro oferecido pela casa","Um conjunto de práticas para promover o jogo saudável e proteger clientes vulneráveis","Um bônus de boas-vindas","Um departamento jurídico"], correct:1,
+      explain:"Jogo Responsável reúne ferramentas e práticas para manter o jogo saudável e proteger o cliente.",
+      topic:"Bem-vindos a Bordo", where:"Revise no Beedoo, módulo Bem-vindos a Bordo, seção Jogo Responsável." },
+    { q:"De forma geral, o que caracteriza uma central de atendimento (call center)?",
+      options:["Um departamento que só vende produtos","Uma estrutura organizada para receber e gerenciar contatos de clientes por diversos canais","Um sistema de apostas ao vivo","Um tipo de chatbot"], correct:1,
+      explain:"Uma central de atendimento organiza e gerencia o contato com clientes por múltiplos canais.",
+      topic:"Nossos Departamentos", where:"Veja mais no Beedoo, módulo Nossos Departamentos." },
+    { q:"Por que a escuta ativa é importante em qualquer atendimento?",
+      options:["Porque permite decorar todas as respostas","Porque ajuda a entender de fato o que o cliente está comunicando antes de responder","Porque acelera o atendimento sem entender o problema","Porque só é exigida no atendimento por telefone"], correct:1,
+      explain:"Escuta ativa garante que o agente compreenda o problema real antes de agir.",
+      topic:"Tom de Voz & Soft Skills", where:"Revise no Beedoo, módulo Tom de Voz & Soft Skills." },
+    { q:"De forma geral, o que costuma ser considerado \"cassino online\"?",
+      options:["Apenas apostas em jogos esportivos","Jogos digitais como caça-níqueis, roleta, cartas e mesas com dealers ao vivo","Um clube de fidelidade","Um sistema de checagem de documentos"], correct:1,
+      explain:"Cassino online reúne slots, roleta, cartas e jogos com transmissão ao vivo.",
+      topic:"Bem-vindos a Bordo", where:"Consulte o Beedoo, módulo Bem-vindos a Bordo, seção O Que Fazemos." },
+    { q:"Em uma empresa regulamentada, por que a conformidade legal (compliance) é importante?",
+      options:["Não é importante, é só uma formalidade","Porque garante que a empresa opere de forma segura, legal e transparente para clientes e reguladores","Porque aumenta o número de apostas","Porque substitui o atendimento ao cliente"], correct:1,
+      explain:"Compliance protege a licença de operação e a confiança de clientes e reguladores.",
+      topic:"Legal & Compliance", where:"Aprofundado no Beedoo, módulo Legal & Compliance." }
+  ]
+},
+
+/* ---------------- RECAP DIA 2 : conteúdo do Dia 1 ---------------- */
+dia2: {
+  label: "Recap · Início do Dia 2",
+  title: "Revisão do Dia 1",
+  desc: "Bem-vindos a Bordo, Regras do Jogo, Nossos Departamentos, Legal & Compliance, Tom de Voz & Soft Skills, Beedoo & Confluence e Jira.",
+  password: "RG02",
+  questions: [
+    { q:"Em quantos mercados a Betano (marca da Kaizen Gaming) está presente?",
+      options:["10","17","25","30"], correct:1,
+      explain:"A Betano está presente em 17 mercados, em quatro continentes.",
+      topic:"Bem-vindos a Bordo", where:"Reveja no Beedoo, módulo Bem-vindos a Bordo, seção Nossas Marcas." },
+    { q:"O que significa a filosofia \"Kaizen\"?",
+      options:["Melhoria contínua, 1% melhor a cada dia","Uma sigla de departamento","Um tipo de bônus","O nome do mascote da empresa"], correct:0,
+      explain:"Kaizen une KAI (mudança) + ZEN (bom): o caminho da melhoria constante.",
+      topic:"Bem-vindos a Bordo", where:"Reveja no Beedoo, módulo Bem-vindos a Bordo, seção Nossa Filosofia." },
+    { q:"Qual órgão regulador garante que a Betano opera em conformidade no Brasil?",
+      options:["BACEN","SPA — Secretaria de Prêmios e Apostas","CVM","ANATEL"], correct:1,
+      explain:"A SPA fiscaliza e garante a conformidade da operação de apostas no Brasil.",
+      topic:"Bem-vindos a Bordo", where:"Reveja no Beedoo, módulo Bem-vindos a Bordo, seção Empresa Regulamentada." },
+    { q:"Qual a nota mínima exigida nos quizzes diários e nas provas formais do onboarding?",
+      options:["60%","70%","80%","100%"], correct:2,
+      explain:"Tanto os quizzes diários quanto as provas formais exigem nota mínima de 80%.",
+      topic:"Regras do Jogo", where:"Reveja no Beedoo, módulo Regras do Jogo, seção Métodos de Avaliação." },
+    { q:"Quantos dias tem a jornada completa de onboarding, incluindo o nesting?",
+      options:["8 dias","10 dias","13 dias","15 dias"], correct:2,
+      explain:"São 13 dias no total: 8 de onboarding + 5 de nesting.",
+      topic:"Regras do Jogo", where:"Reveja no Beedoo, módulo Regras do Jogo, seção Cronograma." },
+    { q:"O que é o \"Nesting\" no cronograma de treinamento?",
+      options:["Uma prova teórica","Dias de prática supervisionada na operação real","Um tipo de bônus","A etapa final de desligamento"], correct:1,
+      explain:"Nesting são os 5 dias finais de prática supervisionada em casos reais.",
+      topic:"Regras do Jogo", where:"Reveja no Beedoo, módulo Regras do Jogo, seção Cronograma." },
+    { q:"Qual departamento é considerado a \"primeira linha de atendimento\" na Betano?",
+      options:["BackOffice","RG (Responsible Gaming)","CS — Customer Service","Compliance"], correct:2,
+      explain:"CS é o coração da operação: o primeiro contato do cliente com a Betano.",
+      topic:"Nossos Departamentos", where:"Reveja no Beedoo, módulo Nossos Departamentos, seção Linha de Frente." },
+    { q:"Qual departamento verifica documentos para confirmar a identidade do cliente?",
+      options:["Traders & Cassino","KYC — Verificação de Documentos","N3 — Ouvidoria","CRM"], correct:1,
+      explain:"KYC (Know Your Customer) confirma que o cliente é quem diz ser.",
+      topic:"Nossos Departamentos", where:"Reveja no Beedoo, módulo Nossos Departamentos, seção Times Especialistas." },
+    { q:"Para quais casos o CS aciona o BackOffice?",
+      options:["Quando não consegue resolver o caso de imediato e precisa de coordenação com outros departamentos","Sempre, para todo atendimento","Apenas para dúvidas sobre bônus","Nunca — BackOffice não interage com CS"], correct:0,
+      explain:"O BackOffice entra quando o CS precisa de suporte de outros times para concluir o caso.",
+      topic:"Nossos Departamentos", where:"Reveja no Beedoo, módulo Nossos Departamentos, seção BKO." },
+    { q:"O que é o Data-Check obrigatório antes de compartilhar informações da conta?",
+      options:["Uma etapa opcional","A validação de identidade do cliente antes de repassar qualquer dado sensível ou financeiro","Um teste de conhecimento do agente","Uma pesquisa de satisfação"], correct:1,
+      explain:"O Data-Check garante que só o titular legítimo receba dados sensíveis da conta.",
+      topic:"Legal & Compliance", where:"Reveja no Beedoo, módulo Legal & Compliance, seção Segurança de Dados (LGPD)." },
+    { q:"Segundo o CDC, o que é a \"inversão do ônus da prova\"?",
+      options:["O cliente deve provar que o sistema falhou","A empresa é responsável por provar que a regra foi seguida corretamente","Não existe essa regra no atendimento","Aplica-se apenas a reclamações no Procon"], correct:1,
+      explain:"Cabe à operadora comprovar, de forma documental, que os procedimentos foram seguidos.",
+      topic:"Legal & Compliance", where:"Reveja no Beedoo, módulo Legal & Compliance, seção Relações de Consumo." },
+    { q:"Por quanto tempo devem ser retidos os registros gerais de dados cadastrais e transacionais?",
+      options:["6 meses","1 ano","5 anos","Para sempre"], correct:2,
+      explain:"O prazo mínimo compulsório de retenção geral é de 5 anos.",
+      topic:"Legal & Compliance", where:"Reveja no Beedoo, módulo Legal & Compliance, seção Retenção de Registros." },
+    { q:"Qual é o prazo máximo para envio do histórico completo de conversas quando solicitado pelo cliente?",
+      options:["24 horas","5 dias","7 dias","30 dias"], correct:1,
+      explain:"O histórico completo deve ser enviado em até 5 dias corridos.",
+      topic:"Legal & Compliance", where:"Reveja no Beedoo, módulo Legal & Compliance, seção SLAs Regulatórios." },
+    { q:"Quais são os quatro traços que definem o estilo de atendimento da Betano?",
+      options:["Formal, técnico, rápido e direto","Leve, empático, descontraído e confiante","Sério, cauteloso, distante e cordial","Divertido, informal, urgente e crítico"], correct:1,
+      explain:"O tom de voz Betano é leve, empático, descontraído e confiante.",
+      topic:"Tom de Voz & Soft Skills", where:"Reveja no Beedoo, módulo Tom de Voz & Soft Skills, seção Nosso Estilo." },
+    { q:"No máximo, quantos emojis devem ser usados por parágrafo em uma mensagem ao cliente?",
+      options:["Nenhum","1","3","Sem limite"], correct:1,
+      explain:"A leveza tem limite: no máximo 1 emoji por parágrafo, sempre no tom certo.",
+      topic:"Tom de Voz & Soft Skills", where:"Reveja no Beedoo, módulo Tom de Voz & Soft Skills, seção Gírias e Emojis." },
+    { q:"Quais são os 5 movimentos da \"escalação\" de um atendimento ideal?",
+      options:["Abertura, coleta de dados, validação, resolução e encerramento","Saudação, venda, cobrança, despedida e avaliação","Login, chat, macro, fechamento e pesquisa","Abertura, escalonamento, aprovação, macro e fechamento"], correct:0,
+      explain:"Essa sequência de 5 movimentos guia os melhores atendimentos.",
+      topic:"Tom de Voz & Soft Skills", where:"Reveja no Beedoo, módulo Tom de Voz & Soft Skills, seção Anatomia do Atendimento Ideal." },
+    { q:"O que caracteriza um cliente \"ameaçador\", justificando um alerta ou encerramento do atendimento?",
+      options:["Reclamar da sorte ou usar palavrões genéricos","Emitir ameaças contra a empresa, funcionários ou familiares","Estar apenas frustrado com a demora","Discordar da resposta do agente"], correct:1,
+      explain:"Ameaças contra a empresa, funcionários ou familiares justificam um alerta imediato.",
+      topic:"Tom de Voz & Soft Skills", where:"Reveja no Beedoo, módulo Tom de Voz & Soft Skills, seção Clientes Difíceis." },
+    { q:"Qual é a ordem correta de consulta quando o agente tem uma dúvida durante o atendimento?",
+      options:["Primeiro o Confluence, depois o Beedoo","Primeiro o Beedoo; se não encontrar, consultar o Confluence","Apenas o Jira","Perguntar diretamente ao cliente"], correct:1,
+      explain:"O Beedoo é a fonte principal; o Confluence é consultado quando o artigo não é encontrado lá.",
+      topic:"Beedoo & Confluence", where:"Reveja no Beedoo, módulo Beedoo & Confluence, seção Onde Encontrar a Resposta Certa." },
+    { q:"O que acontece se o agente não acessar o Beedoo por um dia?",
+      options:["Nada acontece","O login é bloqueado automaticamente","Perde pontos na avaliação","Recebe apenas um aviso por e-mail"], correct:1,
+      explain:"O Beedoo deve ser acessado todos os dias, ou o login é bloqueado automaticamente.",
+      topic:"Beedoo & Confluence", where:"Reveja no Beedoo, módulo Beedoo & Confluence, seção Primeiros Acessos." },
+    { q:"Quais são os três principais status de um chamado no Jira?",
+      options:["Aberto, Pausado e Fechado","Tarefas Pendentes, Em Andamento e Concluído","Novo, Revisão e Aprovado","Iniciado, Escalado e Resolvido"], correct:1,
+      explain:"Os 3 status principais são Tarefas Pendentes, Em Andamento e Concluído.",
+      topic:"Ferramenta Jira", where:"Reveja no Beedoo, módulo Ferramenta Jira, seção Status." },
+    { q:"O que deve ser feito ao assumir um caso no Jira?",
+      options:["Deixar o status como está e não se atribuir","Mudar o status para \"Em Andamento\" e se atribuir como responsável","Fechar o chamado imediatamente","Apenas comentar sem alterar nada"], correct:1,
+      explain:"Ao assumir o caso, muda-se o status e o agente se atribui como responsável.",
+      topic:"Ferramenta Jira", where:"Reveja no Beedoo, módulo Ferramenta Jira, seção Fluxo." },
+    { q:"Para que serve o campo \"Watchers\" no Jira?",
+      options:["Para decorar o chamado","Para incluir a área responsável e notificá-la sobre o chamado","Para bloquear o acesso de outros times","Para registrar o histórico de bônus do cliente"], correct:1,
+      explain:"Watchers notifica a área correta de que o chamado precisa da sua atenção.",
+      topic:"Ferramenta Jira", where:"Reveja no Beedoo, módulo Ferramenta Jira, seção Fluxo." }
+  ]
+},
+
+/* ---------------- RECAP DIA 3 : conteúdo do Dia 2 ---------------- */
+dia3: {
+  label: "Recap · Início do Dia 3",
+  title: "Revisão do Dia 2",
+  desc: "Conhecimento do Produto, Bônus e Missões I e Clientes VIP/KAM.",
+  password: "RG03",
+  questions: [
+    { q:"Quais são as formas principais de o cliente acessar a Betano?",
+      options:["Apenas pelo site","Site (navegador), app Android e app iOS","Somente aplicativo","Só é possível por indicação"], correct:1,
+      explain:"O cliente acessa via navegador, app Android (Google Play) ou app iOS (App Store).",
+      topic:"Conhecimento do Produto", where:"Reveja no Beedoo, módulo Conhecimento do Produto, seção Navegação." },
+    { q:"Quais dados NÃO podem ser alterados pelo cliente após o registro?",
+      options:["E-mail e telefone","Nome, CPF, gênero, data de nascimento e nacionalidade","Senha","Time do coração"], correct:1,
+      explain:"Esses dados ficam bloqueados após o cadastro; só e-mail, telefone e senha podem mudar.",
+      topic:"Conhecimento do Produto", where:"Reveja no Beedoo, módulo Conhecimento do Produto, seção Perfil." },
+    { q:"O que é obrigatório o cliente definir logo no cadastro, referente à proteção do jogador?",
+      options:["Nada é obrigatório","Limite diário de perda e limite de tempo de aposta","Um valor mínimo de depósito","Um time de futebol favorito"], correct:1,
+      explain:"Esses dois limites são obrigatórios já na criação da conta.",
+      topic:"Conhecimento do Produto", where:"Reveja no Beedoo, módulo Conhecimento do Produto, seção Registro." },
+    { q:"Se o cliente diminuir um limite de proteção do jogador, quando o efeito ocorre?",
+      options:["Imediatamente","Em 24 horas","Em 7 dias","No próximo mês"], correct:0,
+      explain:"Reduzir limites tem efeito imediato; aumentar exige 24h de espera.",
+      topic:"Conhecimento do Produto", where:"Reveja no Beedoo, módulo Conhecimento do Produto, seção Proteção do Jogador." },
+    { q:"Quais são os requisitos mínimos de senha na Betano?",
+      options:["4 caracteres numéricos","Pelo menos 8 caracteres, com 1 letra, 1 número e 1 caractere especial","Apenas letras","Não há requisitos"], correct:1,
+      explain:"A senha precisa ter no mínimo 8 caracteres, 1 letra, 1 número e 1 caractere especial.",
+      topic:"Conhecimento do Produto", where:"Reveja no Beedoo, módulo Conhecimento do Produto, seção Redefinição de Senha." },
+    { q:"O que é o \"bilhete\" ou \"cupom\" de apostas?",
+      options:["Um comprovante fiscal","A área onde ficam reunidas as seleções escolhidas pelo cliente antes de confirmar a aposta","Um tipo específico de bônus","O extrato bancário do cliente"], correct:1,
+      explain:"O bilhete reúne as seleções, valor, odds e tipo de aposta antes da confirmação.",
+      topic:"Conhecimento do Produto", where:"Reveja no Beedoo, módulo Conhecimento do Produto, seção Apostas Esportivas." },
+    { q:"O que são Jogos Virtuais?",
+      options:["Transmissões ao vivo de jogos reais","Jogos eletrônicos baseados em RNG que simulam eventos esportivos, sem times reais","Apostas feitas por robôs","Um tipo de aposta múltipla"], correct:1,
+      explain:"São partidas simuladas por RNG, sem equipes reais, disponíveis 24/7.",
+      topic:"Conhecimento do Produto", where:"Reveja no Beedoo, módulo Conhecimento do Produto, seção Apostas Esportivas & Odds." },
+    { q:"No Cassino ao Vivo, quem conduz as mesas de jogos como Roleta e Blackjack?",
+      options:["Um software de RNG","Crupiês reais, transmitidos em vídeo HD ao vivo","O próprio cliente","Um chatbot"], correct:1,
+      explain:"O Cassino ao Vivo une o digital com crupiês reais transmitidos ao vivo.",
+      topic:"Conhecimento do Produto", where:"Reveja no Beedoo, módulo Conhecimento do Produto, seção Cassino & Live." },
+    { q:"Na Aposta Grátis, o que acontece com o valor original em caso de vitória?",
+      options:["O valor original entra no saldo real junto com o lucro","Apenas o lucro líquido entra no saldo real; o valor original não é incluído","O valor é dobrado","O valor é convertido em Fichas Douradas"], correct:1,
+      explain:"Só o lucro líquido é creditado; o valor original da Aposta Grátis não entra no saldo.",
+      topic:"Bônus e Missões", where:"Reveja no Beedoo, módulo Bônus e Missões, seção Aposta Grátis." },
+    { q:"As Rodadas Grátis (Free Spins) podem ser usadas em qualquer jogo de cassino?",
+      options:["Sim, em qualquer slot","Não, apenas nos jogos específicos definidos na oferta","Sim, mas só em jogos de mesa","Não podem ser usadas de forma alguma"], correct:1,
+      explain:"As rodadas valem apenas para o(s) jogo(s) informado(s) na oferta.",
+      topic:"Bônus e Missões", where:"Reveja no Beedoo, módulo Bônus e Missões, seção Rodadas Grátis." },
+    { q:"Para que servem as Fichas Douradas (Golden Chips)?",
+      options:["Apostas esportivas ao vivo","Cassino ao Vivo e Jogos de Mesa","Apenas jogos virtuais","Depósitos via Pix"], correct:1,
+      explain:"Fichas Douradas são para o Cassino ao Vivo e Jogos de Mesa, como Apostas Grátis são para slots.",
+      topic:"Bônus e Missões", where:"Reveja no Beedoo, módulo Bônus e Missões, seção Fichas Douradas." },
+    { q:"Quantas vezes por dia o cliente pode girar a Roda da Sorte?",
+      options:["Ilimitadas vezes","Uma vez por dia","Três vezes por dia","Uma vez por semana"], correct:1,
+      explain:"Cada conta elegível participa uma vez por dia.",
+      topic:"Bônus e Missões", where:"Reveja no Beedoo, módulo Bônus e Missões, seção Roda da Sorte." },
+    { q:"O que são \"Acumuladores\" (ACCA)?",
+      options:["Um desconto em depósitos","Apostas múltiplas com uma porcentagem adicional aos ganhos","Um tipo de saque rápido","Missões diárias"], correct:1,
+      explain:"Acumuladores deixam a aposta múltipla mais vantajosa, com % extra nos ganhos.",
+      topic:"Bônus e Missões", where:"Reveja no Beedoo, módulo Bônus e Missões, seção Acumulador, Turbinada & SuperOdds." },
+    { q:"O que são \"SuperOdds\" (SO)?",
+      options:["Odds aumentadas aplicáveis a qualquer mercado","Jogos selecionados com odds melhores no mercado de Resultado Final, sem margem da casa","Um bônus exclusivo para VIPs","Um recurso do Cassino ao Vivo"], correct:1,
+      explain:"SuperOdds zera a margem da casa apenas no mercado de Resultado Final, em jogos selecionados.",
+      topic:"Bônus e Missões", where:"Reveja no Beedoo, módulo Bônus e Missões, seção Acumulador, Turbinada & SuperOdds." },
+    { q:"O que acontece se o cliente usar \"cashout\" em uma aposta vinculada a uma Missão?",
+      options:["Nada, a missão continua normalmente","A missão é cancelada e as recompensas são suspensas","A missão é concluída automaticamente","O cashout é bloqueado pelo sistema"], correct:1,
+      explain:"Usar cashout em aposta vinculada cancela a promoção e suspende as recompensas.",
+      topic:"Bônus e Missões", where:"Reveja no Beedoo, módulo Bônus e Missões, seção Missões." },
+    { q:"No Clube Betano, quantas fichas o cliente gera a cada R$5,00 jogados em slots?",
+      options:["1 ficha","5 fichas","10 fichas","0,5 ficha"], correct:0,
+      explain:"A cada R$5,00 de turnover em slots, o cliente gera 1 ficha do Clube Betano.",
+      topic:"Bônus e Missões", where:"Reveja no Beedoo, módulo Bônus e Missões, seção Clube Betano." },
+    { q:"Quais são os três níveis CRM considerados VIP?",
+      options:["Silver, Gold e Bronze","Diamond, Platinum e Gold","Bronze, Prata e Ouro","VIP1, VIP2 e VIP3"], correct:1,
+      explain:"Apenas Diamond, Platinum e Gold são considerados níveis VIP.",
+      topic:"Clientes VIP & KAM", where:"Reveja no Beedoo, módulo Clientes VIP & KAM, seção Clientes VIP." },
+    { q:"Se um cliente não sabe que possui um KAM, o que o agente de CS deve fazer?",
+      options:["Informar imediatamente o nome do gerente de contas","Nunca antecipar essa informação ao cliente","Perguntar ao cliente se ele quer um KAM","Transferir a ligação para o KAM"], correct:1,
+      explain:"Regra de ouro: nunca informar a existência de um KAM se o cliente não recebeu o e-mail de boas-vindas.",
+      topic:"Clientes VIP & KAM", where:"Reveja no Beedoo, módulo Clientes VIP & KAM, seção Motivos de Contato." },
+    { q:"Quando um cliente VIP solicita um bônus, o que o agente NUNCA deve fazer?",
+      options:["Verificar elegibilidade no Pandora e BackOffice","Prometer o bônus","Consultar o fluxo oficial no Confluence","Orientar sobre regras de missões"], correct:1,
+      explain:"Bônus nunca deve ser prometido — sempre falar em análise, elegibilidade ou regras da campanha.",
+      topic:"Clientes VIP & KAM", where:"Reveja no Beedoo, módulo Clientes VIP & KAM, seção Solicitações de Bônus." }
+  ]
+},
+
+/* ---------------- RECAP PRÉ-AVALIAÇÃO 1 : Dia 1 + Dia 2 + Dia 3 ---------------- */
+pre: {
+  label: "Recap · Antes da Avaliação 01",
+  title: "Revisão Geral (Dias 1, 2 e 3)",
+  desc: "Mescla todo o conteúdo dos três dias — incluindo Zendesk e BackOffice — para a Avaliação 01.",
+  password: "RG04",
+  questions: [
+    { q:"Por quais canais os atendimentos passam no Zendesk?",
+      options:["Apenas chat","Chat, e-mail e telefone (voz)","Somente e-mail","Redes sociais"], correct:1,
+      explain:"100% dos atendimentos passam pelo Zendesk, seja chat, e-mail ou voz.",
+      topic:"Ferramenta Zendesk", where:"Reveja no Beedoo, módulo Ferramenta Zendesk, seção Canais de Contato." },
+    { q:"O que acontece quando um ticket de chat fica mais de 2 minutos e 59 segundos sem interação?",
+      options:["Nada acontece","O aviso de inatividade sobe e o Bum Bump assume o chat","O ticket é fechado automaticamente","O cliente é bloqueado"], correct:1,
+      explain:"Após esse tempo sem interação, o gatilho de inatividade é acionado.",
+      topic:"Ferramenta Zendesk", where:"Reveja no Beedoo, módulo Ferramenta Zendesk, seção Atendimento Chat." },
+    { q:"Ao finalizar um atendimento no Zendesk, qual status deve ser aplicado ao ticket, mesmo quando um Jira foi aberto?",
+      options:["Pending","Solved","On Hold","New"], correct:1,
+      explain:"O ticket deve ser finalizado como Solved mesmo que um Jira tenha sido aberto durante o atendimento.",
+      topic:"Ferramenta Zendesk", where:"Reveja no Beedoo, módulo Ferramenta Zendesk, seção Finalização do Atendimento." },
+    { q:"O que são as \"macros\" no Zendesk?",
+      options:["Chamados abertos automaticamente","Mensagens pré-prontas padronizadas que devem ser adaptadas ao tom de voz antes de enviar","Relatórios de qualidade","Um tipo de bônus"], correct:1,
+      explain:"Macros padronizam o processo, mas precisam ser adaptadas com tom de voz antes do envio.",
+      topic:"Ferramenta Zendesk", where:"Reveja no Beedoo, módulo Ferramenta Zendesk, seção Atendimento Chat." },
+    { q:"Qual é a área central do BackOffice que reúne as informações e atividades de um cliente?",
+      options:["Painel de Apps","Customer Card","Dashboard Geral","Ticket View"], correct:1,
+      explain:"O Customer Card dá acesso completo às informações e atividades do cliente.",
+      topic:"Ferramenta BackOffice", where:"Reveja no Beedoo, módulo Ferramenta BackOffice, seção Informações do Cliente." },
+    { q:"Onde o agente verifica se o cadastro do cliente foi validado por reconhecimento facial (UNICO ou SUMSUB)?",
+      options:["Na aba Transactions","No campo KYC do Customer Card","No Jira","No Zendesk apenas"], correct:1,
+      explain:"O campo KYC do Customer Card mostra se o cadastro foi Verified ou está Pending.",
+      topic:"Ferramenta BackOffice", where:"Reveja no Beedoo, módulo Ferramenta BackOffice, seção Validações da Conta." },
+    { q:"O que a restrição \"RG to Withdraw Only\" faz na conta do cliente?",
+      options:["Bloqueia todos os saques","Bloqueia todos os depósitos e permite apenas o saque do saldo presente","Bloqueia o acesso total à conta","Apenas limita apostas em cassino"], correct:1,
+      explain:"Essa restrição de RG bloqueia depósitos e permite só o saque do valor já presente na conta.",
+      topic:"Ferramenta BackOffice", where:"Reveja no Beedoo, módulo Ferramenta BackOffice, seção Restrições de Conta." },
+    { q:"Onde fica localizada a ação preventiva de restrição \"RG_Withdrawals_Only\" no fluxo de atendimento?",
+      options:["No Jira","No BackOffice","No Zendesk","No Confluence"], correct:1,
+      explain:"A ação de restrição preventiva é aplicada diretamente no BackOffice.",
+      topic:"Ferramenta BackOffice", where:"Reveja no Beedoo, módulo Ferramenta BackOffice, seção Restrições de Conta." },
+    { q:"Em quantos mercados a Betano está presente?",
+      options:["10","17","25","30"], correct:1,
+      explain:"A Betano opera em 17 mercados, em quatro continentes.",
+      topic:"Bem-vindos a Bordo", where:"Reveja no Beedoo, módulo Bem-vindos a Bordo." },
+    { q:"Qual a nota mínima exigida nos quizzes e nas provas formais do onboarding?",
+      options:["60%","70%","80%","100%"], correct:2,
+      explain:"A nota mínima em todas as avaliações do onboarding é 80%.",
+      topic:"Regras do Jogo", where:"Reveja no Beedoo, módulo Regras do Jogo." },
+    { q:"Qual departamento é considerado a primeira linha de atendimento na Betano?",
+      options:["BackOffice","RG (Responsible Gaming)","CS — Customer Service","Compliance"], correct:2,
+      explain:"CS é o primeiro ponto de contato do cliente com a Betano.",
+      topic:"Nossos Departamentos", where:"Reveja no Beedoo, módulo Nossos Departamentos." },
+    { q:"Por quanto tempo devem ser retidos os registros gerais de dados cadastrais e transacionais?",
+      options:["6 meses","1 ano","5 anos","Para sempre"], correct:2,
+      explain:"O prazo mínimo de retenção geral é de 5 anos, para fins de auditoria regulatória.",
+      topic:"Legal & Compliance", where:"Reveja no Beedoo, módulo Legal & Compliance, seção Retenção de Registros." },
+    { q:"Quais são os quatro traços que definem o estilo de atendimento da Betano?",
+      options:["Formal, técnico, rápido e direto","Leve, empático, descontraído e confiante","Sério, cauteloso, distante e cordial","Divertido, informal, urgente e crítico"], correct:1,
+      explain:"Leve, empático, descontraído e confiante — a essência do tom de voz Betano.",
+      topic:"Tom de Voz & Soft Skills", where:"Reveja no Beedoo, módulo Tom de Voz & Soft Skills, seção Nosso Estilo." },
+    { q:"Qual é a ordem correta de consulta quando o agente tem uma dúvida durante o atendimento?",
+      options:["Primeiro o Confluence, depois o Beedoo","Primeiro o Beedoo; se não encontrar, consultar o Confluence","Apenas o Jira","Perguntar diretamente ao cliente"], correct:1,
+      explain:"O Beedoo é sempre a primeira fonte de consulta.",
+      topic:"Beedoo & Confluence", where:"Reveja no Beedoo, módulo Beedoo & Confluence." },
+    { q:"Quais são os três principais status de um chamado no Jira?",
+      options:["Aberto, Pausado e Fechado","Tarefas Pendentes, Em Andamento e Concluído","Novo, Revisão e Aprovado","Iniciado, Escalado e Resolvido"], correct:1,
+      explain:"Tarefas Pendentes, Em Andamento e Concluído são os três status principais.",
+      topic:"Ferramenta Jira", where:"Reveja no Beedoo, módulo Ferramenta Jira, seção Status." },
+    { q:"Quais dados NÃO podem ser alterados pelo cliente após o registro?",
+      options:["E-mail e telefone","Nome, CPF, gênero, data de nascimento e nacionalidade","Senha","Time do coração"], correct:1,
+      explain:"Esses dados ficam permanentemente bloqueados após o cadastro inicial.",
+      topic:"Conhecimento do Produto", where:"Reveja no Beedoo, módulo Conhecimento do Produto, seção Perfil." },
+    { q:"Na Aposta Grátis, o que acontece com o valor original em caso de vitória?",
+      options:["O valor original entra no saldo real junto com o lucro","Apenas o lucro líquido entra no saldo real; o valor original não é incluído","O valor é dobrado","O valor é convertido em Fichas Douradas"], correct:1,
+      explain:"Só o lucro líquido é creditado como saldo real.",
+      topic:"Bônus e Missões", where:"Reveja no Beedoo, módulo Bônus e Missões, seção Aposta Grátis." },
+    { q:"Quais são os três níveis CRM considerados VIP?",
+      options:["Silver, Gold e Bronze","Diamond, Platinum e Gold","Bronze, Prata e Ouro","VIP1, VIP2 e VIP3"], correct:1,
+      explain:"Apenas Diamond, Platinum e Gold são considerados VIP — nenhum outro nível conta.",
+      topic:"Clientes VIP & KAM", where:"Reveja no Beedoo, módulo Clientes VIP & KAM, seção Clientes VIP." },
+    { q:"Se um cliente não sabe que possui um KAM, o que o agente de CS deve fazer?",
+      options:["Informar imediatamente o nome do gerente de contas","Nunca antecipar essa informação ao cliente","Perguntar ao cliente se ele quer um KAM","Transferir a ligação para o KAM"], correct:1,
+      explain:"Nunca revelar a existência do KAM se o cliente ainda não recebeu o e-mail de boas-vindas.",
+      topic:"Clientes VIP & KAM", where:"Reveja no Beedoo, módulo Clientes VIP & KAM, seção Motivos de Contato." },
+    { q:"O que são \"Acumuladores\" (ACCA)?",
+      options:["Um desconto em depósitos","Apostas múltiplas com uma porcentagem adicional aos ganhos","Um tipo de saque rápido","Missões diárias"], correct:1,
+      explain:"Acumuladores tornam a aposta múltipla mais vantajosa, com % extra nos ganhos.",
+      topic:"Bônus e Missões", where:"Reveja no Beedoo, módulo Bônus e Missões." },
+    { q:"Quantas vezes por dia o cliente pode girar a Roda da Sorte?",
+      options:["Ilimitadas vezes","Uma vez por dia","Três vezes por dia","Uma vez por semana"], correct:1,
+      explain:"Apenas uma vez por dia, por conta elegível.",
+      topic:"Bônus e Missões", where:"Reveja no Beedoo, módulo Bônus e Missões, seção Roda da Sorte." },
+    { q:"O que é o Data-Check obrigatório antes de compartilhar informações da conta?",
+      options:["Uma etapa opcional","A validação de identidade do cliente antes de repassar qualquer dado sensível ou financeiro","Um teste de conhecimento do agente","Uma pesquisa de satisfação"], correct:1,
+      explain:"O Data-Check confirma a identidade do cliente antes de qualquer exposição de dados.",
+      topic:"Legal & Compliance", where:"Reveja no Beedoo, módulo Legal & Compliance, seção Segurança de Dados (LGPD)." },
+    { q:"Segundo o CDC, o que é a \"inversão do ônus da prova\"?",
+      options:["O cliente deve provar que o sistema falhou","A empresa é responsável por provar que a regra foi seguida corretamente","Não existe essa regra no atendimento","Aplica-se apenas a reclamações no Procon"], correct:1,
+      explain:"Cabe à Betano comprovar documentalmente que os processos foram seguidos corretamente.",
+      topic:"Legal & Compliance", where:"Reveja no Beedoo, módulo Legal & Compliance, seção Relações de Consumo." },
+    { q:"Quando um cliente VIP solicita um bônus, o que o agente NUNCA deve fazer?",
+      options:["Verificar elegibilidade no Pandora e BackOffice","Prometer o bônus","Consultar o fluxo oficial no Confluence","Orientar sobre regras de missões"], correct:1,
+      explain:"Nunca se promete bônus — fala-se sempre em análise, elegibilidade e regras da campanha.",
+      topic:"Clientes VIP & KAM", where:"Reveja no Beedoo, módulo Clientes VIP & KAM, seção Solicitações de Bônus." },
+    { q:"O que são Jogos Virtuais?",
+      options:["Transmissões ao vivo de jogos reais","Jogos eletrônicos baseados em RNG que simulam eventos esportivos, sem times reais","Apostas feitas por robôs","Um tipo de aposta múltipla"], correct:1,
+      explain:"São partidas simuladas por RNG, disponíveis 24/7, sem times ou jogadores reais.",
+      topic:"Conhecimento do Produto", where:"Reveja no Beedoo, módulo Conhecimento do Produto, seção Apostas Esportivas & Odds." },
+    { q:"Qual departamento verifica documentos para confirmar a identidade do cliente (KYC)?",
+      options:["Traders & Cassino","KYC — Verificação de Documentos","N3 — Ouvidoria","CRM"], correct:1,
+      explain:"O time de KYC (Know Your Customer) confirma a identidade dos clientes.",
+      topic:"Nossos Departamentos", where:"Reveja no Beedoo, módulo Nossos Departamentos, seção Times Especialistas." }
+  ]
+}
+
+};
+
+const TIME_LIMIT = 40;
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+let currentQuizKey = null;
+let runtimeQuestions = [];   // perguntas com opções embaralhadas para a sessão atual
+let currentIndex = 0;
+let answered = false;
+let timerInterval = null;
+let timeLeft = TIME_LIMIT;
+let totalPoints = 0;         // soma de pontos (0-100 por pergunta)
+let correctCount = 0;
+let reviewData = [];         // para a tela de resultado
+let pendingQuizKey = null;   // aguardando senha
+
+/* =========================================================
+   UTILITÁRIOS
+   ========================================================= */
+function shuffleArray(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+// distribui a posição da resposta certa de forma balanceada (~1/4 A, 1/4 B, 1/4 C, 1/4 D)
+function balancedPositions(n){
+  const base = Math.floor(n/4);
+  const remainder = n%4;
+  let positions = [];
+  for(let i=0;i<4;i++){
+    const count = base + (i<remainder?1:0);
+    for(let c=0;c<count;c++) positions.push(i);
+  }
+  return shuffleArray(positions);
+}
+
+function buildRuntimeQuestions(quiz){
+  const positions = balancedPositions(quiz.questions.length);
+  return quiz.questions.map((q, i)=>{
+    const targetPos = positions[i];
+    const correctText = q.options[q.correct];
+    const wrongTexts = shuffleArray(q.options.filter((_,idx)=>idx!==q.correct));
+    const newOptions = [];
+    let wIdx = 0;
+    for(let slot=0; slot<4; slot++){
+      if(slot === targetPos){ newOptions.push(correctText); }
+      else { newOptions.push(wrongTexts[wIdx]); wIdx++; }
+    }
+    return { ...q, options:newOptions, correct:targetPos };
+  });
+}
+
+/* =========================================================
+   MENU
+   ========================================================= */
+function renderMenu(){
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+  Object.keys(QUIZZES).forEach(key=>{
+    const quiz = QUIZZES[key];
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.onclick = ()=>openPasswordModal(key);
+    card.innerHTML = `
+      <span class="lockicon">🔒</span>
+      <span class="tag">${quiz.label}</span>
+      <h3>${quiz.title}</h3>
+      <p>${quiz.desc}</p>
+      <div class="meta">
+        <span>📋 ${quiz.questions.length} perguntas</span>
+        <span>⏱️ 40s por pergunta</span>
+        <span>🎯 100 pontos no máximo</span>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goMenu(){
+  clearInterval(timerInterval);
+  showScreen('screen-menu');
+}
+
+function confirmExit(){
+  clearInterval(timerInterval);
+  if(confirm('Sair agora? Seu progresso neste recap será perdido.')){
+    goMenu();
+  } else {
+    // retoma o timer de onde parou
+    startTimerTick();
+  }
+}
+
+/* =========================================================
+   MODAL DE SENHA
+   ========================================================= */
+function openPasswordModal(key){
+  pendingQuizKey = key;
+  const quiz = QUIZZES[key];
+  document.getElementById('modal-title').textContent = `Senha · ${quiz.title}`;
+  document.getElementById('modal-desc').textContent = 'Peça a senha do dia ao seu trainer para liberar este recap.';
+  document.getElementById('modal-input').value = '';
+  document.getElementById('modal-err').textContent = '';
+  document.getElementById('modal-overlay').classList.add('active');
+  setTimeout(()=>document.getElementById('modal-input').focus(), 50);
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('active');
+  pendingQuizKey = null;
+}
+
+function checkPassword(){
+  const input = document.getElementById('modal-input').value.trim().toUpperCase();
+  const key = pendingQuizKey;
+  const quiz = QUIZZES[key];
+  if(input === quiz.password){
+    document.getElementById('modal-overlay').classList.remove('active');
+    pendingQuizKey = null;
+    startQuiz(key);
+  } else {
+    document.getElementById('modal-err').textContent = 'Senha incorreta. Confira com seu trainer.';
+  }
+}
+
+document.getElementById('modal-input').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') checkPassword();
+});
+
+/* =========================================================
+   QUIZ — FLUXO PRINCIPAL
+   ========================================================= */
+function startQuiz(key){
+  currentQuizKey = key;
+  runtimeQuestions = buildRuntimeQuestions(QUIZZES[key]);
+  currentIndex = 0;
+  totalPoints = 0;
+  correctCount = 0;
+  reviewData = [];
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+function retryQuiz(){
+  startQuiz(currentQuizKey);
+}
+
+function renderQuestion(){
+  const q = runtimeQuestions[currentIndex];
+  answered = false;
+
+  document.getElementById('qcount').textContent = `Questão ${currentIndex+1} de ${runtimeQuestions.length}`;
+  const pct = (currentIndex / runtimeQuestions.length) * 100;
+  document.getElementById('progressbar').style.width = pct + '%';
+
+  const letters = ['A','B','C','D'];
+  const container = document.getElementById('question-container');
+  container.innerHTML = `
+    <div class="question">
+      <h3>${q.q}</h3>
+      <div id="options"></div>
+    </div>
+    <div id="feedback-area"></div>
+  `;
+  const optionsDiv = document.getElementById('options');
+  q.options.forEach((opt, idx)=>{
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="oletter">${letters[idx]}</span>${opt}`;
+    btn.onclick = ()=>selectAnswer(idx);
+    optionsDiv.appendChild(btn);
+  });
+
+  startTimerTick();
+}
+
+function startTimerTick(){
+  clearInterval(timerInterval);
+  timeLeft = TIME_LIMIT;
+  updateTimerUI();
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    updateTimerUI();
+    if(timeLeft <= 0){
+      clearInterval(timerInterval);
+      if(!answered) selectAnswer(-1);
+    }
+  }, 1000);
+}
+
+function updateTimerUI(){
+  const bar = document.getElementById('timerbar');
+  const num = document.getElementById('timernum');
+  if(!bar || !num) return;
+  num.textContent = Math.max(timeLeft,0) + 's';
+  bar.style.width = (Math.max(timeLeft,0)/TIME_LIMIT*100) + '%';
+  bar.style.background = timeLeft <= 10
+    ? 'var(--red)'
+    : 'linear-gradient(90deg, var(--purple), var(--orange))';
+}
+
+function selectAnswer(idx){
+  if(answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+
+  const q = runtimeQuestions[currentIndex];
+  const isTimeout = idx === -1;
+  const isCorrect = !isTimeout && idx === q.correct;
+
+  let points = 0;
+  if(isCorrect){
+    points = Math.max(40, Math.round((timeLeft/TIME_LIMIT)*100));
+  }
+  totalPoints += points;
+  if(isCorrect) correctCount++;
+
+  reviewData.push({
+    question: q.q,
+    correctAnswer: q.options[q.correct],
+    yourAnswer: isTimeout ? '(tempo esgotado)' : q.options[idx],
+    isCorrect: isCorrect,
+    points: points,
+    topic: q.topic,
+    where: q.where
+  });
+
+  const letters = ['A','B','C','D'];
+  const opts = document.querySelectorAll('.option');
+  opts.forEach((btn, i)=>{
+    btn.disabled = true;
+    if(i === q.correct) btn.classList.add('correct');
+    else if(i === idx) btn.classList.add('incorrect');
+  });
+
+  const feedbackArea = document.getElementById('feedback-area');
+  let html = '';
+
+  if(isTimeout){
+    html += `
+      <div class="feedback no">
+        <b>⏱️ Tempo esgotado! <span class="points-tag zero">+0 pontos</span></b>
+        A resposta certa era: <strong>${q.options[q.correct]}</strong>. ${q.explain}
+      </div>
+      <div class="pointer">
+        <span class="picon">📌</span>
+        <div><b>Revise: ${q.topic}</b>${q.where}</div>
+      </div>
+    `;
+  } else if(isCorrect){
+    html += `
+      <div class="feedback ok">
+        <b>✅ Isso mesmo! <span class="points-tag plus">+${points} pontos</span></b>
+        ${q.explain}
+      </div>
+    `;
+  } else {
+    html += `
+      <div class="feedback no">
+        <b>❌ Não foi dessa vez. <span class="points-tag zero">+0 pontos</span></b>
+        A resposta certa era: <strong>${q.options[q.correct]}</strong>. ${q.explain}
+      </div>
+      <div class="pointer">
+        <span class="picon">📌</span>
+        <div><b>Revise: ${q.topic}</b>${q.where}</div>
+      </div>
+    `;
+  }
+
+  html += `
+    <button class="nextbtn" onclick="nextQuestion()">
+      ${currentIndex + 1 < runtimeQuestions.length ? 'Próxima pergunta →' : 'Ver resultado →'}
+    </button>
+  `;
+  feedbackArea.innerHTML = html;
+}
+
+function nextQuestion(){
+  currentIndex++;
+  if(currentIndex >= runtimeQuestions.length){
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+/* =========================================================
+   RESULTADO
+   ========================================================= */
+function showResult(){
+  const total = runtimeQuestions.length;
+  const finalScore = Math.round(totalPoints / total); // 0-100
+  const accPct = Math.round((correctCount/total)*100);
+  const passed = accPct >= 80;
+
+  document.getElementById('progressbar').style.width = '100%';
+  showScreen('screen-result');
+
+  const ring = document.getElementById('resultring');
+  ring.style.setProperty('--pct', finalScore);
+  ring.style.setProperty('--gradcolor', passed ? '#2ecc71' : '#ff6b1a');
+
+  document.getElementById('resultpct').textContent = finalScore;
+  document.getElementById('resulttitle').innerHTML = passed
+    ? '<span class="pass">Aprovado(a)! 🏆</span>'
+    : '<span class="fail">Quase lá!</span>';
+  document.getElementById('resultsub').textContent =
+    `${correctCount} de ${total} corretas (${accPct}% de aproveitamento — nota de corte 80%).`;
+  document.getElementById('resultsubrow').textContent =
+    'Pontuação combina acerto + velocidade: quanto mais rápido você responde certo, mais pontos ganha (mín. 40, máx. 100 por pergunta).';
+
+  const wrongOnes = reviewData.filter(r=>!r.isCorrect);
+  const reviewList = document.getElementById('reviewlist');
+  if(wrongOnes.length === 0){
+    reviewList.innerHTML = '<p style="color:var(--green);font-size:13.5px;">Você não errou nenhuma pergunta — nada para revisar! 🎉</p>';
+  } else {
+    reviewList.innerHTML = '<p style="font-size:13px;color:var(--text-faint);margin-bottom:8px;">Pontos para revisar antes de seguir:</p>' +
+      wrongOnes.map(r=>`
+        <div class="review-item">
+          <span><b>${r.topic}</b> — ${r.where}</span>
+        </div>
+      `).join('');
+  }
+}
+
+renderMenu();
+</script>
+</body>
+</html>
