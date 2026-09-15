@@ -220,8 +220,7 @@ function confirmPass(){
   if(v===pendingSim.senha){
     const name = AGENT_NAME || "";
     const url = `${pendingSim.url}?agente=${encodeURIComponent(name)}`;
-    window.open(url, "_blank");
-    closePassModal();
+    window.location.href = url;
   } else {
     $("passErr").style.display="block";
     $("passInput").select();
