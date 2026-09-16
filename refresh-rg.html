@@ -8746,7 +8746,8 @@ selectDay(DAYS[0]);
     if(!query){
       resultsHtml = '<div class="bw-chips">' + BOT_CHIPS.map(function(c){
         return '<button class="bw-chip" data-q="' + c.q + '">' + c.label + '</button>';
-      }).join("") + '</div>';
+      }).join("") + '</div>' +
+      '<button class="bw-item" id="bwSenhaBtn" style="text-align:center;font-weight:700;margin-top:10px">🔑 Solicitar senha do plantão</button>';
     } else {
       var results = HELP_FAQ.filter(function(it){ return botFaqMatch(it, query); });
       if(!results.length){
@@ -8766,6 +8767,45 @@ selectDay(DAYS[0]);
     body.querySelectorAll(".bw-item").forEach(function(b){
       b.addEventListener("click", function(){ botShowAnswer(b.dataset.id); });
     });
+    var senhaBtn = body.querySelector("#bwSenhaBtn");
+    if(senhaBtn) senhaBtn.addEventListener("click", botAskSenhaPlantao);
+  }
+
+  /* ---------- Senha de acesso ao plantão (via Bety) ---------- */
+  function botAskSenhaPlantao(){
+    var body = $b("bwBody");
+    var existing = body.querySelector("#bwResults");
+    var html = '<div id="bwResults">' +
+      '<button class="bw-back" id="bwSenhaBackBtn">← Voltar</button>' +
+      '<div class="bw-msg" style="margin-bottom:10px">Qual plantão (1 a 5)?</div>' +
+      '<div style="display:flex;gap:8px;align-items:center">' +
+      '<input type="number" id="bwPlantaoInput" min="1" max="5" placeholder="1–5" style="width:70px;padding:9px 10px;border:1.5px solid var(--bw-border);border-radius:8px;font-family:var(--bw-f);font-size:13px;color:var(--bw-navy)">' +
+      '<button class="bw-chip" id="bwPlantaoConfirm" style="flex:1">Confirmar</button>' +
+      '</div>' +
+      '<div id="bwPlantaoErr" style="display:none;color:#c0392b;font-size:11px;margin-top:8px">Digite um plantão entre 1 e 5.</div>' +
+      '</div>';
+    if(existing) existing.outerHTML = html; else body.insertAdjacentHTML("beforeend", html);
+    $b("bwSenhaBackBtn").addEventListener("click", function(){ botRenderList(""); });
+    $b("bwPlantaoConfirm").addEventListener("click", botConfirmSenhaPlantao);
+    $b("bwPlantaoInput").addEventListener("keydown", function(e){ if(e.key==="Enter") botConfirmSenhaPlantao(); });
+    $b("bwPlantaoInput").focus();
+  }
+  function botConfirmSenhaPlantao(){
+    var raw = $b("bwPlantaoInput").value.trim();
+    var d = parseInt(raw, 10);
+    if(!Number.isInteger(d) || d<1 || d>5){ $b("bwPlantaoErr").style.display="block"; return; }
+    var senha = "bet" + (d+11);
+    var body = $b("bwBody");
+    var html = '<div id="bwResults">' +
+      '<button class="bw-back" id="bwSenhaBackBtn2">← Escolher outro plantão</button>' +
+      '<div class="bw-answer">' +
+      '<span class="bw-cat">Senha de acesso</span>' +
+      '<b>Plantão ' + d + '</b>' +
+      '<p style="margin-top:10px">A senha pra liberar esse plantão é:</p>' +
+      '<p style="margin-top:4px;font-size:20px;font-weight:800;color:var(--bw-orange);letter-spacing:1px">' + senha + '</p>' +
+      '</div></div>';
+    body.querySelector("#bwResults").outerHTML = html;
+    $b("bwSenhaBackBtn2").addEventListener("click", botAskSenhaPlantao);
   }
 
   function botShowAnswer(id){

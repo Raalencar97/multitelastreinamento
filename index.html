@@ -339,7 +339,8 @@ function botRenderList(query){
   const body = $("botBody");
   let resultsHtml = "";
   if(!query){
-    resultsHtml = `<div class="bot-chips">` + BOT_CHIPS.map(c=>`<button class="bot-chip" data-q="${c.q}">${c.label}</button>`).join("") + `</div>`;
+    resultsHtml = `<div class="bot-chips">` + BOT_CHIPS.map(c=>`<button class="bot-chip" data-q="${c.q}">${c.label}</button>`).join("") + `</div>
+      <button class="bot-opt" id="botSenhaBtn" style="width:100%;margin-top:10px">🔑 Solicitar senha de um simulador</button>`;
   } else {
     const results = HELP_FAQ.filter(it=>botFaqMatch(it, query));
     if(!results.length){
@@ -359,6 +360,41 @@ function botRenderList(query){
   body.querySelectorAll(".help-item").forEach(b=>{
     b.addEventListener("click", ()=>botShowAnswer(b.dataset.id));
   });
+  const senhaBtn = body.querySelector("#botSenhaBtn");
+  if(senhaBtn) senhaBtn.addEventListener("click", botAskSenhaSimulador);
+}
+
+/* ---------- Senha de acesso (via Bety) ---------- */
+function botAskSenhaSimulador(){
+  const body = $("botBody");
+  const existing = body.querySelector("#botResults");
+  const opts = SIMULADORES.map(s=>`<button class="bot-opt" data-sim="${s.id}">${s.icon} ${s.titulo}</button>`).join("");
+  const html = `<div id="botResults">
+    <button class="help-back" id="botSenhaBackBtn">← Voltar</button>
+    <div class="bot-msg" style="margin-bottom:10px">Qual simulador você quer acessar?</div>
+    <div class="bot-opts">${opts}</div>
+  </div>`;
+  if(existing) existing.outerHTML = html; else body.insertAdjacentHTML("beforeend", html);
+  body.querySelectorAll("#botResults [data-sim]").forEach(b=>{
+    b.addEventListener("click", ()=>botShowSenhaSimulador(b.dataset.sim));
+  });
+  $("botSenhaBackBtn").addEventListener("click", ()=>botRenderList(""));
+}
+function botShowSenhaSimulador(simId){
+  const s = SIMULADORES.find(x=>x.id===simId);
+  if(!s) return;
+  const body = $("botBody");
+  const html = `<div id="botResults">
+    <button class="help-back" id="botSenhaBackBtn2">← Escolher outro simulador</button>
+    <div class="help-answer">
+      <span class="help-cat">Senha de acesso</span>
+      <b>${s.titulo}</b>
+      <p style="margin-top:10px">A senha pra abrir esse simulador aqui no hub é:</p>
+      <p style="margin-top:4px;font-size:20px;font-weight:800;color:var(--orange);letter-spacing:1px">${s.senha}</p>
+    </div>
+  </div>`;
+  body.querySelector("#botResults").outerHTML = html;
+  $("botSenhaBackBtn2").addEventListener("click", botAskSenhaSimulador);
 }
 
 function botShowAnswer(id){
